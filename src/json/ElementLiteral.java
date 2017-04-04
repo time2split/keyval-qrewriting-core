@@ -60,7 +60,7 @@ public class ElementLiteral extends Element{
 	
 	
 	@Override
-	public Object getVal()
+	public Object getValue()
 	{
 		return getLiteral();
 	}

@@ -26,7 +26,7 @@ public class ElementString extends Element{
 
 	
 	@Override
-	public Object getVal()
+	public Object getValue()
 	{
 		return getString();
 	}

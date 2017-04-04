@@ -1,0 +1,7 @@
+{
+	"animal" : {
+		"felin" : {
+			"canide" : {"$exists" : true}
+		}
+	}
+}

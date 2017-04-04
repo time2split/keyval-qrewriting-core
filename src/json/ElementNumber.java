@@ -36,7 +36,7 @@ public class ElementNumber extends Element {
 	
 	
 	@Override
-	public Object getVal() {
+	public Object getValue() {
 		return getNumber();
 	}
 	

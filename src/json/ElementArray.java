@@ -75,7 +75,7 @@ public class ElementArray extends Element
 	
 	
 	@Override
-	public Object getVal()
+	public Object getValue()
 	{
 		return getArray();
 	}

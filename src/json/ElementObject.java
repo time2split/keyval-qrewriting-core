@@ -3,7 +3,6 @@ package json;
 
 import java.util.HashMap;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import printer.Printer;
 
@@ -58,7 +57,7 @@ public class ElementObject extends Element{
 	
 	
 	@Override
-	public Object getVal()
+	public Object getValue()
 	{
 		return getObject();
 	}

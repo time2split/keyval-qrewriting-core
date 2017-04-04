@@ -26,18 +26,18 @@ implements Cloneable
 		if(!(o instanceof Element))
 			return false;
 		
-		return ((Element)o).getVal().equals(getVal());
+		return ((Element)o).getValue().equals(getValue());
 	}
 	
 	
 	@Override
 	public int hashCode()
 	{
-		return this.getVal().hashCode();
+		return this.getValue().hashCode();
 	}
 	
 	
-	public abstract Object getVal();
+	public abstract Object getValue();
 	
 	
 	public Element followPath(String[] keys, int offset)
@@ -73,7 +73,7 @@ implements Cloneable
 	
 	public String toString()
 	{
-		return "element(" + getVal().toString() + ")";
+		return "element(" + getValue().toString() + ")";
 	}
 	
 	
@@ -102,6 +102,6 @@ implements Cloneable
 	
 	public void prints(Printer p)
 	{
-		p.prints(getVal().toString());
+		p.prints(getValue().toString());
 	}
 }

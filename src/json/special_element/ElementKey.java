@@ -1,24 +1,23 @@
 package json.special_element;
 
-
 import json.Element;
 
+public class ElementKey extends Element
+{
 
-public class ElementKey extends Element{
-
-	
-	public ElementKey() {
+	public ElementKey()
+	{
 	}
 
-	
 	@Override
-	public Object getVal() {
+	public Object getValue()
+	{
 		return null;
 	}
 
-
 	@Override
-	public Object clone() {
+	public Object clone()
+	{
 		return null;
 	}
 }
