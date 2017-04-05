@@ -33,7 +33,7 @@ public class NodeValueString extends NodeValue
 	}
 
 	@Override
-	public Object clone()
+	public NodeValueString clone()
 	{
 		return new NodeValueString(s);
 	}

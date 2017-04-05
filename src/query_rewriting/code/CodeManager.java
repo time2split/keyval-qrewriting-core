@@ -1,18 +1,26 @@
 package query_rewriting.code;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Ensemble de codes
+ * 
+ * @author zuri
+ * 
+ */
 public class CodeManager extends HashSet<Code>
 {
-	private Encoding	encoding;
+	private static final long	serialVersionUID	= 1L;
+	private Encoding			encoding;
 
 	public CodeManager(Encoding e)
 	{
 		encoding = e;
 	}
 
-	public CodeManager(Encoding e, Set<Code> c)
+	public CodeManager(Encoding e, Collection<Code> c)
 	{
 		super(c);
 		encoding = e;

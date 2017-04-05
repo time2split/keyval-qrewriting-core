@@ -23,7 +23,7 @@ public class ElementArray extends Element
 		this.array = new ArrayList<Element>(e.array.size());
 		
 		for(Element el : e.array)
-			this.array.add((Element)el.clone());
+			this.array.add(el.clone());
 	}
 	
 	
@@ -117,7 +117,7 @@ public class ElementArray extends Element
 
 
 	@Override
-	public Object clone() {
+	public ElementArray clone() {
 		return new ElementArray(this);
 	}
 

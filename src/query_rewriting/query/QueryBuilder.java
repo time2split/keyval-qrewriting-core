@@ -1,5 +1,11 @@
 package query_rewriting.query;
 
+/**
+ * Permet de construire une requête
+ * 
+ * @author zuri
+ * 
+ */
 abstract public class QueryBuilder
 {
 	protected Query	query;

@@ -1,23 +1,18 @@
 package json;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import reader.Reader;
-
 import json.special_element.ElementKey;
 import json.special_element.ElementRoot;
+import reader.Reader;
 
 public class JsonReader extends Reader
 {
+	// Todo : utiliser enumération JAVA
 	static private final int	TOKEN_OBJ_OPEN	= 1;
 	static private final int	TOKEN_OBJ_CLOS	= 2;
 	static private final int	TOKEN_ARR_OPEN	= 3;

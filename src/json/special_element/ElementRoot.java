@@ -13,7 +13,7 @@ public class ElementRoot extends Element
 
 	ElementRoot(ElementRoot e)
 	{
-		this.e = (Element) e.clone();
+		this.e = e.clone();
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class ElementRoot extends Element
 	}
 
 	@Override
-	public Object clone()
+	public ElementRoot clone()
 	{
 		return new ElementRoot(this);
 	}

@@ -48,7 +48,7 @@ public class ElementNumber extends Element {
 
 
 	@Override
-	public Object clone() {
+	public ElementNumber clone() {
 		return new ElementNumber(this);
 	}
 

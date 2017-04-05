@@ -1,13 +1,13 @@
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Set;
 
 import json.Json;
 import json.JsonReader;
+import numeric.Interval;
 import query_building.QueryBuilder_json;
 import query_building.RuleManagerBuilder_text;
 import query_rewriting.code.Code;
+import query_rewriting.code.Encoding;
 import query_rewriting.generator.CodeGenerator;
 import query_rewriting.generator.CodeGeneratorException;
 import query_rewriting.generator.CodeGenerator_simple;
@@ -28,18 +28,18 @@ public class Main
 	public static void main(String[] args)
 	{
 		JsonReader js_reader;
-		Json js_rules;
 		Json js_query;
-		BufferedInputStream fs;
 
-		js_reader = new JsonReader(new File("query.json"));
+		js_reader = new JsonReader(new File("test_rewriting/animaux_query.json"));
 		js_query = js_reader.read();
 
 		Query query = new Query();
 		QueryBuilder_json qb = new QueryBuilder_json(query, js_query);
 
 		RuleManager rm = new RuleManager();
-		RuleManagerBuilder_text rmbt = new RuleManagerBuilder_text(rm, new File("rules.txt"));
+		RuleManagerBuilder_text rmbt = new RuleManagerBuilder_text(rm, new File("test_rewriting/animaux_rules.txt"));
+
+		int nbThread = 8;
 
 		try
 		{
@@ -47,13 +47,30 @@ public class Main
 			rmbt.build();
 
 			CodeGenerator generator = new CodeGenerator_simple(query, rm);
-			ArrayList<Code> codes = generator.getEncoding().generateAllCodes();
+			// Tous les codes
+			Encoding encoding = generator.getEncoding();
+			ArrayList<Code> codes = encoding.generateAllCodes();
 			QPUSimple qpu = new QPUSimple(query, codes, generator.getContextManager(), generator.getEncoding());
 
-			ArrayList<Query> rewrites = qpu.process();
+			ArrayList<Interval> cutting = (new Interval(0, encoding.getTotalNbStates() - 1)).cutByNumberOfIntervals(nbThread);
+			// Reécriture avec tous les codes
+			// ArrayList<Query> rewrites = qpu.process();
 
-			for (Query r : rewrites)
-				System.out.println(r);
+			// Display
+			{
+				// System.out.println(codes);
+
+				// for (int i = 0; i < 64; i++)
+				// System.out.println(generator.getEncoding().getCodeFrom(i));
+
+				// for (Query r : rewrites)
+				// System.out.println(r);
+
+				for (Interval in : cutting)
+				{
+					System.out.println(encoding.generateAllCodes(in));
+				}
+			}
 
 		}
 		catch (QueryBuilderException e)
@@ -71,5 +88,4 @@ public class Main
 			e.printStackTrace();
 		}
 	}
-
 }

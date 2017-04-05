@@ -16,6 +16,12 @@ import query_rewriting.query.node.NodeChilds;
 import query_rewriting.query.node.NodeValueExists;
 import query_rewriting.query.node.NodeValueString;
 
+/**
+ * Construit une règle à partir d'un document Json
+ * 
+ * @author zuri
+ * 
+ */
 public class QueryBuilder_json extends QueryBuilder
 {
 	private Json	doc;

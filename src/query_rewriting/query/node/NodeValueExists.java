@@ -1,5 +1,11 @@
 package query_rewriting.query.node;
 
+/**
+ * Valeur 'exists' (pour les feuilles)
+ * 
+ * @author zuri
+ * 
+ */
 public class NodeValueExists extends NodeValue
 {
 	boolean	exists	= true;
@@ -32,7 +38,7 @@ public class NodeValueExists extends NodeValue
 	}
 
 	@Override
-	public Object clone()
+	public NodeValueExists clone()
 	{
 		return new NodeValueExists(exists);
 	}

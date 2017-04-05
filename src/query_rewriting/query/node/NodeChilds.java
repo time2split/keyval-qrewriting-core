@@ -4,25 +4,31 @@ import java.util.ArrayList;
 
 import query_rewriting.query.Label;
 
-public class NodeChilds
+/**
+ * Enfants d'un noeud
+ * 
+ * @author zuri
+ * 
+ */
+public class NodeChilds extends ArrayList<Node>
 {
-	private ArrayList<Node>	childs;
+	private static final long	serialVersionUID	= 1L;
 
 	public NodeChilds(int nb)
 	{
-		childs = new ArrayList<Node>(nb);
+		super(nb);
 	}
 
 	public NodeChilds()
 	{
-		childs = new ArrayList<Node>();
+		super();
 	}
 
 	public ArrayList<Label> getChildsLabel()
 	{
-		ArrayList<Label> ret = new ArrayList<Label>();
+		ArrayList<Label> ret = new ArrayList<>();
 
-		for (Node n : childs)
+		for (Node n : this)
 		{
 			ret.add(n.getLabel());
 		}
@@ -31,28 +37,17 @@ public class NodeChilds
 
 	public ArrayList<Node> getChilds()
 	{
-		return childs;
+		return this;
 	}
 
-	public void add(Node n)
+	public boolean add(Label l)
 	{
-		childs.add(n);
+		return add(new Node(l));
 	}
 
-	public void add(Label l)
-	{
-		add(new Node(l));
-	}
-
-	public void add(Label l, Node n)
+	public boolean add(Label l, Node n)
 	{
 		n.setLabel(l);
-		add(n);
-	}
-
-	@Override
-	public String toString()
-	{
-		return childs.toString();
+		return add(n);
 	}
 }

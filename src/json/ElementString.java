@@ -33,7 +33,7 @@ public class ElementString extends Element{
 	
 	
 	@Override
-	public Object clone()
+	public ElementString clone()
 	{
 		return new ElementString(this);
 	}

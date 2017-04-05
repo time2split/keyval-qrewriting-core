@@ -28,7 +28,7 @@ public class ElementObject extends Element{
 		this.object = new HashMap<String,Element>(e.object.size());
 		
 		for(String key : e.object.keySet())
-			this.object.put(new String(key), (Element) e.object.get(key).clone());
+			this.object.put(new String(key), e.object.get(key).clone());
 	}
 	
 	
@@ -108,7 +108,7 @@ public class ElementObject extends Element{
 
 
 	@Override
-	public Object clone() {
+	public ElementObject clone() {
 		return new ElementObject(this);
 	}
 

@@ -8,6 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Permet la lectue d'un flux quelconque
+ * 
+ * @author zuri
+ * 
+ */
 public abstract class Reader
 {
 	protected InputStream	source;
@@ -57,6 +63,9 @@ public abstract class Reader
 		closeStream = false;
 	}
 
+	/**
+	 * Close No Exception
+	 */
 	public void closeNoe()
 	{
 		try
@@ -104,6 +113,11 @@ public abstract class Reader
 
 	// =========================================================================
 
+	/**
+	 * Lecture jusqu'à épuisement de la source
+	 * 
+	 * @return
+	 */
 	public String getContents()
 	{
 		String ret = "";

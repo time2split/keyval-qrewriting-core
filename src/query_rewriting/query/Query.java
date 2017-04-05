@@ -6,6 +6,12 @@ import java.util.Set;
 
 import query_rewriting.query.node.Node;
 
+/**
+ * Une requête
+ * 
+ * @author zuri
+ * 
+ */
 public class Query implements Cloneable
 {
 	private Node	root;
@@ -16,10 +22,10 @@ public class Query implements Cloneable
 	}
 
 	@Override
-	public Object clone()
+	public Query clone()
 	{
 		Query q = new Query();
-		q.setRoot((Node) root.clone());
+		q.setRoot(root.clone());
 		return q;
 	}
 
@@ -49,9 +55,13 @@ public class Query implements Cloneable
 		return true;
 	}
 
+	/**
+	 * 
+	 * @return Toutes les clés de la requête (labels)
+	 */
 	public Set<String> getAllKeys()
 	{
-		Set<String> ret = new HashSet<String>();
+		Set<String> ret = new HashSet<>();
 
 		for (Node n : getNodes())
 		{
@@ -67,22 +77,20 @@ public class Query implements Cloneable
 	}
 
 	/**
-	 * Retourne tous les noeuds sauf la racine
 	 * 
-	 * @return
+	 * @return Tous les noeuds sauf la racine
 	 */
 	public ArrayList<Node> getNodes()
 	{
-		ArrayList<Node> ret = new ArrayList<Node>();
+		ArrayList<Node> ret = new ArrayList<>();
 		s_getNodes(ret, root);
 		ret.remove(root);
 		return ret;
 	}
 
 	/**
-	 * Récupère un noeud par son identifiant
 	 * 
-	 * @return
+	 * @return Le noeud dont l'identifiant est $id
 	 */
 	public Node getNode(int id)
 	{

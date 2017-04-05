@@ -1,7 +1,7 @@
 package query_rewriting.query;
 
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 import json.ElementArray;
 import json.ElementObject;

@@ -3,15 +3,15 @@ package query_rewriting.rule;
 import query_rewriting.query.Label;
 
 /**
+ * Règle
  * 
  * @author zuri
- * 
  */
-public class Rule
+public abstract class Rule
 {
 	// Seul le premier élément de Label sera utilisé (utile pour le futur ?)
-	private Label	h;
-	private Label	c;
+	protected Label	h;
+	protected Label	c;
 
 	public Rule(String hh, String cc)
 	{
@@ -64,7 +64,7 @@ public class Rule
 	{
 		if (!(b instanceof Rule))
 			return false;
-		
+
 		Rule bb = (Rule) b;
 		return h.equals(bb.h) && c.equals(bb.c);
 	}

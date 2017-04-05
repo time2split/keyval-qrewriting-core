@@ -4,6 +4,12 @@ import java.io.File;
 
 import reader.Reader;
 
+/**
+ * Constructeur de RuleManager
+ * 
+ * @author zuri
+ * 
+ */
 abstract public class RuleManagerBuilder extends Reader
 {
 	protected RuleManager	rm;

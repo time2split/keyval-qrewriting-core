@@ -2,6 +2,12 @@ package query_rewriting.query.node;
 
 import query_rewriting.query.Label;
 
+/**
+ * Noeud d'une requête
+ * 
+ * @author zuri
+ * 
+ */
 public class Node implements Cloneable
 {
 	private Label		label;
@@ -17,6 +23,16 @@ public class Node implements Cloneable
 	public Node(Label l)
 	{
 		label = l;
+	}
+
+	/**
+	 * Est une feuille
+	 * 
+	 * @return true|false
+	 */
+	public boolean isLeaf()
+	{
+		return childs.isEmpty();
 	}
 
 	public void setLabel(Label l)
@@ -77,18 +93,18 @@ public class Node implements Cloneable
 	}
 
 	@Override
-	public Object clone()
+	public Node clone()
 	{
 		Node n = new Node();
 		n.setLabel(label);
 		n.setId(id);
 
 		if (value != null)
-			n.setValue((NodeValue) value.clone());
+			n.setValue(value.clone());
 
 		for (Node tmp : childs.getChilds())
 		{
-			n.childs.add((Node) tmp.clone());
+			n.childs.add(tmp.clone());
 		}
 		return n;
 	}

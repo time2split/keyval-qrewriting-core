@@ -5,6 +5,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Contexte de codage
+ * 
+ * @author zuri
+ * 
+ */
 public class Context
 {
 	private String		key;

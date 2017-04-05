@@ -89,7 +89,7 @@ public class ElementLiteral extends Element{
 
 
 	@Override
-	public Object clone() {
+	public ElementLiteral clone() {
 		return new ElementLiteral(this);
 	}
 

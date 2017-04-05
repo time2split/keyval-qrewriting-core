@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Ensemble de règles
+ * 
+ * @author zuri
+ * 
+ */
 public class RuleManager extends ArrayList<Rule>
 {
 	private static final long	serialVersionUID	= 1L;
@@ -16,7 +22,6 @@ public class RuleManager extends ArrayList<Rule>
 	@Override
 	public boolean add(Rule r)
 	{
-
 		if (contains(r))
 			return false;
 
@@ -31,12 +36,12 @@ public class RuleManager extends ArrayList<Rule>
 	public RuleManager getApplicables(String k1)
 	{
 		RuleManager ret = new RuleManager();
-		ArrayList<String> conclusions = new ArrayList<String>();
+		ArrayList<String> conclusions = new ArrayList<>();
 		conclusions.add(k1);
 
 		while (!conclusions.isEmpty())
 		{
-			ArrayList<String> nc = new ArrayList<String>();
+			ArrayList<String> nc = new ArrayList<>();
 
 			for (String k : conclusions)
 			{
@@ -54,22 +59,31 @@ public class RuleManager extends ArrayList<Rule>
 		return ret;
 	}
 
+	public boolean hasExistsRule()
+	{
+		for (Rule r : this)
+		{
+			if (r instanceof RuleExists)
+				return true;
+		}
+		return false;
+	}
+
 	public Set<String> getAllKeys()
 	{
-		HashSet<String> ret = new HashSet<String>(size());
+		HashSet<String> ret = new HashSet<>(size());
 
 		for (Rule r : this)
 		{
 			ret.add(r.getHypothesis());
 			ret.add(r.getConclusion());
 		}
-
 		return ret;
 	}
 
 	public Set<String> getAllHypothesis()
 	{
-		HashSet<String> ret = new HashSet<String>(size());
+		HashSet<String> ret = new HashSet<>(size());
 
 		for (Rule r : this)
 			ret.add(r.getHypothesis());
@@ -92,6 +106,5 @@ public class RuleManager extends ArrayList<Rule>
 		Set<String> ret = getAllHypothesisWithout(k);
 		ret.add(k);
 		return ret;
-
 	}
 }

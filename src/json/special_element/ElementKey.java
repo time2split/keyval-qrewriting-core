@@ -16,7 +16,7 @@ public class ElementKey extends Element
 	}
 
 	@Override
-	public Object clone()
+	public ElementKey clone()
 	{
 		return null;
 	}

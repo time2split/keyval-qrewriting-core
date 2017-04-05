@@ -5,6 +5,13 @@ import query_rewriting.code.Encoding;
 import query_rewriting.query.Query;
 import query_rewriting.rule.RuleManager;
 
+/**
+ * Construit le ContextManager et l'Encoding à partir d'une requête et de ses
+ * règles de réécriture
+ * 
+ * @author zuri
+ * 
+ */
 abstract public class CodeGenerator
 {
 	private Query				query;

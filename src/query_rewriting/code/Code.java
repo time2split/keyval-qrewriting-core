@@ -1,5 +1,12 @@
 package query_rewriting.code;
 
+/**
+ * Code rerpésentant une requête. Attention pour les calculs, le premier élément
+ * d'un code (affichage à gauche) est indexé à 0
+ * 
+ * @author zuri
+ * 
+ */
 public class Code
 {
 	int	code[];
@@ -24,7 +31,6 @@ public class Code
 
 	public boolean setCode(int i, int state)
 	{
-
 		if (i < 0 || i >= code.length)
 			return false;
 

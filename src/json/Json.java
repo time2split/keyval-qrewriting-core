@@ -20,7 +20,7 @@ implements Cloneable
 	
 	public Json(Json document)
 	{
-		this.setDocument((Element) document.getDocument().clone());
+		this.setDocument(document.getDocument().clone());
 	}
 	
 	
@@ -56,7 +56,7 @@ implements Cloneable
 	
 	
 	@Override
-	public Object clone()
+	public Json clone()
 	{
 		return new Json(this);
 	}
