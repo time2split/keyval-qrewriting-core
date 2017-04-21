@@ -1,28 +1,43 @@
 package builder;
 
+/**
+ * Permet de construire/ajouter des informations à un objet
+ * 
+ * @author zuri
+ * 
+ */
 abstract public class Builder
 {
-	protected Object	builded;
+	private Object	builded;
 
 	public Builder()
 	{
-
 	}
 
-	public Builder(Object d)
+	protected Builder(Object d)
 	{
 		setBuilded(d);
 	}
 
-	public void setBuilded(Object d)
+	protected void setBuilded(Object d)
 	{
 		builded = d;
 	}
 
-	public Object getBuilded()
+	protected Object getBuilded()
 	{
 		return builded;
 	}
 
+	/**
+	 * Construit l'objet enregistré ($builded)
+	 * 
+	 * @throws BuilderException
+	 */
 	abstract public void build() throws BuilderException;
+
+	/**
+	 * @return Un nouvel objet construit
+	 */
+	abstract public Object newBuild() throws BuilderException;
 }

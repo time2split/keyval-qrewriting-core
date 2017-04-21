@@ -17,7 +17,7 @@ import query_rewriting.query.node.NodeValueExists;
 import query_rewriting.query.node.NodeValueString;
 
 /**
- * Construit une règle à partir d'un document Json
+ * Construit une requête à partir d'un document Json
  * 
  * @author zuri
  * 
@@ -41,6 +41,20 @@ public class QueryBuilder_json extends QueryBuilder
 	public void setJson(Json d)
 	{
 		doc = d;
+	}
+
+	public void setQuery(Query q)
+	{
+		setBuilded(q);
+	}
+
+	@Override
+	public Query newBuild() throws QueryBuilderException
+	{
+		Query ret = new Query();
+		setQuery(ret);
+		build();
+		return ret;
 	}
 
 	/**
@@ -127,6 +141,9 @@ public class QueryBuilder_json extends QueryBuilder
 	@Override
 	public void build() throws QueryBuilderException
 	{
+		if (doc == null)
+			throw new QueryBuilderException("Builder Json : pas de document Json en paramètre");
+
 		s_validate(doc);
 		Query query = getQuery();
 		Node n = query.getRoot();
