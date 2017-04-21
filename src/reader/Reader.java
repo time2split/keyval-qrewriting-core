@@ -35,22 +35,29 @@ public abstract class Reader
 		setSource(s);
 	}
 
-	public Reader(File f)
+	public Reader(File f) throws FileNotFoundException
+	{
+		setSource(new BufferedInputStream(new FileInputStream(f)));
+		closeStream = true;
+	}
+
+	@Override
+	public void finalize()
 	{
 		try
 		{
-			setSource(new BufferedInputStream(new FileInputStream(f)));
-			closeStream = true;
+			close();
 		}
-		catch (FileNotFoundException e)
+		catch (IOException e)
 		{
-			e.printStackTrace();
+			System.err.println("Impossible de fermer la ressource : "
+					+ e.getMessage());
 		}
 	}
 
 	// =========================================================================
 
-	// abstract public Object read();
+	abstract public Object read() throws ReaderException, IOException;
 
 	// =========================================================================
 
@@ -63,47 +70,22 @@ public abstract class Reader
 		closeStream = false;
 	}
 
-	/**
-	 * Close No Exception
-	 */
-	public void closeNoe()
-	{
-		try
-		{
-			close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
 	// =========================================================================
 
 	public void setSource(InputStream stream)
 	{
-		closeNoe();
 		source = stream;
 	}
 
 	public void setSource(String s)
 	{
-		closeNoe();
 		setSource(new ByteArrayInputStream(s.getBytes()));
 	}
 
-	public void setSource(File f)
+	public void setSource(File f) throws FileNotFoundException
 	{
-		closeNoe();
-		try
-		{
-			setSource(new BufferedInputStream(new FileInputStream(f)));
-			closeStream = true;
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
+		setSource(new BufferedInputStream(new FileInputStream(f)));
+		closeStream = true;
 	}
 
 	public InputStream getSource()
