@@ -39,7 +39,6 @@ public class JsonReader extends Reader
 	// Retour de nextToken()
 	private static class LexerVal
 	{
-
 		Token	token;
 		String	data;
 

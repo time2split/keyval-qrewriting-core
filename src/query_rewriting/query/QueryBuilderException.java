@@ -1,6 +1,8 @@
 package query_rewriting.query;
 
-public class QueryBuilderException extends Exception
+import builder.BuilderException;
+
+public class QueryBuilderException extends BuilderException
 {
 	private static final long	serialVersionUID	= 1L;
 

@@ -128,6 +128,7 @@ public class QueryBuilder_json extends QueryBuilder
 	public void build() throws QueryBuilderException
 	{
 		s_validate(doc);
+		Query query = getQuery();
 		Node n = query.getRoot();
 
 		if (n == null)

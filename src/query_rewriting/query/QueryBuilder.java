@@ -1,15 +1,15 @@
 package query_rewriting.query;
 
+import builder.Builder;
+
 /**
  * Permet de construire une requête
  * 
  * @author zuri
  * 
  */
-abstract public class QueryBuilder
+abstract public class QueryBuilder extends Builder
 {
-	protected Query	query;
-
 	public QueryBuilder()
 	{
 
@@ -22,7 +22,12 @@ abstract public class QueryBuilder
 
 	public void setQuery(Query q)
 	{
-		query = q;
+		setBuilded(q);
+	}
+
+	final public Query getQuery()
+	{
+		return (Query) getBuilded();
 	}
 
 	abstract public void build() throws QueryBuilderException;
