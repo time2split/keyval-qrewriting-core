@@ -12,46 +12,9 @@ import reader.Reader;
 
 public class JsonReader extends Reader
 {
-	// Todo : utiliser enumération JAVA
-	static private final int	TOKEN_OBJ_OPEN	= 1;
-	static private final int	TOKEN_OBJ_CLOS	= 2;
-	static private final int	TOKEN_ARR_OPEN	= 3;
-	static private final int	TOKEN_ARR_CLOS	= 4;
-	static private final int	TOKEN_COMA		= 5;
-	static private final int	TOKEN_COLON		= 6;
-
-	static private final int	TOKEN_LITERAL	= 10;
-	static private final int	TOKEN_STRING	= 11;
-	static private final int	TOKEN_NUMBER	= 12;
-
-	static private final int	TOKEN_START		= 0;
-	static private final int	TOKEN_END		= 100;
-
-	private String tokenName(int t)
+	private enum Token
 	{
-		if (t == TOKEN_OBJ_OPEN)
-			return "OBJ_OPEN";
-		if (t == TOKEN_OBJ_CLOS)
-			return "OBJ_CLOS";
-		if (t == TOKEN_ARR_OPEN)
-			return "ARR_OPEN";
-		if (t == TOKEN_ARR_CLOS)
-			return "ARR_CLOS";
-		if (t == TOKEN_COMA)
-			return "COMA";
-		if (t == TOKEN_COLON)
-			return "COLON";
-		if (t == TOKEN_LITERAL)
-			return "LITERAL";
-		if (t == TOKEN_STRING)
-			return "STRING";
-		if (t == TOKEN_START)
-			return "START";
-		if (t == TOKEN_END)
-			return "END";
-		if (t == TOKEN_NUMBER)
-			return "NUMBER";
-		return "???";
+		OBJ_OPEN, OBJ_CLOS, ARR_OPEN, ARR_CLOS, COMA, COLON, LITERAL, STRING, NUMBER, START, END
 	}
 
 	// =========================================================================
@@ -77,10 +40,10 @@ public class JsonReader extends Reader
 	private static class LexerVal
 	{
 
-		int		token;
+		Token	token;
 		String	data;
 
-		LexerVal(int t, String d)
+		LexerVal(Token t, String d)
 		{
 			this.token = t;
 			this.data = d;
@@ -122,17 +85,17 @@ public class JsonReader extends Reader
 				if (d == -1)
 					break;
 				if (c == '{')
-					return new LexerVal(TOKEN_OBJ_OPEN, "{");
+					return new LexerVal(Token.OBJ_OPEN, "{");
 				if (c == '}')
-					return new LexerVal(TOKEN_OBJ_CLOS, "}");
+					return new LexerVal(Token.OBJ_CLOS, "}");
 				if (c == '[')
-					return new LexerVal(TOKEN_ARR_OPEN, "[");
+					return new LexerVal(Token.ARR_OPEN, "[");
 				if (c == ']')
-					return new LexerVal(TOKEN_ARR_CLOS, "]");
+					return new LexerVal(Token.ARR_CLOS, "]");
 				if (c == ':')
-					return new LexerVal(TOKEN_COLON, ":");
+					return new LexerVal(Token.COLON, ":");
 				if (c == ',')
-					return new LexerVal(TOKEN_COMA, ",");
+					return new LexerVal(Token.COMA, ",");
 
 				if (c == '"')
 					state = 50;
@@ -167,7 +130,7 @@ public class JsonReader extends Reader
 
 					if (buffer.equals("true") || buffer.equals("false")
 							|| buffer.equals("null"))
-						return new LexerVal(TOKEN_LITERAL, buffer);
+						return new LexerVal(Token.LITERAL, buffer);
 
 					throw new Exception("Littéral " + buffer + " inconnu !");
 				}
@@ -185,7 +148,7 @@ public class JsonReader extends Reader
 				else
 				{
 					stream.reset();
-					return new LexerVal(TOKEN_NUMBER, buffer);
+					return new LexerVal(Token.NUMBER, buffer);
 				}
 				break;
 
@@ -193,7 +156,7 @@ public class JsonReader extends Reader
 			case 50:
 
 				if (c == '"')
-					return new LexerVal(TOKEN_STRING, buffer);
+					return new LexerVal(Token.STRING, buffer);
 
 				buffer += c;
 
@@ -219,7 +182,7 @@ public class JsonReader extends Reader
 					throw new Exception("Fin rencontrée dans lexer !");
 			}
 		}
-		return new LexerVal(TOKEN_END, null);
+		return new LexerVal(Token.END, null);
 	}
 
 	// =========================================================================
@@ -245,7 +208,7 @@ public class JsonReader extends Reader
 	{
 		// Lexer
 		LexerVal lv = null; // Compilateur pas content si non initialisée
-		int token;
+		Token token;
 		String data;
 
 		Stack<Integer> states = new Stack<Integer>();
@@ -285,26 +248,26 @@ public class JsonReader extends Reader
 			state = states.pop().intValue();
 
 			if (Config.DEBUG_READER)
-				System.out.println(state + " " + tokenName(token) + " " + data);
+				System.out.println(state + " " + token + " " + data);
 
 			switch (state)
 			{
 
 			case 0:
 
-				if (token == TOKEN_LITERAL)
+				if (token == Token.LITERAL)
 				{
 					current = new ElementLiteral(data);
 					states.push(900);
 					skipLexer = true;
 				}
-				else if (token == TOKEN_STRING)
+				else if (token == Token.STRING)
 				{
 					current = new ElementString(data);
 					states.push(900);
 					skipLexer = true;
 				}
-				else if (token == TOKEN_NUMBER)
+				else if (token == Token.NUMBER)
 				{
 					Matcher m = pnum.matcher(data);
 
@@ -315,29 +278,28 @@ public class JsonReader extends Reader
 					states.push(900);
 					skipLexer = true;
 				}
-				else if (token == TOKEN_ARR_OPEN)
+				else if (token == Token.ARR_OPEN)
 				{
 					states.push(900);
 					current = new ElementArray();
 					skipLexer = true;
 				}
-				else if (token == TOKEN_OBJ_OPEN)
+				else if (token == Token.OBJ_OPEN)
 				{
 					states.push(900);
 					current = new ElementObject();
 					skipLexer = true;
 				}
-				else if (token == TOKEN_ARR_CLOS)
+				else if (token == Token.ARR_CLOS)
 				{
 				}
-				else if (token == TOKEN_OBJ_CLOS)
+				else if (token == Token.OBJ_CLOS)
 				{
 				}
-				else if (token == TOKEN_COMA || token == TOKEN_COLON
-						|| token == TOKEN_ARR_CLOS)
+				else if (token == Token.COMA || token == Token.COLON
+						|| token == Token.ARR_CLOS)
 				{
-					throw new Exception("Token " + tokenName(token)
-							+ " non attendu");
+					throw new Exception("Token " + token + " non attendu");
 				}
 				else
 				{
@@ -412,12 +374,12 @@ public class JsonReader extends Reader
 			// Attente , ou ]
 			case 920:
 
-				if (token != TOKEN_ARR_CLOS && token != TOKEN_COMA)
+				if (token != Token.ARR_CLOS && token != Token.COMA)
 					throw new Exception("Token ',' ou ']' attendue !");
 				{
 					skipLexer = true;
 
-					if (token == TOKEN_COMA)
+					if (token == Token.COMA)
 						states.push(0);
 
 					states.push(910);
@@ -445,7 +407,7 @@ public class JsonReader extends Reader
 			// Attente ':'
 			case 960:
 
-				if (token != TOKEN_COLON)
+				if (token != Token.COLON)
 					throw new Exception("Token ':' attendu!");
 
 				states.push(0);
@@ -454,12 +416,12 @@ public class JsonReader extends Reader
 			// Attente , ou }
 			case 970:
 
-				if (token != TOKEN_OBJ_CLOS && token != TOKEN_COMA)
+				if (token != Token.OBJ_CLOS && token != Token.COMA)
 					throw new Exception("Token ',' ou '}' attendus !");
 				{
 					skipLexer = true;
 
-					if (token == TOKEN_COMA)
+					if (token == Token.COMA)
 						states.push(0);
 
 					states.push(950);
@@ -469,7 +431,7 @@ public class JsonReader extends Reader
 			// Attente END
 			case 1000:
 
-				if (token != TOKEN_END)
+				if (token != Token.END)
 					throw new Exception("Token END attendue !");
 				{
 					Element p = null;
@@ -486,7 +448,7 @@ public class JsonReader extends Reader
 				break;
 			}
 
-			if (token == TOKEN_END)
+			if (token == Token.END)
 			{
 				if (skipLexer)
 					continue;
