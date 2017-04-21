@@ -70,15 +70,18 @@ public class QueryBuilder_json extends QueryBuilder
 		if (!e.isObject())
 			throw new QueryBuilderException("Le document json doit commencer par un objet");
 
-		s_validate_obj((ElementObject) e);
+		s_validate_obj((ElementObject) e, State.ROOT);
 	}
-
-	final static int	VAL_STATE_EMATCH	= 1;
 
 	static private void s_validate_obj(ElementObject e)
 			throws QueryBuilderException
 	{
-		s_validate_obj(e, 0);
+		s_validate_obj(e, State.ELEM);
+	}
+
+	enum State
+	{
+		ROOT, ELEM_MATCH, ELEM
 	}
 
 	/**
@@ -88,11 +91,11 @@ public class QueryBuilder_json extends QueryBuilder
 	 *            1 : elemMatch
 	 * @throws QueryBuilderException
 	 */
-	static private void s_validate_obj(ElementObject e, int state)
+	static private void s_validate_obj(ElementObject e, State state)
 			throws QueryBuilderException
 	{
 		HashMap<String, Element> childs = e.getObject();
-		int cnt = childs.size();
+		final int cnt = childs.size();
 
 		for (String k : childs.keySet())
 		{
@@ -102,25 +105,25 @@ public class QueryBuilder_json extends QueryBuilder
 			{
 			case "$elemMatch":
 
-				if (state == VAL_STATE_EMATCH)
+				if (state == State.ELEM_MATCH)
 					throw new QueryBuilderException("$elemMatch imbriquées impossible");
 
 				if (!c.isObject())
 					throw new QueryBuilderException("$elemMatch doit être un object");
 
-				s_validate_obj((ElementObject) c, VAL_STATE_EMATCH);
+				s_validate_obj((ElementObject) c, State.ELEM_MATCH);
 				break;
 
 			case "$exists":
 
-				if (state == VAL_STATE_EMATCH)
+				if (state == State.ELEM_MATCH)
 					throw new QueryBuilderException("$exists dans $elemMatch impossible");
 
 				if (cnt > 1)
 					throw new QueryBuilderException("$exists doit être seul (feuille)");
 
 				if (!c.isLiteral()
-						|| ((ElementLiteral) c).getLiteral() != ElementLiteral.TRUE)
+						|| ((ElementLiteral) c).getLiteral() != ElementLiteral.Literal.TRUE)
 					throw new QueryBuilderException("$exists doit être un literal 'true'");
 
 				break;
