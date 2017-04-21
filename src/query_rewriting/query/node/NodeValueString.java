@@ -9,7 +9,7 @@ public class NodeValueString extends NodeValue
 		s = ss;
 	}
 
-	String getString()
+	public String getString()
 	{
 		return s;
 	}

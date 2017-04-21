@@ -1,4 +1,4 @@
-package query_building;
+package query_building.mongo;
 
 import java.util.HashMap;
 

@@ -2,10 +2,12 @@ import java.io.File;
 import java.util.ArrayList;
 
 import json.Json;
+import json.JsonBuilderException;
 import json.JsonReader;
 import numeric.Interval;
-import query_building.QueryBuilder_json;
 import query_building.RuleManagerBuilder_text;
+import query_building.mongo.JsonBuilder_query;
+import query_building.mongo.QueryBuilder_json;
 import query_rewriting.code.Code;
 import query_rewriting.code.Encoding;
 import query_rewriting.generator.CodeGenerator;
@@ -52,9 +54,9 @@ public class Main
 			ArrayList<Code> codes = encoding.generateAllCodes();
 			QPUSimple qpu = new QPUSimple(query, codes, generator.getContextManager(), generator.getEncoding());
 
-			ArrayList<Interval> cutting = (new Interval(0, encoding.getTotalNbStates() - 1)).cutByNumberOfIntervals(nbThread);
+			ArrayList<Interval> cutting = (new Interval(0, encoding.getTotalNbStates() - 1)).cutByNumberOfIntervals(nbThread, Interval.OPTION_HOMOGENEOUS);
 			// Reécriture avec tous les codes
-			// ArrayList<Query> rewrites = qpu.process();
+			ArrayList<Query> rewrites = qpu.process();
 
 			// Display
 			{
@@ -62,16 +64,27 @@ public class Main
 
 				// for (int i = 0; i < 64; i++)
 				// System.out.println(generator.getEncoding().getCodeFrom(i));
+				JsonBuilder_query jsonBuilder = new JsonBuilder_query();
 
-				// for (Query r : rewrites)
-				// System.out.println(r);
+				for (Query r : rewrites)
+				{
+					jsonBuilder.setQuery(r);
+					System.out.println(r);
+					try
+					{
+						System.out.println(jsonBuilder.newBuild());
+					}
+					catch (JsonBuilderException e)
+					{
+						e.printStackTrace();
+					}
+				}
 
 				for (Interval in : cutting)
 				{
 					System.out.println(encoding.generateAllCodes(in));
 				}
 			}
-
 		}
 		catch (QueryBuilderException e)
 		{
