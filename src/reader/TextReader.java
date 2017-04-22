@@ -1,5 +1,9 @@
 package reader;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,6 +37,21 @@ public class TextReader extends Reader
 	public TextReader()
 	{
 		super();
+	}
+
+	public TextReader(InputStream s)
+	{
+		super(s);
+	}
+
+	public TextReader(String s)
+	{
+		super(s);
+	}
+
+	public TextReader(File f) throws FileNotFoundException
+	{
+		super(new BufferedInputStream(new FileInputStream(f)));
 	}
 
 	/**

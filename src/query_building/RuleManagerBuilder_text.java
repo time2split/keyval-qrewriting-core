@@ -9,7 +9,6 @@ import query_rewriting.rule.RuleExists;
 import query_rewriting.rule.RuleManager;
 import query_rewriting.rule.RuleManagerBuilder;
 import query_rewriting.rule.RuleManagerBuilderException;
-import reader.Reader;
 import reader.ReaderException;
 import reader.TextReader;
 import builder.BuilderException;
