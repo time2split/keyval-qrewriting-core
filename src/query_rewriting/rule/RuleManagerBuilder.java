@@ -1,6 +1,5 @@
 package query_rewriting.rule;
 
-import reader.Reader;
 import builder.Builder;
 
 /**

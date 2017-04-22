@@ -2,8 +2,6 @@ package json;
 
 import java.util.Collection;
 
-import printer.Printer;
-
 public abstract class Element implements Cloneable
 {
 	public boolean isArray()
@@ -81,29 +79,5 @@ public abstract class Element implements Cloneable
 	public String toString()
 	{
 		return "element(" + getValue().toString() + ")";
-	}
-
-	public void printns(Printer p)
-	{
-		p.printPrefix();
-		this.prints(p);
-	}
-
-	public void printnp(Printer p)
-	{
-		this.prints(p);
-		p.printSuffix();
-	}
-
-	public void print(Printer p)
-	{
-		p.printPrefix();
-		this.prints(p);
-		p.printSuffix();
-	}
-
-	public void prints(Printer p)
-	{
-		p.prints(getValue().toString());
 	}
 }

@@ -53,8 +53,8 @@ public class RuleManagerBuilder_text extends RuleManagerBuilder
 	public void build() throws RuleManagerBuilderException
 	{
 		RuleManager rm = getRuleManager();
-		Reader reader = getReader();
-		//String contents = reader.getContents();
+		TextReader reader = getReader();
+		reader.setModeLine();
 		int li = 0;
 
 		try
@@ -72,7 +72,7 @@ public class RuleManagerBuilder_text extends RuleManagerBuilder
 				if (rexists)
 					line = line.substring(1).trim();
 
-				String[] words = line.split("[ \t\n\f\r]+");
+				String[] words = line.split("[\\s]+");
 
 				if (words.length != 2)
 					throw new RuleManagerBuilderException("'"
@@ -92,9 +92,11 @@ public class RuleManagerBuilder_text extends RuleManagerBuilder
 	}
 
 	@Override
-	public Object newBuild() throws BuilderException
+	public RuleManager newBuild() throws BuilderException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		RuleManager ret = new RuleManager();
+		setRuleManager(ret);
+		build();
+		return ret;
 	}
 }

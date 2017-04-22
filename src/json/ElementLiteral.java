@@ -1,7 +1,5 @@
 package json;
 
-import printer.Printer;
-
 public class ElementLiteral extends Element
 {
 	public enum Literal
@@ -17,8 +15,6 @@ public class ElementLiteral extends Element
 			setLiteral(Literal.TRUE);
 		else if (val.equals("false"))
 			setLiteral(Literal.FALSE);
-		// else if (val.equals("null"))
-		// setLiteral(Literal.NULL);
 		else
 			setLiteral(Literal.NULL);
 	}
@@ -69,12 +65,6 @@ public class ElementLiteral extends Element
 		default:
 			return "UNKNOW_LITERAL";
 		}
-	}
-
-	@Override
-	public void prints(Printer p)
-	{
-		p.prints(this.toString());
 	}
 
 	@Override

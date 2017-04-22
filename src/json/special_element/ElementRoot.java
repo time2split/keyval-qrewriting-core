@@ -1,7 +1,6 @@
 package json.special_element;
 
 import json.Element;
-import printer.Printer;
 
 public class ElementRoot extends Element
 {
@@ -30,13 +29,6 @@ public class ElementRoot extends Element
 	public String toString()
 	{
 		return "JSON(" + this.e + ")";
-	}
-
-	@Override
-	public void prints(Printer p)
-	{
-		this.e.print(p);
-		p.flush();
 	}
 
 	@Override
