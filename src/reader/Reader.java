@@ -16,9 +16,9 @@ import java.io.InputStream;
  */
 public abstract class Reader
 {
-	protected InputStream	source;
-	private boolean			closeStream	= false;
-	private int				buffLen		= 4096;
+	private InputStream	source;
+	private boolean		closeStream	= false;
+	private int			buffLen		= 4096;
 
 	public Reader()
 	{
@@ -58,6 +58,11 @@ public abstract class Reader
 	// =========================================================================
 
 	abstract public Object read() throws ReaderException, IOException;
+
+	public Object nextRead() throws ReaderException, IOException
+	{
+		return null;
+	}
 
 	// =========================================================================
 

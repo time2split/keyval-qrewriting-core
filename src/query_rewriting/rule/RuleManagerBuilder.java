@@ -1,8 +1,7 @@
 package query_rewriting.rule;
 
-import java.io.File;
-
 import reader.Reader;
+import builder.Builder;
 
 /**
  * Constructeur de RuleManager
@@ -10,25 +9,27 @@ import reader.Reader;
  * @author zuri
  * 
  */
-abstract public class RuleManagerBuilder extends Reader
+abstract public class RuleManagerBuilder extends Builder
 {
-	protected RuleManager	rm;
+	public RuleManagerBuilder()
+	{
+	}
 
 	public RuleManagerBuilder(RuleManager rman)
 	{
 		setRuleManager(rman);
 	}
 
-	public RuleManagerBuilder(RuleManager rman, File f)
+	public RuleManager getRuleManager()
 	{
-		super(f);
-		setRuleManager(rman);
+		return (RuleManager) getBuilded();
 	}
 
 	public void setRuleManager(RuleManager rman)
 	{
-		rm = rman;
+		setBuilded(rman);
 	}
 
+	@Override
 	abstract public void build() throws RuleManagerBuilderException;
 }

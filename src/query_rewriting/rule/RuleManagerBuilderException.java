@@ -1,6 +1,8 @@
 package query_rewriting.rule;
 
-public class RuleManagerBuilderException extends Exception
+import builder.BuilderException;
+
+public class RuleManagerBuilderException extends BuilderException
 {
 	private static final long	serialVersionUID	= 1L;
 

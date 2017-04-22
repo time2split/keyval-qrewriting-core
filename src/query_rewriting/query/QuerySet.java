@@ -3,8 +3,6 @@ package query_rewriting.query;
 
 //import java.util.ArrayList;
 
-import json.ElementArray;
-import json.ElementObject;
 
 ///
 //public class QuerySet extends ArrayList<Query>

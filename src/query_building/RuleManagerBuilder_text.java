@@ -1,6 +1,7 @@
 package query_building;
 
-import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import query_rewriting.rule.Rule;
 import query_rewriting.rule.RuleAll;
@@ -8,6 +9,10 @@ import query_rewriting.rule.RuleExists;
 import query_rewriting.rule.RuleManager;
 import query_rewriting.rule.RuleManagerBuilder;
 import query_rewriting.rule.RuleManagerBuilderException;
+import reader.Reader;
+import reader.ReaderException;
+import reader.TextReader;
+import builder.BuilderException;
 
 /**
  * Construit l'ensemble de règles à partir d'un fichier texte. Format : Une
@@ -20,47 +25,76 @@ import query_rewriting.rule.RuleManagerBuilderException;
  */
 public class RuleManagerBuilder_text extends RuleManagerBuilder
 {
+	private TextReader	reader;
 
 	public RuleManagerBuilder_text(RuleManager rman)
 	{
 		super(rman);
+		setReader(new TextReader());
 	}
 
-	public RuleManagerBuilder_text(RuleManager rman, File f)
+	public RuleManagerBuilder_text(RuleManager rman, TextReader r)
 	{
-		super(rman, f);
+		super(rman);
+		setReader(r);
+	}
+
+	public TextReader getReader()
+	{
+		return reader;
+	}
+
+	public void setReader(TextReader r)
+	{
+		reader = r;
 	}
 
 	@Override
 	public void build() throws RuleManagerBuilderException
 	{
-		String contents = getContents();
+		RuleManager rm = getRuleManager();
+		Reader reader = getReader();
+		//String contents = reader.getContents();
 		int li = 0;
 
-		for (String line : contents.split("\n"))
+		try
 		{
-			li++;
-			line = line.trim();
+			for (String line : (ArrayList<String>) reader.read())
+			{
+				li++;
+				line = line.trim();
 
-			if (line.isEmpty() || line.charAt(0) == '#')
-				continue;
+				if (line.isEmpty() || line.charAt(0) == '#')
+					continue;
 
-			boolean rexists = line.charAt(0) == '?';
+				boolean rexists = line.charAt(0) == '?';
 
-			if (rexists)
-				line = line.substring(1).trim();
+				if (rexists)
+					line = line.substring(1).trim();
 
-			String[] words = line.split("[ \t\n\f\r]+");
+				String[] words = line.split("[ \t\n\f\r]+");
 
-			if (words.length != 2)
-				throw new RuleManagerBuilderException("'" + source.toString()
-						+ "' ligne " + li
-						+ " la règle doit contenir 2 éléments : "
-						+ words.length + " trouvés");
+				if (words.length != 2)
+					throw new RuleManagerBuilderException("'"
+							+ reader.getSource().toString() + "' ligne " + li
+							+ " la règle doit contenir 2 éléments : "
+							+ words.length + " trouvés");
 
-			Rule r = rexists ? new RuleExists(words[0], words[1])
-					: new RuleAll(words[0], words[1]);
-			rm.add(r);
+				Rule r = rexists ? new RuleExists(words[0], words[1])
+						: new RuleAll(words[0], words[1]);
+				rm.add(r);
+			}
 		}
+		catch (ReaderException | IOException e)
+		{
+			throw new RuleManagerBuilderException(e.getMessage());
+		}
+	}
+
+	@Override
+	public Object newBuild() throws BuilderException
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

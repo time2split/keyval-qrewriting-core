@@ -17,7 +17,7 @@ public class ElementRoot extends Element
 	}
 
 	@Override
-	public Object getVal()
+	public Object getValue()
 	{
 		return getRoot();
 	}
