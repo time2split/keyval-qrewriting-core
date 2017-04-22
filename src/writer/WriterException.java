@@ -1,10 +1,10 @@
 package reader;
 
-public class ReaderException extends Exception
+public class WriterException extends Exception
 {
 	private static final long	serialVersionUID	= 1L;
 
-	public ReaderException(String m)
+	public WriterException(String m)
 	{
 		super(m);
 	}

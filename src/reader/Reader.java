@@ -2,6 +2,7 @@ package reader;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,16 +10,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Permet la lectue d'un flux quelconque
+ * Permet la lecture d'objets depuis un flux quelconque
  * 
  * @author zuri
  * 
  */
-public abstract class Reader
+public abstract class Reader implements Closeable
 {
 	private InputStream	source;
-	private boolean		closeStream	= false;
-	private int			buffLen		= 4096;
+	private int			buffLen	= 4096;
 
 	public Reader()
 	{
@@ -38,21 +38,12 @@ public abstract class Reader
 	public Reader(File f) throws FileNotFoundException
 	{
 		setSource(new BufferedInputStream(new FileInputStream(f)));
-		closeStream = true;
 	}
 
 	@Override
-	public void finalize()
+	public void finalize() throws IOException
 	{
-		try
-		{
-			close();
-		}
-		catch (IOException e)
-		{
-			System.err.println("Impossible de fermer la ressource : "
-					+ e.getMessage());
-		}
+		close();
 	}
 
 	// =========================================================================
@@ -66,13 +57,10 @@ public abstract class Reader
 
 	// =========================================================================
 
+	@Override
 	public void close() throws IOException
 	{
-		if (!closeStream)
-			return;
-
 		source.close();
-		closeStream = false;
 	}
 
 	// =========================================================================
@@ -90,7 +78,6 @@ public abstract class Reader
 	public void setSource(File f) throws FileNotFoundException
 	{
 		setSource(new BufferedInputStream(new FileInputStream(f)));
-		closeStream = true;
 	}
 
 	public InputStream getSource()
