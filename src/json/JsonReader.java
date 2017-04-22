@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import json.special_element.ElementKey;
 import json.special_element.ElementRoot;
@@ -28,11 +26,22 @@ public class JsonReader extends Reader
 	 * <li>false : permet de spécifier des clés objet sans parenthèses</li>
 	 * </ul>
 	 */
-	private boolean	option_strict	= true;
+	private JsonOptions	options	= new JsonOptions();
 
 	private enum Token
 	{
-		OBJ_OPEN, OBJ_CLOS, ARR_OPEN, ARR_CLOS, COMA, COLON, LITERAL, STRING, LITERALORSTRING, NUMBER, START, END
+		OBJ_OPEN,
+		OBJ_CLOS,
+		ARR_OPEN,
+		ARR_CLOS,
+		COMA,
+		COLON,
+		LITERAL,
+		STRING,
+		LITERALORSTRING,
+		NUMBER,
+		START,
+		END
 	}
 
 	// =========================================================================
@@ -54,9 +63,21 @@ public class JsonReader extends Reader
 
 	// =========================================================================
 
-	public void setStrict(boolean s)
+	public JsonOptions getOptions()
 	{
-		option_strict = s;
+		return options;
+	}
+
+	// =========================================================================
+
+	public static boolean checkNumber(String s)
+	{
+		return s.matches("^-?(([1-9]\\d*)|0)(\\.\\d+)?([eE][+-]\\d+)?$");
+	}
+
+	public static boolean checkLiteral(String s)
+	{
+		return s.equals("null") || s.equals("true") || s.equals("false");
 	}
 
 	// =========================================================================
@@ -79,12 +100,6 @@ public class JsonReader extends Reader
 		START, STRING, LITERAL, LITERALNOSTRICT, NUMBER, CHAR_ESCAPE
 	}
 
-	private boolean checkNonStrict(char c)
-	{
-		return Character.isAlphabetic(c) || Character.isDigit(c)
-				|| ("" + c).matches("[~^/\\$#@&_.+*?-]");
-	}
-
 	// TODO: faire une classe Lexer
 	// TODO: enregistrement ligne/colonne pour erreurs précises
 	private LexerVal nextToken(InputStream stream) throws ReaderException,
@@ -96,6 +111,7 @@ public class JsonReader extends Reader
 
 		LexerState state = LexerState.START;
 		String buffer = "";
+		final boolean option_strict = options.getStrict();
 
 		while (true)
 		{
@@ -132,7 +148,7 @@ public class JsonReader extends Reader
 
 				if (c == '"')
 					state = LexerState.STRING;
-				else if (!option_strict && checkNonStrict(c))
+				else if (!option_strict && JsonOptions.checkNonStrict(c))
 				{
 					stream.mark(1);
 					buffer += c;
@@ -156,7 +172,7 @@ public class JsonReader extends Reader
 
 			case LITERALNOSTRICT:
 
-				if (checkNonStrict(c))
+				if (JsonOptions.checkNonStrict(c))
 				{
 					stream.mark(1);
 					buffer += c;
@@ -183,8 +199,7 @@ public class JsonReader extends Reader
 					if (d != -1)
 						stream.reset();
 
-					if (buffer.equals("true") || buffer.equals("false")
-							|| buffer.equals("null"))
+					if (checkLiteral(buffer))
 						return new LexerVal(Token.LITERAL, buffer);
 
 					throw new ReaderException("Littéral " + buffer + " inconnu");
@@ -254,7 +269,14 @@ public class JsonReader extends Reader
 
 	private enum ReadState
 	{
-		START, END, STORE_ELEMENT, COMMA_OR_ARRCLOS, COMMA_OR_OBJCLOS, COLON, ARRAY_ADD, OBJECT_ADD
+		START,
+		END,
+		STORE_ELEMENT,
+		COMMA_OR_ARRCLOS,
+		COMMA_OR_OBJCLOS,
+		COLON,
+		ARRAY_ADD,
+		OBJECT_ADD
 	}
 
 	private ElementRoot _read() throws ReaderException, IOException
@@ -268,9 +290,6 @@ public class JsonReader extends Reader
 		Stack<Element> elems = new Stack<>();
 
 		ReadState state;
-
-		// TODO: mettre la vérification dans le lexer
-		Pattern pnum = Pattern.compile("^-?(([1-9]\\d*)|0)(\\.\\d+)?([eE][+-]\\d+)?$");
 
 		Element current = null; // Nouvel élément
 		boolean skipLexer = false;
@@ -333,21 +352,18 @@ public class JsonReader extends Reader
 					}
 					else
 					{
-						if (data.equals("null") || data.equals("true")
-								|| data.equals("false"))
-							;
+						if (checkLiteral(data))
+							lv.token = Token.LITERAL;
+						else if (checkNumber(data))
+							lv.token = Token.NUMBER;
 						else
-							throw new ReaderException("Littéral " + data
+							throw new ReaderException("Token " + data
 									+ " non reconnu");
-
-						lv.token = Token.LITERAL;
 					}
 				}
 				else if (token == Token.NUMBER)
 				{
-					Matcher m = pnum.matcher(data);
-
-					if (!m.find())
+					if (!checkNumber(data))
 						throw new ReaderException("Nombre non reconnu : "
 								+ data);
 

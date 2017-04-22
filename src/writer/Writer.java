@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 
-import reader.WriterException;
+import json.Json;
 
 /**
  * Permet l'écriture d'objets sur un flux quelconque
@@ -85,5 +85,11 @@ abstract public class Writer implements Closeable, Flushable
 	public void flush() throws IOException
 	{
 		destination.flush();
+	}
+
+	public void write(Json json) throws writer.WriterException, IOException
+	{
+		// TODO Auto-generated method stub
+
 	}
 }
