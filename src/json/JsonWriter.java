@@ -138,10 +138,11 @@ public class JsonWriter extends Writer
 			dest.write(tabs.getBytes());
 			dest.write((']' + eol).getBytes());
 		}
-		else if (e instanceof ElementString)
-		{
-			dest.write(("\"" + e + "\"" + eol).getBytes());
-		}
+		// else if (e instanceof ElementString)
+		// {
+		// dest.write(("\"" + ((ElementString) e).getString() + "\"" +
+		// eol).getBytes());
+		// }
 		else
 		{
 			dest.write((e + eol).getBytes());

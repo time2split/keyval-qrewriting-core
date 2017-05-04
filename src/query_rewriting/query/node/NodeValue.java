@@ -15,6 +15,16 @@ abstract public class NodeValue implements Cloneable
 		return false;
 	}
 
+	public boolean isNumber()
+	{
+		return false;
+	}
+
+	public boolean isLiteral()
+	{
+		return false;
+	}
+
 	@Override
 	public String toString()
 	{

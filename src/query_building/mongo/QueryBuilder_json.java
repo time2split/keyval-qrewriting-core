@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import json.Element;
 import json.ElementLiteral;
+import json.ElementNumber;
 import json.ElementObject;
 import json.ElementString;
 import json.Json;
@@ -14,6 +15,8 @@ import query_rewriting.query.QueryBuilderException;
 import query_rewriting.query.node.Node;
 import query_rewriting.query.node.NodeChilds;
 import query_rewriting.query.node.NodeValueExists;
+import query_rewriting.query.node.NodeValueLiteral;
+import query_rewriting.query.node.NodeValueNumber;
 import query_rewriting.query.node.NodeValueString;
 
 /**
@@ -96,6 +99,12 @@ public class QueryBuilder_json extends QueryBuilder
 	{
 		HashMap<String, Element> childs = e.getObject();
 		final int cnt = childs.size();
+		boolean noEMatch = true;
+
+		if (state == State.ELEM && cnt > 1)
+		{
+			throw new QueryBuilderException("Un objet ne peut être utilisé que avec $elemMatch (représentation de valeur objet impossible)");
+		}
 
 		for (String k : childs.keySet())
 		{
@@ -111,6 +120,7 @@ public class QueryBuilder_json extends QueryBuilder
 				if (!c.isObject())
 					throw new QueryBuilderException("$elemMatch doit être un object");
 
+				noEMatch = false;
 				s_validate_obj((ElementObject) c, State.ELEM_MATCH);
 				break;
 
@@ -134,10 +144,19 @@ public class QueryBuilder_json extends QueryBuilder
 					s_validate_obj((ElementObject) c);
 				else if (c.isString())
 					;
+				else if (c.isLiteral())
+					;
+				else if (c.isNumber())
+					;
 				else
-					throw new QueryBuilderException("Seul les éléments objets ou string sont pris en compte");
+					throw new QueryBuilderException("Seul les éléments objets, string, literal et number sont pris en compte");
 
 			}
+		}
+
+		if (noEMatch && state == State.ELEM)
+		{
+			throw new QueryBuilderException("Un objet ne peut être utilisé que avec $elemMatch (représentation de valeur objet impossible)");
 		}
 	}
 
@@ -189,6 +208,10 @@ public class QueryBuilder_json extends QueryBuilder
 					s_build_obj((ElementObject) c, cn);
 				else if (c.isString())
 					cn.setValue(new NodeValueString(((ElementString) c).getString()));
+				else if (c.isLiteral())
+					cn.setValue(new NodeValueLiteral(((ElementLiteral) c).toString()));
+				else if (c.isNumber())
+					cn.setValue(new NodeValueNumber(((ElementNumber) c).getNumber()));
 				else
 					throw new QueryBuilderException("??? revoir la validation");
 			}
