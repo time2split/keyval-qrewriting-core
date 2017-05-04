@@ -17,7 +17,6 @@ import query_rewriting.query.node.NodeValueString;
 
 public class JsonBuilder_query extends JsonBuilder
 {
-	Query	query;
 
 	public JsonBuilder_query()
 	{
@@ -31,12 +30,19 @@ public class JsonBuilder_query extends JsonBuilder
 
 	public void setQuery(Query q)
 	{
-		query = q;
+		setData(q);
+	}
+
+	public Query getQuery()
+	{
+		return (Query) getData();
 	}
 
 	@Override
 	public void build() throws JsonBuilderException
 	{
+		Query query = getQuery();
+
 		if (!query.isUnfolded())
 			throw new JsonBuilderException("La Query doit être dépliée");
 
@@ -69,7 +75,7 @@ public class JsonBuilder_query extends JsonBuilder
 				else
 					throw new JsonBuilderException("Query Element '" + v
 							+ "' non pris en charge");
-				
+
 				ElementObject exists = new ElementObject();
 				exists.getObject().put("$exists", new_e);
 				map.put(k, exists);

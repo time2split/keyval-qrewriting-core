@@ -1,0 +1,14 @@
+étude spécialité
+étude diplôme
+
+professeur personne
+personne humain
+humain animal
+animal terrien
+
+?professeur spécialité
+?prénom nom
+#?nom prénom
+?personne téléphone
+?téléphone contact
+?contact mail

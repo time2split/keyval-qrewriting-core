@@ -21,10 +21,10 @@ import query_rewriting.query.node.Node;
 public class QPUSimple extends QPU
 {
 
-	public QPUSimple(Query query, Collection<Code> codesset,
-			ContextManager cman, Encoding e)
+	public QPUSimple(Query query, Collection<Code> codesset, Encoding e,
+			ContextManager cman)
 	{
-		super(query, codesset, cman, e);
+		super(query, codesset, e, cman);
 	}
 
 	@Override

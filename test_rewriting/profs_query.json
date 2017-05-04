@@ -1,0 +1,7 @@
+{
+	personne :
+	{
+		mail : {$exists : true},
+		nom  : {$exists : true}
+	}
+}

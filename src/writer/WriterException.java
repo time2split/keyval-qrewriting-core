@@ -1,4 +1,4 @@
-package reader;
+package writer;
 
 public class WriterException extends Exception
 {

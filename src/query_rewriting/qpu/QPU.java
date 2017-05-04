@@ -22,8 +22,10 @@ abstract public class QPU
 	protected ContextManager	cm;
 	protected Encoding			encoding;
 
-	public QPU(Query q, Collection<Code> codesset, ContextManager cman,
-			Encoding e)
+	public QPU(Query q, Collection<Code> codesset, Encoding e,
+			ContextManager cman
+
+	)
 	{
 		codes = codesset;
 		cm = cman;
@@ -33,6 +35,7 @@ abstract public class QPU
 
 	/**
 	 * Réécriture
+	 * 
 	 * @return Les requêtes réécrites
 	 */
 	abstract public ArrayList<Query> process();

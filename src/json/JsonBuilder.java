@@ -1,6 +1,6 @@
 package json;
 
-import builder.Builder;
+import builder.BuilderData;
 
 /**
  * Permet de construire un document Json
@@ -8,7 +8,7 @@ import builder.Builder;
  * @author zuri
  * 
  */
-abstract public class JsonBuilder extends Builder
+abstract public class JsonBuilder extends BuilderData
 {
 
 	public JsonBuilder()
