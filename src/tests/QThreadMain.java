@@ -1,5 +1,6 @@
 package tests;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,6 +12,9 @@ import json.JsonMaker;
 import json.JsonReader;
 import json.JsonWriter;
 import numeric.Interval;
+
+import org.bson.Document;
+
 import query_building.RuleManagerBuilder_text;
 import query_building.mongo.FactoryOfJsonBuilder_query;
 import query_building.mongo.QueryBuilder_json;
@@ -27,6 +31,14 @@ import query_rewriting.thread.QThreadManager;
 import query_rewriting.thread.QThreadResult;
 import reader.ReaderException;
 import reader.TextReader;
+import writer.WriterException;
+
+import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import database.mongo.MongoConnection;
 
 public class QThreadMain
 {
@@ -37,8 +49,8 @@ public class QThreadMain
 		// TODO Auto-generated constructor stub
 	}
 
-	static final String	rulesPath	= "test_rewriting/profs_rules.txt";
-	static final String	queryPath	= "test_rewriting/profs_query.json";
+	static final String	rulesPath	= "test_rewriting/animaux_rules.txt";
+	static final String	queryPath	= "test_rewriting/angular_query.json";
 
 	public static void main(String[] args)
 	{
@@ -67,7 +79,7 @@ public class QThreadMain
 
 			// Utilisation des threads
 			QThreadManager thm = new QThreadManager(query, encoding, contexts);
-			thm.setMode_nbThread(8);
+			thm.setMode_nbThread(1);
 			ArrayList<QThreadResult> res = thm.compute(new FactoryOfJsonBuilder_query());
 
 			{
@@ -77,12 +89,30 @@ public class QThreadMain
 				{
 					Json doc = (Json) r.builded;
 					json_queries.add(doc.getDocument());
-					System.out.println(doc);
 				}
 				Json or = JsonMaker.makeArray(json_queries, "$or");
-				JsonWriter writer = new JsonWriter();
-				// writer.write(or);
-				writer.close();
+				{
+					MongoConnection mongo = new MongoConnection("mongodb://localhost");
+					MongoClient client = mongo.getClient();
+					MongoDatabase db = client.getDatabase("angular");
+					MongoCollection<Document> coll = db.getCollection("produits");
+
+					JsonWriter writer = new JsonWriter();
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					writer.setDestination(out);
+					writer.setEol("");
+					writer.setTab("");
+					writer.write(or);
+					writer.close();
+					System.out.println(out);
+
+					FindIterable<Document> ret = coll.find(Document.parse(out.toString()));
+
+					for (Document r : ret)
+					{
+						System.out.println(r);
+					}
+				}
 			}
 		}
 		catch (
@@ -92,7 +122,8 @@ public class QThreadMain
 			| QueryBuilderException
 			| RuleManagerBuilderException
 			| InterruptedException
-			| ExecutionException e1)
+			| ExecutionException
+			| WriterException e1)
 		{
 			e1.printStackTrace();
 			return;

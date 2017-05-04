@@ -39,14 +39,16 @@ public class Rewriting
 	/**
 	 * Nombre de Threads (simulation car pas de vrais threads utilisés)
 	 */
-	static final int	nbThread	= 8;
+	static final int	nbThread	= 1;
+	static final String	rulesPath	= "test_rewriting/simple_rules.txt";
+	static final String	queryPath	= "test_rewriting/simple_query.json";
 
 	public static void main(String[] args)
 	{
 		Json js_query;
 
 		try (
-			JsonReader js_reader = new JsonReader(new File("test_rewriting/animaux_query.json")) ;
+			JsonReader js_reader = new JsonReader(new File(queryPath)) ;
 			JsonWriter js_writer = new JsonWriter())
 		{
 			js_reader.getOptions().setStrict(false);
@@ -60,12 +62,11 @@ public class Rewriting
 
 			// Règles et builder
 			RuleManager rm = new RuleManager();
-			RuleManagerBuilder_text rmbt = new RuleManagerBuilder_text(rm, new TextReader(new File("test_rewriting/animaux_rules.txt")));
+			RuleManagerBuilder_text rmbt = new RuleManagerBuilder_text(rm, new TextReader(new File(rulesPath)));
 
 			// Construction requête et règles
 			qb.build();
 			rmbt.build();
-
 			CodeGenerator generator = new CodeGenerator_simple(query, rm);
 
 			// Encodage (sémantique des codes)
@@ -130,7 +131,7 @@ public class Rewriting
 				ArrayList<Query> rewrites;
 				{
 					// Unité de réécriture
-					QPUSimple qpu = new QPUSimple(query, encoding.generateAllCodes(cutting.get(0)), contexts, encoding);
+					QPUSimple qpu = new QPUSimple(query, encoding.generateAllCodes(cutting.get(0)), encoding, contexts);
 					rewrites = qpu.process();
 				}
 
