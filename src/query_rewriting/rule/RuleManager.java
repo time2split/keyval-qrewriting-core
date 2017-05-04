@@ -47,7 +47,7 @@ public class RuleManager extends ArrayList<Rule>
 			{
 				for (Rule r : this)
 				{
-					if (r.getConclusion().equals(k))
+					if (r.getConclusion().equals(k) && !ret.contains(r))
 					{
 						nc.add(r.getHypothesis());
 						ret.add(r);
