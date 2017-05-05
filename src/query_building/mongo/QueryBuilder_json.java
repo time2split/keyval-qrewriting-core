@@ -99,11 +99,11 @@ public class QueryBuilder_json extends QueryBuilder
 	{
 		HashMap<String, Element> childs = e.getObject();
 		final int cnt = childs.size();
-		boolean noEMatch = true;
+		boolean noElem = true;
 
 		if (state == State.ELEM && cnt > 1)
 		{
-			throw new QueryBuilderException("Un objet ne peut être utilisé que avec $elemMatch (représentation de valeur objet impossible)");
+			throw new QueryBuilderException("Un objet ne peut être utilisé que avec $elemMatch ou $exists (représentation de valeur objet impossible)");
 		}
 
 		for (String k : childs.keySet())
@@ -120,7 +120,7 @@ public class QueryBuilder_json extends QueryBuilder
 				if (!c.isObject())
 					throw new QueryBuilderException("$elemMatch doit être un object");
 
-				noEMatch = false;
+				noElem = false;
 				s_validate_obj((ElementObject) c, State.ELEM_MATCH);
 				break;
 
@@ -136,6 +136,7 @@ public class QueryBuilder_json extends QueryBuilder
 						|| ((ElementLiteral) c).getLiteral() != ElementLiteral.Literal.TRUE)
 					throw new QueryBuilderException("$exists doit être un literal 'true'");
 
+				noElem = false;
 				break;
 
 			default:
@@ -154,9 +155,9 @@ public class QueryBuilder_json extends QueryBuilder
 			}
 		}
 
-		if (noEMatch && state == State.ELEM)
+		if (noElem && state == State.ELEM)
 		{
-			throw new QueryBuilderException("Un objet ne peut être utilisé que avec $elemMatch (représentation de valeur objet impossible)");
+			throw new QueryBuilderException("Un objet ne peut être utilisé que avec $elemMatch ou $exists (représentation de valeur objet impossible)");
 		}
 	}
 
