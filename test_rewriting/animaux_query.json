@@ -1,7 +1,9 @@
 {
 	animal : {
-		felin : {
-			canide : {$exists : true}
+	
+		$elemMatch :
+		{
+			chat : "felix"
 		}
 	}
 }
