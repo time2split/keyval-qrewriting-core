@@ -201,9 +201,27 @@ public class QueryBuilder_json extends QueryBuilder
 				break;
 
 			default:
-				Node cn = new Node(new Label(k));
-				cn.setId(lastNodeId++);
-				childs.add(cn);
+				Node cn = null;
+				String[] tmp = k.split("\\.");
+
+				if (tmp.length > 1)
+				{
+					NodeChilds tmpch = childs;
+
+					for (int i = 0; i < tmp.length; i++)
+					{
+						cn = new Node(new Label(tmp[i]));
+						cn.setId(lastNodeId++);
+						tmpch.add(cn);
+						tmpch = cn.getChilds();
+					}
+				}
+				else
+				{
+					cn = new Node(new Label(k));
+					cn.setId(lastNodeId++);
+					childs.add(cn);
+				}
 
 				if (c.isObject())
 					s_build_obj((ElementObject) c, cn);
