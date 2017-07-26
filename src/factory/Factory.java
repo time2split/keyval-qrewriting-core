@@ -19,7 +19,7 @@ public abstract class Factory
 		data = d;
 	}
 
-	public Object getDate()
+	public Object getData()
 	{
 		return data;
 	}
