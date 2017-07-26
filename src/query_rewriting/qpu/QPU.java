@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import query_rewriting.code.Code;
-import query_rewriting.code.ContextManager;
 import query_rewriting.code.Encoding;
 import query_rewriting.query.Query;
 
@@ -19,16 +18,11 @@ abstract public class QPU
 {
 	protected Query				query;
 	protected Collection<Code>	codes;
-	protected ContextManager	cm;
 	protected Encoding			encoding;
 
-	public QPU(Query q, Collection<Code> codesset, Encoding e,
-			ContextManager cman
-
-	)
+	public QPU(Query q, Collection<Code> codesset, Encoding e)
 	{
 		codes = codesset;
-		cm = cman;
 		encoding = e;
 		query = q;
 	}

@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import query_rewriting.code.Code;
 import query_rewriting.code.Context;
-import query_rewriting.code.ContextManager;
 import query_rewriting.code.Encoding;
 import query_rewriting.generator.NodeContext;
 import query_rewriting.query.Label;
@@ -21,10 +20,9 @@ import query_rewriting.query.node.Node;
 public class QPUSimple extends QPU
 {
 
-	public QPUSimple(Query query, Collection<Code> codesset, Encoding e,
-			ContextManager cman)
+	public QPUSimple(Query query, Collection<Code> codesset, Encoding e)
 	{
-		super(query, codesset, e, cman);
+		super(query, codesset, e);
 	}
 
 	@Override

@@ -35,10 +35,7 @@ public class CodeGenerator_simple extends CodeGenerator
 						+ n);
 
 			Set<String> applicables = rapplicables.getAllHypothesisWith(k);
-
-			cm.put(k, new Context(k, (Collection<String>) applicables));
-
-			Context c = cm.get(k);
+			Context c = new Context(k, (Collection<String>) applicables);
 			encoding.add(new NodeContext(n, c));
 		}
 	}

@@ -7,7 +7,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import numeric.Interval;
-import query_rewriting.code.ContextManager;
 import query_rewriting.code.Encoding;
 import query_rewriting.query.Query;
 import builder.BuilderDataFactory;
@@ -39,19 +38,17 @@ public class QThreadManager
 	};
 
 	private Query						query;
-	private ContextManager				contexts;
 	private Encoding					encoding;
 	private ExecutorService				executor;
 	private ArrayList<QThreadResult>	result;
 	private int							modeData;
 	private Mode						mode	= Mode.AUTO;
 
-	public QThreadManager(Query q, Encoding e, ContextManager cm)
+	public QThreadManager(Query q, Encoding e)
 	{
 		super();
 		setQuery(q);
 		setEncoding(e);
-		setContexts(cm);
 	}
 
 	public void setMode_sizeOfThread(int nb)
@@ -64,11 +61,6 @@ public class QThreadManager
 	{
 		mode = Mode.NB_THREAD;
 		modeData = nb;
-	}
-
-	private void setContexts(ContextManager cm)
-	{
-		contexts = cm;
 	}
 
 	private void setEncoding(Encoding e)
@@ -128,16 +120,20 @@ public class QThreadManager
 
 		for (Interval i : intervals)
 		{
-			QThread th = new QThread(query, i, encoding, contexts);
+			// System.out.println(i);
+			QThread th = new QThread(query, i, encoding);
 			th.setBuilderDataFactory(factory);
 			loaded.add(executor.submit(th));
+			// System.out.println("end");
 		}
 
 		for (Future<ArrayList<QThreadResult>> ft : loaded)
 		{
+			// System.out.println("add");
 			result.addAll(ft.get());
 		}
 		executor.shutdown();
+		// System.out.println("END");
 		return result;
 	}
 }

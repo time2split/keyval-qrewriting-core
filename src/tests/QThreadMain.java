@@ -50,7 +50,7 @@ public class QThreadMain
 	}
 
 	static final String	rulesPath	= "test_rewriting/animaux_rules.txt";
-	static final String	queryPath	= "test_rewriting/angular_query.json";
+	static final String	queryPath	= "test_rewriting/animaux_query.json";
 
 	public static void main(String[] args)
 	{
@@ -75,10 +75,9 @@ public class QThreadMain
 
 			CodeGenerator generator = new CodeGenerator_simple(query, rm);
 			Encoding encoding = generator.getEncoding();
-			ContextManager contexts = generator.getContextManager();
 
 			// Utilisation des threads
-			QThreadManager thm = new QThreadManager(query, encoding, contexts);
+			QThreadManager thm = new QThreadManager(query, encoding);
 			thm.setMode_nbThread(1);
 			ArrayList<QThreadResult> res = thm.compute(new FactoryOfJsonBuilder_query());
 
@@ -110,7 +109,7 @@ public class QThreadMain
 
 					for (Document r : ret)
 					{
-						System.out.println(r);
+						// System.out.println(r);
 					}
 				}
 			}

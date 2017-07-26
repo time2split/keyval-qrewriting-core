@@ -6,7 +6,6 @@ import java.util.concurrent.Callable;
 
 import numeric.Interval;
 import query_rewriting.code.Code;
-import query_rewriting.code.ContextManager;
 import query_rewriting.code.Encoding;
 import query_rewriting.qpu.QPUSimple;
 import query_rewriting.query.Query;
@@ -26,26 +25,19 @@ public class QThread implements Callable<ArrayList<QThreadResult>>
 	private Collection<Code>	codes;
 	private Interval			interval;
 	private Query				query;
-	private ContextManager		contexts;
 	private Encoding			encoding;
 	private BuilderDataFactory	builderDataFactory;
 
-	public QThread(Query q, Interval i, Encoding e, ContextManager cm)
+	public QThread(Query q, Interval i, Encoding e)
 	{
 		setQuery(q);
 		setCodes(i);
 		setEncoding(e);
-		setContexts(cm);
 	}
 
 	public void setBuilderDataFactory(BuilderDataFactory b)
 	{
 		builderDataFactory = b;
-	}
-
-	private void setContexts(ContextManager cm)
-	{
-		contexts = cm;
 	}
 
 	private void setEncoding(Encoding e)
@@ -89,7 +81,7 @@ public class QThread implements Callable<ArrayList<QThreadResult>>
 		// System.out.println(Thread.currentThread().getName() + " : " +
 		// interval);
 		s_computeCodes();
-		ArrayList<Query> qpuRes = new QPUSimple(query, codes, encoding, contexts).process();
+		ArrayList<Query> qpuRes = new QPUSimple(query, codes, encoding).process();
 		ArrayList<QThreadResult> ret = new ArrayList<>(qpuRes.size());
 
 		if (builderDataFactory == null)

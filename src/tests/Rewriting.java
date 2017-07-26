@@ -13,7 +13,6 @@ import query_building.RuleManagerBuilder_text;
 import query_building.mongo.JsonBuilder_query;
 import query_building.mongo.QueryBuilder_json;
 import query_rewriting.code.Code;
-import query_rewriting.code.ContextManager;
 import query_rewriting.code.Encoding;
 import query_rewriting.generator.CodeGenerator;
 import query_rewriting.generator.CodeGeneratorException;
@@ -40,8 +39,8 @@ public class Rewriting
 	 * Nombre de Threads (simulation car pas de vrais threads utilisés)
 	 */
 	static final int	nbThread	= 1;
-	static final String	rulesPath	= "test_rewriting/simple_rules.txt";
-	static final String	queryPath	= "test_rewriting/simple_query.json";
+	static final String	rulesPath	= "test_rewriting/insomnia_rules.txt";
+	static final String	queryPath	= "test_rewriting/insomnia_query1.json";
 
 	public static void main(String[] args)
 	{
@@ -72,9 +71,6 @@ public class Rewriting
 			// Encodage (sémantique des codes)
 			Encoding encoding = generator.getEncoding();
 
-			// Contextes de codes
-			ContextManager contexts = generator.getContextManager();
-
 			// Exemples d'utilisations
 			{
 				/*
@@ -91,13 +87,13 @@ public class Rewriting
 				/*
 				 * Récupère les codes à partir de leur représentation numérique
 				 */
-				{
-					System.out.println("\n\n===== CODES DEPUIS ENTIER =====");
-
-					for (int i = 0; i < 100; i++)
-						System.out.println(i + " = "
-								+ generator.getEncoding().getCodeFrom(i));
-				}
+				// {
+				// System.out.println("\n\n===== CODES DEPUIS ENTIER =====");
+				//
+				// for (int i = 0; i < 100; i++)
+				// System.out.println(i + " = "
+				// + generator.getEncoding().getCodeFrom(i));
+				// }
 
 				/*
 				 * Récupération d'intervalles de codes
@@ -131,7 +127,8 @@ public class Rewriting
 				ArrayList<Query> rewrites;
 				{
 					// Unité de réécriture
-					QPUSimple qpu = new QPUSimple(query, encoding.generateAllCodes(cutting.get(0)), encoding, contexts);
+					System.out.println(query);
+					QPUSimple qpu = new QPUSimple(query, encoding.generateAllCodes(cutting.get(0)), encoding);
 					rewrites = qpu.process();
 				}
 
