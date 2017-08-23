@@ -9,6 +9,7 @@ import java.util.Set;
  * 
  * @author zuri
  * 
+ * 
  */
 public class RuleManager extends ArrayList<Rule>
 {
@@ -22,32 +23,54 @@ public class RuleManager extends ArrayList<Rule>
 	@Override
 	public boolean add(Rule r)
 	{
-		if (contains(r))
+		if ( contains(r) )
 			return false;
 
 		return super.add(r);
 	}
 
-	/**
-	 * A_Rls(k)
-	 * 
-	 * @return
-	 */
 	public RuleManager getApplicables(String k1)
 	{
 		RuleManager ret = new RuleManager();
 		ArrayList<String> conclusions = new ArrayList<>();
 		conclusions.add(k1);
 
-		while (!conclusions.isEmpty())
+		while ( !conclusions.isEmpty() )
 		{
 			ArrayList<String> nc = new ArrayList<>();
 
-			for (String k : conclusions)
+			for ( String k : conclusions )
 			{
-				for (Rule r : this)
+				for ( Rule r : this )
 				{
-					if (r.getConclusion().equals(k) && !ret.contains(r))
+					if ( r.getConclusion().equals(k) && !ret.contains(r) )
+					{
+						nc.add(r.getHypothesis());
+						ret.add(r);
+					}
+				}
+			}
+			conclusions = nc;
+		}
+		return ret;
+	}
+
+	public RuleManager getApplicablesOnlyRAll(String k1)
+	{
+		RuleManager ret = new RuleManager();
+		ArrayList<String> conclusions = new ArrayList<>();
+		conclusions.add(k1);
+
+		while ( !conclusions.isEmpty() )
+		{
+			ArrayList<String> nc = new ArrayList<>();
+
+			for ( String k : conclusions )
+			{
+				for ( Rule r : this )
+				{
+					if ( r.getConclusion().equals(k) && !ret.contains(r)
+							&& r instanceof RuleAll )
 					{
 						nc.add(r.getHypothesis());
 						ret.add(r);
@@ -61,9 +84,9 @@ public class RuleManager extends ArrayList<Rule>
 
 	public boolean hasExistsRule()
 	{
-		for (Rule r : this)
+		for ( Rule r : this )
 		{
-			if (r instanceof RuleExists)
+			if ( r instanceof RuleExists )
 				return true;
 		}
 		return false;
@@ -73,7 +96,7 @@ public class RuleManager extends ArrayList<Rule>
 	{
 		HashSet<String> ret = new HashSet<>(size());
 
-		for (Rule r : this)
+		for ( Rule r : this )
 		{
 			ret.add(r.getHypothesis());
 			ret.add(r.getConclusion());
@@ -85,7 +108,7 @@ public class RuleManager extends ArrayList<Rule>
 	{
 		HashSet<String> ret = new HashSet<>(size());
 
-		for (Rule r : this)
+		for ( Rule r : this )
 			ret.add(r.getHypothesis());
 
 		return ret;
@@ -95,7 +118,7 @@ public class RuleManager extends ArrayList<Rule>
 	{
 		Set<String> ret = getAllHypothesis();
 
-		if (ret.contains(k))
+		if ( ret.contains(k) )
 			ret.remove(k);
 
 		return ret;

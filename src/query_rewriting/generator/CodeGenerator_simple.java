@@ -6,6 +6,8 @@ import java.util.Set;
 import query_rewriting.code.Context;
 import query_rewriting.query.Query;
 import query_rewriting.query.node.Node;
+import query_rewriting.query.node.NodeValue;
+import query_rewriting.query.node.NodeValueExists;
 import query_rewriting.rule.RuleManager;
 
 /**
@@ -22,17 +24,20 @@ public class CodeGenerator_simple extends CodeGenerator
 	{
 		super(q, rm);
 
-		if (!q.isUnfolded())
+		if ( !q.isUnfolded() )
 			throw new CodeGeneratorException("La requête doit être dépliée");
 
-		for (Node n : q.getNodes())
+		for ( Node n : q.getNodes() )
 		{
 			String k = n.getLabel().get();
 			RuleManager rapplicables = rm.getApplicables(k);
+			NodeValue val = n.getValue();
 
-			if (!n.isLeaf() && rapplicables.hasExistsRule())
-				throw new CodeGeneratorException("Les requêtes 'exists' ne peuvent s'appliquer qu'aux feuilles, "
-						+ n);
+			// Je suis une feuille existentielle
+			if ( n.isLeaf() && ( val instanceof NodeValueExists ) )
+				rapplicables = rm.getApplicables(k);
+			else
+				rapplicables = rm.getApplicablesOnlyRAll(k);
 
 			Set<String> applicables = rapplicables.getAllHypothesisWith(k);
 			Context c = new Context(k, (Collection<String>) applicables);
