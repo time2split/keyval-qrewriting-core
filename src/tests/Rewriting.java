@@ -39,16 +39,15 @@ public class Rewriting
 	 * Nombre de Threads (simulation car pas de vrais threads utilisés)
 	 */
 	static final int	nbThread	= 1;
-	static final String	rulesPath	= "test_rewriting/insomnia_rules.txt";
-	static final String	queryPath	= "test_rewriting/insomnia_query1.json";
+	static final String	rulesPath	= "test_rewriting/simple_rules_2.txt";
+	static final String	queryPath	= "test_rewriting/simple_query_2.json";
 
 	public static void main(String[] args)
 	{
 		Json js_query;
 
-		try (
-			JsonReader js_reader = new JsonReader(new File(queryPath)) ;
-			JsonWriter js_writer = new JsonWriter())
+		try ( JsonReader js_reader = new JsonReader(new File(queryPath));
+				JsonWriter js_writer = new JsonWriter() )
 		{
 			js_reader.getOptions().setStrict(false);
 
@@ -61,7 +60,8 @@ public class Rewriting
 
 			// Règles et builder
 			RuleManager rm = new RuleManager();
-			RuleManagerBuilder_text rmbt = new RuleManagerBuilder_text(rm, new TextReader(new File(rulesPath)));
+			RuleManagerBuilder_text rmbt = new RuleManagerBuilder_text(rm,
+					new TextReader(new File(rulesPath)));
 
 			// Construction requête et règles
 			qb.build();
@@ -100,10 +100,13 @@ public class Rewriting
 				 */
 				ArrayList<Interval> cutting;
 				{
-					System.out.println("\n\n===== RECUPERATION D'INTERVALLES =====");
-					cutting = encoding.generateCodeInterval().cutByNumberOfIntervals(nbThread, Interval.OPTION_HOMOGENEOUS);
+					System.out
+							.println("\n\n===== RECUPERATION D'INTERVALLES =====");
+					cutting = encoding.generateCodeInterval()
+							.cutByNumberOfIntervals(nbThread,
+									Interval.OPTION_HOMOGENEOUS);
 
-					for (Interval in : cutting)
+					for ( Interval in : cutting )
 					{
 						System.out.println(in);
 					}
@@ -113,8 +116,9 @@ public class Rewriting
 				 * Réécriture d'un intervalle
 				 */
 				{
-					System.out.println("\n\n===== REECRITURE D'INTERVALLES =====");
-					for (Interval in : cutting)
+					System.out
+							.println("\n\n===== REECRITURE D'INTERVALLES =====");
+					for ( Interval in : cutting )
 					{
 						System.out.println(in);
 						System.out.println(encoding.generateAllCodes(in));
@@ -128,7 +132,8 @@ public class Rewriting
 				{
 					// Unité de réécriture
 					System.out.println(query);
-					QPUSimple qpu = new QPUSimple(query, encoding.generateAllCodes(cutting.get(0)), encoding);
+					QPUSimple qpu = new QPUSimple(query,
+							encoding.generateAllCodes(cutting.get(0)), encoding);
 					rewrites = qpu.process();
 				}
 
@@ -136,11 +141,12 @@ public class Rewriting
 				 * Conversion requête vers JSON
 				 */
 				{
-					System.out.println("\n\n===== CONVERSION REQUÊTE VERS JSON =====");
+					System.out
+							.println("\n\n===== CONVERSION REQUÊTE VERS JSON =====");
 					JsonBuilder_query jsonBuilder = new JsonBuilder_query();
 					js_writer.getOptions().setCompact(true);
 
-					for (Query r : rewrites)
+					for ( Query r : rewrites )
 					{
 						jsonBuilder.setQuery(r);
 						System.out.println("\n\n" + r);
@@ -148,15 +154,9 @@ public class Rewriting
 					}
 				}
 			}
-		}
-		catch (
-			ReaderException
-			| IOException
-			| JsonBuilderException
-			| WriterException
-			| CodeGeneratorException
-			| QueryBuilderException
-			| RuleManagerBuilderException e1)
+		} catch (ReaderException | IOException | JsonBuilderException
+				| WriterException | CodeGeneratorException
+				| QueryBuilderException | RuleManagerBuilderException e1)
 		{
 			e1.printStackTrace();
 			return;

@@ -20,7 +20,7 @@ public class ElementObject extends Element
 	{
 		this.object = new HashMap<String, Element>(e.object.size());
 
-		for (String key : e.object.keySet())
+		for ( String key : e.object.keySet() )
 			this.object.put(new String(key), e.object.get(key).clone());
 	}
 
@@ -28,20 +28,20 @@ public class ElementObject extends Element
 	public Element followPath(String[] keys, int offset)
 	{
 
-		if (offset < 0 || offset > keys.length)
+		if ( offset < 0 || offset > keys.length )
 			return null;
 
-		if (offset == keys.length)
+		if ( offset == keys.length )
 			return this;
 
 		String key = keys[offset];
 
-		if (key.equals(""))
+		if ( key.equals("") )
 			return this.followPath(keys, offset++);
 
 		Element e = object.get(key);
 
-		if (e == null)
+		if ( e == null )
 			return null;
 
 		return e.followPath(keys, offset + 1);
@@ -79,17 +79,16 @@ public class ElementObject extends Element
 	public boolean equals(Object o)
 	{
 
-		if (!(o instanceof ElementObject))
+		if ( ! ( o instanceof ElementObject ) )
 			return false;
 		/*
 		 * if(object.equals(((ElementObject)o).object))
 		 * System.out.println(object + "!!=====>>>>>" +
 		 * ((ElementObject)o).object);
-		 * System.out.println(object.entrySet().equals(((ElementObject)o).object.
-		 * entrySet()));
-		 * //
+		 * System.out.println(object.entrySet().equals
+		 * (((ElementObject)o).object. entrySet())); //
 		 */
-		return object.equals(((ElementObject) o).object);
+		return object.equals( ( (ElementObject) o ).object);
 	}
 
 	@Override
@@ -97,7 +96,7 @@ public class ElementObject extends Element
 	{
 		int i = 0;
 
-		for (String key : object.keySet())
+		for ( String key : object.keySet() )
 			i += key.hashCode() + object.get(key).hashCode();
 
 		return i;

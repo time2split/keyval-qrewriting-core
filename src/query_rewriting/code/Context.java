@@ -13,6 +13,7 @@ import java.util.Set;
  */
 public class Context
 {
+	@SuppressWarnings("unused")
 	private String		key;
 	private Set<String>	replacements	= new HashSet<String>();
 
@@ -35,6 +36,7 @@ public class Context
 
 	public String getK(int codeState)
 	{
+		// TODO: optimisation
 		return (new ArrayList<String>(replacements)).get(codeState);
 	}
 

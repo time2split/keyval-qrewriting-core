@@ -18,7 +18,6 @@ import org.bson.Document;
 import query_building.RuleManagerBuilder_text;
 import query_building.mongo.FactoryOfJsonBuilder_query;
 import query_building.mongo.QueryBuilder_json;
-import query_rewriting.code.ContextManager;
 import query_rewriting.code.Encoding;
 import query_rewriting.generator.CodeGenerator;
 import query_rewriting.generator.CodeGeneratorException;
@@ -44,7 +43,7 @@ public class QThreadMain
 {
 
 	public QThreadMain(Query query, Interval generateCodeInterval,
-			Encoding encoding, ContextManager contexts)
+			Encoding encoding)
 	{
 		// TODO Auto-generated constructor stub
 	}
@@ -56,9 +55,8 @@ public class QThreadMain
 	{
 		Json js_query;
 
-		try (
-			JsonReader js_reader = new JsonReader(new File(queryPath)) ;
-			JsonWriter js_writer = new JsonWriter())
+		try ( JsonReader js_reader = new JsonReader(new File(queryPath));
+				JsonWriter js_writer = new JsonWriter() )
 		{
 			js_reader.getOptions().setStrict(false);
 
@@ -68,7 +66,8 @@ public class QThreadMain
 			QueryBuilder_json qb = new QueryBuilder_json(query, js_query);
 
 			RuleManager rm = new RuleManager();
-			RuleManagerBuilder_text rmbt = new RuleManagerBuilder_text(rm, new TextReader(new File(rulesPath)));
+			RuleManagerBuilder_text rmbt = new RuleManagerBuilder_text(rm,
+					new TextReader(new File(rulesPath)));
 
 			qb.build();
 			rmbt.build();
@@ -79,22 +78,25 @@ public class QThreadMain
 			// Utilisation des threads
 			QThreadManager thm = new QThreadManager(query, encoding);
 			thm.setMode_nbThread(1);
-			ArrayList<QThreadResult> res = thm.compute(new FactoryOfJsonBuilder_query());
+			ArrayList<QThreadResult> res = thm
+					.compute(new FactoryOfJsonBuilder_query());
 
 			{
 				ArrayList<Element> json_queries = new ArrayList<>(res.size());
 
-				for (QThreadResult r : res)
+				for ( QThreadResult r : res )
 				{
 					Json doc = (Json) r.builded;
 					json_queries.add(doc.getDocument());
 				}
 				Json or = JsonMaker.makeArray(json_queries, "$or");
 				{
-					MongoConnection mongo = new MongoConnection("mongodb://localhost");
+					MongoConnection mongo = new MongoConnection(
+							"mongodb://localhost");
 					MongoClient client = mongo.getClient();
 					MongoDatabase db = client.getDatabase("angular");
-					MongoCollection<Document> coll = db.getCollection("produits");
+					MongoCollection<Document> coll = db
+							.getCollection("produits");
 
 					JsonWriter writer = new JsonWriter();
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -105,24 +107,19 @@ public class QThreadMain
 					writer.close();
 					System.out.println(out);
 
-					FindIterable<Document> ret = coll.find(Document.parse(out.toString()));
+					FindIterable<Document> ret = coll.find(Document.parse(out
+							.toString()));
 
-					for (Document r : ret)
+					for ( Document r : ret )
 					{
-						// System.out.println(r);
+						System.out.println(r);
 					}
+					mongo.close();
 				}
 			}
-		}
-		catch (
-			ReaderException
-			| IOException
-			| CodeGeneratorException
-			| QueryBuilderException
-			| RuleManagerBuilderException
-			| InterruptedException
-			| ExecutionException
-			| WriterException e1)
+		} catch (ReaderException | IOException | CodeGeneratorException
+				| QueryBuilderException | RuleManagerBuilderException
+				| InterruptedException | ExecutionException | WriterException e1)
 		{
 			e1.printStackTrace();
 			return;

@@ -1,5 +1,11 @@
 package builder;
 
+/**
+ * Builder stockant des données internes
+ * 
+ * @author zuri
+ * 
+ */
 public abstract class BuilderData extends Builder
 {
 	private Object	data;

@@ -8,6 +8,9 @@ package builder;
  */
 abstract public class Builder
 {
+	/**
+	 * Objet à construire
+	 */
 	private Object	builded;
 
 	public Builder()

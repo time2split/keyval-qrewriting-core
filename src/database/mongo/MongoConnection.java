@@ -19,7 +19,7 @@ public class MongoConnection extends Connection
 	{
 		client = new MongoClient(new MongoClientURI(uri));
 
-		for (String a : client.listDatabaseNames())
+		for ( String a : client.listDatabaseNames() )
 		{
 			System.out.println(a);
 		}
@@ -36,6 +36,7 @@ public class MongoConnection extends Connection
 		client.close();
 	}
 
+	// TODO
 	@Override
 	public ArrayList<Json> find(Json query)
 	{

@@ -35,10 +35,10 @@ public abstract class Element implements Cloneable
 	@Override
 	public boolean equals(Object o)
 	{
-		if (!(o instanceof Element))
+		if ( ! ( o instanceof Element ) )
 			return false;
 
-		return ((Element) o).getValue().equals(getValue());
+		return ( (Element) o ).getValue().equals(getValue());
 	}
 
 	@Override
@@ -49,13 +49,22 @@ public abstract class Element implements Cloneable
 
 	public abstract Object getValue();
 
+	/**
+	 * Suit un chemin dans l'arborescence
+	 * 
+	 * @param keys
+	 *            Ensemble des clés à parcourir
+	 * @param offset
+	 *            Indice de keys[i] de départ
+	 * @return
+	 */
 	public Element followPath(String[] keys, int offset)
 	{
 		// Comportement par défaut des objets non traversables
-		if (offset == keys.length)
+		if ( offset == keys.length )
 			return this;
 
-		if (keys[0].equals(""))
+		if ( keys[0].equals("") )
 			return this.followPath(keys, offset++);
 
 		return null;
