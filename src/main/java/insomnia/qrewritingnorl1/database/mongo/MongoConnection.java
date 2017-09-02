@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
+import insomnia.json.Json;
 import insomnia.qrewritingnorl1.database.Connection;
-import insomnia.qrewritingnorl1.json.Json;
 
 public class MongoConnection extends Connection
 {

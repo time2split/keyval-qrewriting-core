@@ -2,12 +2,12 @@ package insomnia.qrewritingnorl1.query_building.mongo;
 
 import java.util.HashMap;
 
-import insomnia.qrewritingnorl1.json.Element;
-import insomnia.qrewritingnorl1.json.ElementLiteral;
-import insomnia.qrewritingnorl1.json.ElementNumber;
-import insomnia.qrewritingnorl1.json.ElementObject;
-import insomnia.qrewritingnorl1.json.ElementString;
-import insomnia.qrewritingnorl1.json.Json;
+import insomnia.json.Element;
+import insomnia.json.ElementLiteral;
+import insomnia.json.ElementNumber;
+import insomnia.json.ElementObject;
+import insomnia.json.ElementString;
+import insomnia.json.Json;
 import insomnia.qrewritingnorl1.node.Node;
 import insomnia.qrewritingnorl1.node.NodeChilds;
 import insomnia.qrewritingnorl1.node.NodeValueExists;

@@ -3,7 +3,7 @@ package insomnia.qrewritingnorl1.database;
 import java.io.Closeable;
 import java.util.ArrayList;
 
-import insomnia.qrewritingnorl1.json.Json;
+import insomnia.json.Json;
 
 public abstract class Connection implements Closeable
 {
