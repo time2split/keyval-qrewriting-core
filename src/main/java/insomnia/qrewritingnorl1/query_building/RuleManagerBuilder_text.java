@@ -10,8 +10,8 @@ import insomnia.qrewritingnorl1.query_rewriting.rule.RuleExists;
 import insomnia.qrewritingnorl1.query_rewriting.rule.RuleManager;
 import insomnia.qrewritingnorl1.query_rewriting.rule.RuleManagerBuilder;
 import insomnia.qrewritingnorl1.query_rewriting.rule.RuleManagerBuilderException;
-import insomnia.qrewritingnorl1.reader.TextReader;
 import insomnia.reader.ReaderException;
+import insomnia.reader.TextReader;
 
 /**
  * Construit l'ensemble de règles à partir d'un fichier texte. Format : Une

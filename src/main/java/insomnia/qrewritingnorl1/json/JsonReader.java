@@ -119,7 +119,7 @@ public class JsonReader extends Reader
 			char c = (char) d;
 
 			if (Config.DEBUG_LEXER)
-				System.out.println("l " + state + " c:" + c + " buff: "
+				System.out.println("l " + state + " c:" + c + " (" + d + ") buff: "
 						+ buffer);
 
 			switch (state)
@@ -128,7 +128,7 @@ public class JsonReader extends Reader
 			// Start
 			case START:
 
-				if (Character.isWhitespace(c))
+				if (Character.isWhitespace(c) || d == 0)
 					continue;
 
 				if (d == -1)
@@ -167,7 +167,7 @@ public class JsonReader extends Reader
 					state = LexerState.NUMBER;
 				}
 				else
-					throw new ReaderException("Mauvais caractère lexer '" + c);
+					throw new ReaderException("Mauvais caractère lexer '" + d + " " + c + "'");
 				break;
 
 			case LITERALNOSTRICT:
@@ -554,5 +554,10 @@ public class JsonReader extends Reader
 				return (ElementRoot) elems.pop();
 			}
 		}
+	}
+
+	@Override
+	public Json nextRead() throws ReaderException, IOException {
+		return read();
 	}
 }
