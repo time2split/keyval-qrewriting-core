@@ -25,10 +25,15 @@ public class QPUSimple extends QPU
 		super(query, codesset, e);
 	}
 
+	public QPUSimple(Query query, Code[] codesset, Encoding e)
+	{
+		super(query, codesset, e);
+	}
+
 	@Override
 	public ArrayList<Query> process()
 	{
-		ArrayList<Query> ret = new ArrayList<>(codes.size());
+		ArrayList<Query> ret = new ArrayList<>(codes.length);
 		int nbNodes = query.getNodes().size() + 1;
 		int nbCodePos = nbNodes - 1;
 

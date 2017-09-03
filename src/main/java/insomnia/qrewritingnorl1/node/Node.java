@@ -11,17 +11,29 @@ import insomnia.qrewritingnorl1.query_rewriting.query.Label;
 public class Node implements Cloneable
 {
 	private Label		label;
-	private NodeChilds	childs	= new NodeChilds();
+	private NodeChilds	childs;
 	private NodeValue	value;
-	private int			id		= 0;
+	private int			id	= 0;
 
 	public Node()
 	{
+		childs = new NodeChilds();
 		label = new Label("");
+	}
+
+	public Node(Node n)
+	{
+		setLabel(n.label);
+		setId(n.id);
+		childs = new NodeChilds(n.childs);
+
+		if (n.value != null)
+			setValue(n.value.clone());
 	}
 
 	public Node(Label l)
 	{
+		childs = new NodeChilds();
 		label = l;
 	}
 
@@ -95,17 +107,6 @@ public class Node implements Cloneable
 	@Override
 	public Node clone()
 	{
-		Node n = new Node();
-		n.setLabel(label);
-		n.setId(id);
-
-		if (value != null)
-			n.setValue(value.clone());
-
-		for (Node tmp : childs.getChilds())
-		{
-			n.childs.add(tmp.clone());
-		}
-		return n;
+		return new Node(this);
 	}
 }

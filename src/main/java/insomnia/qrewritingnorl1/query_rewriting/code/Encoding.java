@@ -13,7 +13,7 @@ import insomnia.qrewritingnorl1.query_rewriting.generator.NodeContext;
  */
 public class Encoding extends ArrayList<NodeContext>
 {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @return L'intervalle de tous les codes possibles
@@ -54,15 +54,15 @@ public class Encoding extends ArrayList<NodeContext>
 	 *            Intervalle des codes à générer
 	 * @return L'ensemble des codes de l'intervalle
 	 */
-	public ArrayList<Code> generateAllCodes(Interval codes)
+	public Code[] generateAllCodes(Interval codes)
 	{
-		final ArrayList<Code> ret = new ArrayList<>((int) codes.size());
+		final Code[] ret = new Code[(int) codes.size()];
 		final int c = (int) codes.getb();
 		int i = (int) codes.geta();
 
-		for (; i <= c; i++)
+		for (int o = 0; i <= c; i++, o++)
 		{
-			ret.add(getCodeFrom(i));
+			ret[o] = getCodeFrom(i);
 		}
 		return ret;
 	}
@@ -70,38 +70,16 @@ public class Encoding extends ArrayList<NodeContext>
 	/**
 	 * @return tous les codes possibles
 	 */
-	public ArrayList<Code> generateAllCodes()
+	public Code[] generateAllCodes()
 	{
 		final int totalNbState = getTotalNbStates();
-		final int nbState = size();
-		final ArrayList<Code> ret = new ArrayList<>(totalNbState);
 		final Code codes[] = new Code[totalNbState];
 
 		for (int i = 0; i < totalNbState; i++)
 		{
-			codes[i] = new Code(nbState);
-			ret.add(codes[i]);
+			codes[i] = getCodeFrom(i);
 		}
-		int restNbState = totalNbState;
-
-		for (int pos = 0; pos < nbState; pos++)
-		{
-			int currNbState = this.get(pos).getContext().size();
-			int state = 0;
-
-			for (int i = 0; i < totalNbState;)
-			{
-				int window = restNbState / currNbState;
-
-				for (int w = 0; w < window; w++, i++)
-				{
-					codes[i].setCode(pos, state);
-				}
-				state = (state + 1) % currNbState;
-			}
-			restNbState /= currNbState;
-		}
-		return ret;
+		return codes;
 	}
 
 	/**

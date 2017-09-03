@@ -14,19 +14,28 @@ import insomnia.qrewritingnorl1.node.Node;
  */
 public class Query implements Cloneable
 {
-	private Node	root;
+	private Node root;
 
 	public Query()
 	{
 
 	}
 
+	/**
+	 * Constructeur par copie
+	 * 
+	 * @param q
+	 */
+	public Query(Query q)
+	{
+		if(q.root != null)
+			setRoot(q.root.clone());
+	}
+
 	@Override
 	public Query clone()
 	{
-		Query q = new Query();
-		q.setRoot(root.clone());
-		return q;
+		return new Query(this);
 	}
 
 	public void setRoot(Node r)

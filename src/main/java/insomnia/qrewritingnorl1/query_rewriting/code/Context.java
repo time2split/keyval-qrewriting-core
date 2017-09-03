@@ -1,9 +1,7 @@
 package insomnia.qrewritingnorl1.query_rewriting.code;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Contexte de codage
@@ -13,40 +11,39 @@ import java.util.Set;
  */
 public class Context
 {
-	@SuppressWarnings("unused")
-	private String		key;
-	private Set<String>	replacements	= new HashSet<String>();
+	private String[] replacements;
 
 	public Context(String k)
 	{
-		key = k;
-		replacements.add(k);
+		replacements = new String[1];
+		replacements[0] = k;
 	}
 
 	public Context(String k, Collection<String> e)
 	{
 		this(k);
-		replacements.addAll(e);
+		replacements = new String[e.size()];
+		e.toArray(replacements);
 	}
 
-	public Set<String> getReplacements()
+	public String[] getReplacements()
 	{
 		return replacements;
 	}
 
 	public String getK(int codeState)
 	{
-		// TODO: optimisation
-		return (new ArrayList<String>(replacements)).get(codeState);
+		return replacements[codeState];
 	}
 
+	/**
+	 * 
+	 * @param k
+	 * @return l'index ou une valeur négative si rien n'est trouvé
+	 */
 	public int getCodeState(String k)
 	{
-		if (!replacements.contains(k))
-			return -1;
-
-		// TODO: optimisation
-		return (new ArrayList<String>(replacements)).indexOf(k);
+		return Arrays.binarySearch(replacements, k);
 	}
 
 	@Override
@@ -57,6 +54,6 @@ public class Context
 
 	public int size()
 	{
-		return replacements.size();
+		return replacements.length;
 	}
 }

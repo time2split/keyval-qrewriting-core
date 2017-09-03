@@ -1,5 +1,7 @@
 package insomnia.qrewritingnorl1.query_rewriting.code;
 
+import java.util.Arrays;
+
 /**
  * Code rerpésentant une requête. Attention pour les calculs, le premier élément
  * d'un code (affichage à gauche) est indexé à 0
@@ -9,7 +11,7 @@ package insomnia.qrewritingnorl1.query_rewriting.code;
  */
 public class Code
 {
-	int	code[];
+	int code[];
 
 	public Code(int nbState)
 	{
@@ -36,6 +38,21 @@ public class Code
 
 		code[i] = state;
 		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Arrays.hashCode(code);
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o == null || !(o instanceof Code))
+			return false;
+
+		return Arrays.equals(code, ((Code) o).code);
 	}
 
 	@Override

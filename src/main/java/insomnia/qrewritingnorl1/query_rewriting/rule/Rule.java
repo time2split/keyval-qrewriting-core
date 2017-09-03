@@ -39,24 +39,14 @@ public abstract class Rule
 		c = new Label(cc);
 	}
 
-	// public Label getHypothesisLabel(Label hh)
-	// {
-	// return h;
-	// }
-	//
-	// public Label getConclusionLabel(Label cc)
-	// {
-	// return c;
-	// }
-
 	public String getHypothesis()
 	{
-		return h.get(0);
+		return h.get();
 	}
 
 	public String getConclusion()
 	{
-		return c.get(0);
+		return c.get();
 	}
 
 	@Override
@@ -67,6 +57,12 @@ public abstract class Rule
 
 		Rule bb = (Rule) b;
 		return h.equals(bb.h) && c.equals(bb.c);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return h.hashCode() + 12 * c.hashCode();
 	}
 
 	@Override

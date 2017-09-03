@@ -22,7 +22,7 @@ import insomnia.qrewritingnorl1.query_rewriting.query.Query;
  */
 public class QThread implements Callable<ArrayList<QThreadResult>>
 {
-	private Collection<Code>	codes;
+	private Code[]				codes;
 	private Interval			interval;
 	private Query				query;
 	private Encoding			encoding;
@@ -53,7 +53,7 @@ public class QThread implements Callable<ArrayList<QThreadResult>>
 	public void setCodes(Collection<Code> c)
 	{
 		interval = null;
-		codes = c;
+		codes = c.toArray(new Code[0]);
 	}
 
 	public void setCodes(Interval i)
@@ -81,7 +81,8 @@ public class QThread implements Callable<ArrayList<QThreadResult>>
 		// System.out.println(Thread.currentThread().getName() + " : " +
 		// interval);
 		s_computeCodes();
-		ArrayList<Query> qpuRes = new QPUSimple(query, codes, encoding).process();
+		ArrayList<Query> qpuRes = new QPUSimple(query, codes, encoding)
+				.process();
 		ArrayList<QThreadResult> ret = new ArrayList<>(qpuRes.size());
 
 		if (builderDataFactory == null)

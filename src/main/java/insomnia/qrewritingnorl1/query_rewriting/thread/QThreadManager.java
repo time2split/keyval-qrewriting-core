@@ -83,57 +83,69 @@ public class QThreadManager
 		return result;
 	}
 
-	public ArrayList<QThreadResult> compute() throws InterruptedException,
-			ExecutionException
+	public ArrayList<QThreadResult> compute()
+			throws InterruptedException, ExecutionException
 	{
-		return compute(null);
+		return compute((BuilderDataFactory) null);
+	}
+
+	public ArrayList<QThreadResult> compute(ExecutorService exec)
+			throws InterruptedException, ExecutionException
+	{
+		return compute(null, exec);
 	}
 
 	public ArrayList<QThreadResult> compute(BuilderDataFactory factory)
 			throws InterruptedException, ExecutionException
 	{
+		return compute(factory, Executors.newCachedThreadPool());
+	}
+
+	public ArrayList<QThreadResult> compute(BuilderDataFactory factory, ExecutorService exec)
+			throws InterruptedException, ExecutionException
+	{
 		int nbThread;
 		ArrayList<Interval> intervals;
 		result = new ArrayList<>(encoding.size());
-		executor = Executors.newCachedThreadPool();
+		executor = exec;
 
 		switch (mode)
 		{
 		case NB_THREAD:
 			nbThread = modeData;
-			intervals = encoding.generateCodeInterval().cutByNumberOfIntervals(nbThread);
+			intervals = encoding.generateCodeInterval()
+					.cutByNumberOfIntervals(nbThread);
 			break;
 
 		case SIZEOF_THREAD:
-			intervals = encoding.generateCodeInterval().cutBySizeOfIntervals(modeData);
+			intervals = encoding.generateCodeInterval()
+					.cutBySizeOfIntervals(modeData);
 			nbThread = intervals.size();
 			break;
 
 		// TODO: définir un meilleur comportement
 		default:
 			// case AUTO:
-			intervals = encoding.generateCodeInterval().cutBySizeOfIntervals(1000);
+			intervals = encoding.generateCodeInterval()
+					.cutBySizeOfIntervals(1000);
 			nbThread = intervals.size();
 			break;
 		}
-		ArrayList<Future<ArrayList<QThreadResult>>> loaded = new ArrayList<>(nbThread);
+		ArrayList<Future<ArrayList<QThreadResult>>> loaded = new ArrayList<>(
+			nbThread);
 
 		for (Interval i : intervals)
 		{
-			// System.out.println(i);
 			QThread th = new QThread(query, i, encoding);
 			th.setBuilderDataFactory(factory);
 			loaded.add(executor.submit(th));
-			// System.out.println("end");
 		}
 
 		for (Future<ArrayList<QThreadResult>> ft : loaded)
 		{
-			// System.out.println("add");
 			result.addAll(ft.get());
 		}
 		executor.shutdown();
-		// System.out.println("END");
 		return result;
 	}
 }

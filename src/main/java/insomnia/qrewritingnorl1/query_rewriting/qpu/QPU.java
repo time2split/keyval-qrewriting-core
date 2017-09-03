@@ -16,11 +16,16 @@ import insomnia.qrewritingnorl1.query_rewriting.query.Query;
  */
 abstract public class QPU
 {
-	protected Query				query;
-	protected Collection<Code>	codes;
-	protected Encoding			encoding;
+	protected Query		query;
+	protected Code[]	codes;
+	protected Encoding	encoding;
 
 	public QPU(Query q, Collection<Code> codesset, Encoding e)
+	{
+		this(q, codesset.toArray(new Code[0]), e);
+	}
+
+	public QPU(Query q, Code[] codesset, Encoding e)
 	{
 		codes = codesset;
 		encoding = e;

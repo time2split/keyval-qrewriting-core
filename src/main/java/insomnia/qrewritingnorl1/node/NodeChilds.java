@@ -10,13 +10,21 @@ import insomnia.qrewritingnorl1.query_rewriting.query.Label;
  * @author zuri
  * 
  */
-public class NodeChilds extends ArrayList<Node>
+public class NodeChilds extends ArrayList<Node> implements Cloneable
 {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	public NodeChilds(int nb)
 	{
 		super(nb);
+	}
+
+	public NodeChilds(NodeChilds childs)
+	{
+		for (Node tmp : childs)
+		{
+			add(new Node(tmp));
+		}
 	}
 
 	public NodeChilds()
@@ -49,5 +57,11 @@ public class NodeChilds extends ArrayList<Node>
 	{
 		n.setLabel(l);
 		return add(n);
+	}
+
+	@Override
+	public NodeChilds clone()
+	{
+		return new NodeChilds(this);
 	}
 }

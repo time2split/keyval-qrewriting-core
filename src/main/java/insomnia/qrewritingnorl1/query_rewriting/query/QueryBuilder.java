@@ -30,5 +30,9 @@ abstract public class QueryBuilder extends Builder
 		return (Query) getBuilded();
 	}
 
+	@Override
 	abstract public void build() throws QueryBuilderException;
+
+	@Override
+	abstract public Query newBuild() throws QueryBuilderException;
 }
