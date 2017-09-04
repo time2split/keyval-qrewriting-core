@@ -3,6 +3,7 @@ package insomnia.qrewritingnorl1.query_rewriting.qpu;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import insomnia.numeric.Interval;
 import insomnia.qrewritingnorl1.node.Node;
 import insomnia.qrewritingnorl1.query_rewriting.code.Code;
 import insomnia.qrewritingnorl1.query_rewriting.code.Context;
@@ -20,14 +21,32 @@ import insomnia.qrewritingnorl1.query_rewriting.query.Query;
 public class QPUSimple extends QPU
 {
 
-	public QPUSimple(Query query, Collection<Code> codesset, Encoding e)
+	Query		query;
+	Code[]		codes;
+	Encoding	encoding;
+
+	public QPUSimple(Query q, Encoding e)
 	{
-		super(query, codesset, e);
+		this(q, e.generateAllCodes(), e);
 	}
 
-	public QPUSimple(Query query, Code[] codesset, Encoding e)
+	public QPUSimple(Query q, Interval i, Encoding e)
 	{
-		super(query, codesset, e);
+		query = q;
+		codes = encoding.generateAllCodes(i);
+		encoding = e;
+	}
+
+	public QPUSimple(Query q, Collection<Code> codesset, Encoding e)
+	{
+		this(q, codesset.toArray(new Code[0]), e);
+	}
+
+	public QPUSimple(Query q, Code[] c, Encoding e)
+	{
+		query = q;
+		codes = c;
+		encoding = e;
 	}
 
 	@Override
