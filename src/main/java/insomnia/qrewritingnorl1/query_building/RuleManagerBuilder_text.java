@@ -1,7 +1,6 @@
 package insomnia.qrewritingnorl1.query_building;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import insomnia.builder.BuilderException;
 import insomnia.qrewritingnorl1.query_rewriting.rule.Rule;
@@ -10,7 +9,6 @@ import insomnia.qrewritingnorl1.query_rewriting.rule.RuleExists;
 import insomnia.qrewritingnorl1.query_rewriting.rule.RuleManager;
 import insomnia.qrewritingnorl1.query_rewriting.rule.RuleManagerBuilder;
 import insomnia.qrewritingnorl1.query_rewriting.rule.RuleManagerBuilderException;
-import insomnia.reader.ReaderException;
 import insomnia.reader.TextReader;
 
 /**
@@ -25,77 +23,68 @@ import insomnia.reader.TextReader;
 public class RuleManagerBuilder_text extends RuleManagerBuilder
 {
 	private TextReader	reader;
+	private int			iline	= 0;
+
+	public RuleManagerBuilder_text()
+	{
+		super(new RuleManager());
+	}
 
 	public RuleManagerBuilder_text(RuleManager rman)
 	{
 		super(rman);
-		setReader(new TextReader());
 	}
 
-	public RuleManagerBuilder_text(RuleManager rman, TextReader r)
+	public RuleManagerBuilder_text addLines(List<String> lines) throws RuleManagerBuilderException
 	{
-		super(rman);
-		setReader(r);
+		for (String line : lines)
+			addLine(line);
+		return this;
 	}
 
-	public TextReader getReader()
+	RuleManagerBuilder_text addLines(String[] lines) throws RuleManagerBuilderException
 	{
-		return reader;
+		for (String line : lines)
+			addLine(line);
+		return this;
 	}
 
-	public void setReader(TextReader r)
+	RuleManagerBuilder_text addLine(String line)
+			throws RuleManagerBuilderException
 	{
-		reader = r;
+		if (line.isEmpty() || line.charAt(0) == '#')
+			return this;
+
+		boolean rexists = line.charAt(0) == '?';
+		final RuleManager rm = getRuleManager();
+
+		if (rexists)
+			line = line.substring(1).trim();
+
+		iline += 1;
+		String[] words = line.split("[\\s]+");
+
+		if (words.length != 2)
+			throw new RuleManagerBuilderException(
+				"'" + reader.getSource().toString() + "' ligne " + iline
+						+ " la règle doit contenir 2 éléments : " + words.length
+						+ " trouvés");
+
+		Rule r = rexists ? new RuleExists(words[0], words[1])
+				: new RuleAll(words[0], words[1]);
+		rm.add(r);
+		return this;
 	}
 
 	@Override
 	public void build() throws RuleManagerBuilderException
 	{
-		RuleManager rm = getRuleManager();
-		TextReader reader = getReader();
-		reader.setModeLine();
-		int li = 0;
-
-		try
-		{
-			for (String line : (ArrayList<String>) reader.read())
-			{
-				li++;
-				line = line.trim();
-
-				if (line.isEmpty() || line.charAt(0) == '#')
-					continue;
-
-				boolean rexists = line.charAt(0) == '?';
-
-				if (rexists)
-					line = line.substring(1).trim();
-
-				String[] words = line.split("[\\s]+");
-
-				if (words.length != 2)
-					throw new RuleManagerBuilderException("'"
-							+ reader.getSource().toString() + "' ligne " + li
-							+ " la règle doit contenir 2 éléments : "
-							+ words.length + " trouvés");
-
-				Rule r = rexists ? new RuleExists(words[0], words[1])
-						: new RuleAll(words[0], words[1]);
-				rm.add(r);
-			}
-		}
-		catch (ReaderException | IOException e)
-		{
-			throw new RuleManagerBuilderException(e.getMessage());
-		}
 	}
 
 	@Override
 	public RuleManager newBuild() throws BuilderException
 	{
-		RuleManager ret = new RuleManager();
-		setRuleManager(ret);
 		build();
-		return ret;
+		return getRuleManager();
 	}
 }

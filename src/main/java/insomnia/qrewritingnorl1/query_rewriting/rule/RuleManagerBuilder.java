@@ -1,6 +1,7 @@
 package insomnia.qrewritingnorl1.query_rewriting.rule;
 
 import insomnia.builder.Builder;
+import insomnia.builder.BuilderException;
 
 /**
  * Constructeur de RuleManager
@@ -29,6 +30,9 @@ abstract public class RuleManagerBuilder extends Builder
 		setBuilded(rman);
 	}
 
+	// @Override
+	// abstract public void build() throws RuleManagerBuilderException;
+
 	@Override
-	abstract public void build() throws RuleManagerBuilderException;
+	abstract public RuleManager newBuild() throws BuilderException;
 }
