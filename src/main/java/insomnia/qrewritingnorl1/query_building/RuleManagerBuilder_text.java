@@ -1,6 +1,10 @@
 package insomnia.qrewritingnorl1.query_building;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
 
 import insomnia.builder.BuilderException;
 import insomnia.qrewritingnorl1.query_rewriting.rule.Rule;
@@ -35,14 +39,29 @@ public class RuleManagerBuilder_text extends RuleManagerBuilder
 		super(rman);
 	}
 
-	public RuleManagerBuilder_text addLines(List<String> lines) throws RuleManagerBuilderException
+	public RuleManagerBuilder_text addLines(BufferedReader reader)
+			throws RuleManagerBuilderException
+	{
+		try
+		{
+			return addLines(IOUtils.readLines(IOUtils.toBufferedReader(reader)));
+		}
+		catch (IOException e)
+		{
+			throw new RuleManagerBuilderException(e.getMessage());
+		}
+	}
+
+	public RuleManagerBuilder_text addLines(List<String> lines)
+			throws RuleManagerBuilderException
 	{
 		for (String line : lines)
 			addLine(line);
 		return this;
 	}
 
-	RuleManagerBuilder_text addLines(String[] lines) throws RuleManagerBuilderException
+	public RuleManagerBuilder_text addLines(String[] lines)
+			throws RuleManagerBuilderException
 	{
 		for (String line : lines)
 			addLine(line);
