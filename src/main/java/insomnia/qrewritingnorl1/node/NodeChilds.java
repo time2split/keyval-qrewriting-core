@@ -48,6 +48,18 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 		return this;
 	}
 
+	public Node getChild(Label l)
+	{
+		for (Node c : getChilds())
+		{
+			Label cl = c.getLabel();
+
+			if (cl.equals(l))
+				return c;
+		}
+		return null;
+	}
+
 	public boolean add(Label l)
 	{
 		return add(new Node(l));

@@ -71,7 +71,8 @@ public class QueryBuilder_json extends QueryBuilder
 		Element e = d.getDocument();
 
 		if (!e.isObject())
-			throw new QueryBuilderException("Le document json doit commencer par un objet");
+			throw new QueryBuilderException(
+				"Le document json doit commencer par un objet");
 
 		s_validate_obj((ElementObject) e, State.ROOT);
 	}
@@ -103,7 +104,8 @@ public class QueryBuilder_json extends QueryBuilder
 
 		if (state == State.ELEM && cnt > 1)
 		{
-			throw new QueryBuilderException("Un objet ne peut être utilisé que avec $elemMatch ou $exists (représentation de valeur objet impossible)");
+			throw new QueryBuilderException(
+				"Un objet ne peut être utilisé que avec $exists (représentation de valeur objet impossible)");
 		}
 
 		for (String k : childs.keySet())
@@ -112,29 +114,34 @@ public class QueryBuilder_json extends QueryBuilder
 
 			switch (k)
 			{
-			case "$elemMatch":
-
-				if (state == State.ELEM_MATCH)
-					throw new QueryBuilderException("$elemMatch imbriquées impossible");
-
-				if (!c.isObject())
-					throw new QueryBuilderException("$elemMatch doit être un object");
-
-				noElem = false;
-				s_validate_obj((ElementObject) c, State.ELEM_MATCH);
-				break;
+			// case "$elemMatch":
+			//
+			// if (state == State.ELEM_MATCH)
+			// throw new QueryBuilderException("$elemMatch imbriquées
+			// impossible");
+			//
+			// if (!c.isObject())
+			// throw new QueryBuilderException("$elemMatch doit être un
+			// object");
+			//
+			// noElem = false;
+			// s_validate_obj((ElementObject) c, State.ELEM_MATCH);
+			// break;
 
 			case "$exists":
 
 				if (state == State.ELEM_MATCH)
-					throw new QueryBuilderException("$exists dans $elemMatch impossible");
+					throw new QueryBuilderException(
+						"$exists dans $elemMatch impossible");
 
 				if (cnt > 1)
-					throw new QueryBuilderException("$exists doit être seul (feuille)");
+					throw new QueryBuilderException(
+						"$exists doit être seul (feuille)");
 
-				if (!c.isLiteral()
-						|| ((ElementLiteral) c).getLiteral() != ElementLiteral.Literal.TRUE)
-					throw new QueryBuilderException("$exists doit être un literal 'true'");
+				if (!c.isLiteral() || ((ElementLiteral) c)
+						.getLiteral() != ElementLiteral.Literal.TRUE)
+					throw new QueryBuilderException(
+						"$exists doit être un literal 'true'");
 
 				noElem = false;
 				break;
@@ -150,14 +157,16 @@ public class QueryBuilder_json extends QueryBuilder
 				else if (c.isNumber())
 					;
 				else
-					throw new QueryBuilderException("Seul les éléments objets, string, literal et number sont pris en compte");
+					throw new QueryBuilderException(
+						"Seul les éléments objets, string, literal et number sont pris en compte");
 
 			}
 		}
 
 		if (noElem && state == State.ELEM)
 		{
-			throw new QueryBuilderException("Un objet ne peut être utilisé que avec $elemMatch ou $exists (représentation de valeur objet impossible)");
+			throw new QueryBuilderException(
+				"Un objet ne peut être utilisé que avec $elemMatch ou $exists (représentation de valeur objet impossible)");
 		}
 	}
 
@@ -165,7 +174,8 @@ public class QueryBuilder_json extends QueryBuilder
 	public void build() throws QueryBuilderException
 	{
 		if (doc == null)
-			throw new QueryBuilderException("Builder Json : pas de document Json en paramètre");
+			throw new QueryBuilderException(
+				"Builder Json : pas de document Json en paramètre");
 
 		s_validate(doc);
 		Query query = getQuery();
@@ -184,7 +194,6 @@ public class QueryBuilder_json extends QueryBuilder
 			throws QueryBuilderException
 	{
 		HashMap<String, Element> obj = e.getObject();
-		NodeChilds childs = n.getChilds();
 
 		for (String k : obj.keySet())
 		{
@@ -201,14 +210,37 @@ public class QueryBuilder_json extends QueryBuilder
 				break;
 
 			default:
-				Node cn = null;
 				String[] tmp = k.split("\\.");
+				NodeChilds tmpch = n.getChilds();
+				int i = 0;
 
-				if (tmp.length > 1)
+				// Recherche des chemins existants
+				for (; i < tmp.length; i++)
 				{
-					NodeChilds tmpch = childs;
+					Label tmpl = new Label(tmp[i]);
+					Node tmpn = tmpch.getChild(tmpl);
 
-					for (int i = 0; i < tmp.length; i++)
+					if (tmpn == null)
+					{
+						break;
+					}
+					else if (tmpn.isLeaf())
+					{
+						throw new QueryBuilderException(
+							"Un chemin avec plusieurs valeurs terminales impossible !");
+					}
+					tmpch = tmpn.getChilds();
+				}
+				Node cn = null;
+
+				if (i == tmp.length)
+				{
+					throw new QueryBuilderException(
+						"Un chemin avec plusieurs valeurs terminales impossible !");
+				}
+				else
+				{
+					for (; i < tmp.length; i++)
 					{
 						cn = new Node(new Label(tmp[i]));
 						cn.setId(lastNodeId++);
@@ -216,21 +248,18 @@ public class QueryBuilder_json extends QueryBuilder
 						tmpch = cn.getChilds();
 					}
 				}
-				else
-				{
-					cn = new Node(new Label(k));
-					cn.setId(lastNodeId++);
-					childs.add(cn);
-				}
 
 				if (c.isObject())
 					s_build_obj((ElementObject) c, cn);
 				else if (c.isString())
-					cn.setValue(new NodeValueString(((ElementString) c).getString()));
+					cn.setValue(
+						new NodeValueString(((ElementString) c).getString()));
 				else if (c.isLiteral())
-					cn.setValue(new NodeValueLiteral(((ElementLiteral) c).toString()));
+					cn.setValue(
+						new NodeValueLiteral(((ElementLiteral) c).toString()));
 				else if (c.isNumber())
-					cn.setValue(new NodeValueNumber(((ElementNumber) c).getNumber()));
+					cn.setValue(
+						new NodeValueNumber(((ElementNumber) c).getNumber()));
 				else
 					throw new QueryBuilderException("??? revoir la validation");
 			}

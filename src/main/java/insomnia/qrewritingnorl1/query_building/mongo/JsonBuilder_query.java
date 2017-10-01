@@ -52,10 +52,10 @@ public class JsonBuilder_query extends JsonBuilder
 		final ElementObject e_new = new ElementObject();
 		Json doc = getJson();
 		doc.setDocument(e_new);
-		p_build(query.getRoot(), e_new);
+		p_build(query.getRoot(), e_new, "");
 	}
 
-	private void p_build(Node n, ElementObject json_e)
+	private void p_build(Node n, ElementObject json_e, String label)
 			throws JsonBuilderException
 	{
 		HashMap<String, Element> map = json_e.getObject();
@@ -63,8 +63,15 @@ public class JsonBuilder_query extends JsonBuilder
 		for (Node child : n.getChilds())
 		{
 			final int nbChilds = child.getChilds().size();
-			String k = child.getLabel().get(0);
+			String k = child.getLabel().get();
 			NodeValue v = child.getValue();
+			String tlabel;
+			
+			if(label.isEmpty())
+				tlabel = k;
+			else
+				tlabel = label + "." + k;
+			
 			// Feuille
 			if (nbChilds == 0)
 			{
@@ -75,46 +82,41 @@ public class JsonBuilder_query extends JsonBuilder
 					new_e = new ElementLiteral(ElementLiteral.Literal.TRUE);
 					ElementObject exists = new ElementObject();
 					exists.getObject().put("$exists", new_e);
-					map.put(k, exists);
+					map.put(tlabel, exists);
 				}
 				else
 				{
 					if (v instanceof NodeValueString)
 					{
-						new_e = new ElementString(((NodeValueString) v).getString());
+						new_e = new ElementString(
+							((NodeValueString) v).getString());
 					}
 					else if (v instanceof NodeValueLiteral)
 					{
-						new_e = new ElementLiteral(((NodeValueLiteral) v).toString());
+						new_e = new ElementLiteral(
+							((NodeValueLiteral) v).toString());
 					}
 					else if (v instanceof NodeValueNumber)
 					{
-						new_e = new ElementNumber(((NodeValueNumber) v).getNumber());
+						new_e = new ElementNumber(
+							((NodeValueNumber) v).getNumber());
 					}
 					else
-						throw new JsonBuilderException("Query Element '" + v
-								+ "' non pris en charge");
+						throw new JsonBuilderException(
+							"Query Element '" + v + "' non pris en charge");
 
-					map.put(k, new_e);
+					map.put(tlabel, new_e);
 				}
-
 			}
-			/**
-			 * TODO : utiliser les notation 'a.b' de mongo
-			 */
-			// else if (nbChilds == 1)
-			// {
-			// // ElementObject new_e = new ElementObject();
-			// // map.put(k, new_e);
-			// // p_build(child, new_e);
-			// }
 			else
 			{
-				ElementObject eMatch = new ElementObject();
-				ElementObject new_e = new ElementObject(eMatch);
-				eMatch.getObject().put("$elemMatch", new_e);
-				map.put(k, eMatch);
-				p_build(child, new_e);
+//				ElementObject eMatch = new ElementObject();
+//				ElementObject new_e = new ElementObject(eMatch);
+//				eMatch.getObject().put("$elemMatch", new_e);
+//				map.put(k, eMatch);
+//				p_build(child, new_e);
+				
+				p_build(child, json_e, tlabel );
 			}
 		}
 	}

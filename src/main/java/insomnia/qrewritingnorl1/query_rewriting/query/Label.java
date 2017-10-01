@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class Label extends ArrayList<String>
 {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
 	public Label(String l)
 	{
@@ -31,5 +31,23 @@ public class Label extends ArrayList<String>
 	public String get()
 	{
 		return get(0);
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof String)
+		{
+			return this.contains(o);
+		}
+		else if (o instanceof Label)
+		{
+			for (String tmp : (Label) o)
+			{
+				if (this.equals(tmp))
+					return true;
+			}
+		}
+		return false;
 	}
 }
