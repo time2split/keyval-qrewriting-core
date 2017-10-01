@@ -18,12 +18,23 @@ public class Context
 		replacements = new String[1];
 		replacements[0] = k;
 	}
+	
+	/**
+	 * Met replacements[0] à k
+	 */
+	private void setCodeNull(String k)
+	{
+		int i = getCodeState(k);
+		String tmp = replacements[0];
+		replacements[i] = tmp;
+		replacements[0] = k;
+	}
 
 	public Context(String k, Collection<String> e)
 	{
-		this(k);
 		replacements = new String[e.size()];
 		e.toArray(replacements);
+		setCodeNull(k);
 	}
 
 	public String[] getReplacements()
