@@ -34,6 +34,17 @@ public class Label extends ArrayList<String>
 	}
 
 	@Override
+	public int hashCode()
+	{
+		int ret = 0;
+		for (String tmp : this)
+		{
+			ret += tmp.hashCode();
+		}
+		return ret;
+	}
+
+	@Override
 	public boolean equals(Object o)
 	{
 		if (o instanceof String)

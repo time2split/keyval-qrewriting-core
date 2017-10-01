@@ -1,6 +1,7 @@
 package insomnia.qrewritingnorl1.node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import insomnia.qrewritingnorl1.query_rewriting.query.Label;
 
@@ -37,7 +38,7 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 		for (int i = 0; i < this.size(); i++)
 		{
 			Node n = this.get(i);
-			
+
 			if (n.getId() == id)
 			{
 				this.remove(i);
@@ -60,6 +61,47 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 	public ArrayList<Node> getChilds()
 	{
 		return this;
+	}
+
+	public ArrayList<Node> getMultipleChilds()
+	{
+		ArrayList<Node> ret = new ArrayList<>(this.size());
+		ArrayList<Node> unique = getUniqueChilds();
+
+		for (Node c : getChilds())
+		{
+			if(!unique.contains(c))
+			{
+				ret.add(c);
+			}
+		}
+		return ret;
+	}
+
+	public ArrayList<Node> getUniqueChilds()
+	{
+		ArrayList<Node> ret = new ArrayList<>(this.size());
+		HashMap<Label, ArrayList<Node>> buff = new HashMap<>();
+
+		for (Node c : getChilds())
+		{
+			ArrayList<Node> multi;
+			Label label = c.getLabel();
+
+			if (buff.containsKey(label))
+			{
+				multi = buff.get(label);
+			}
+			else
+			{
+				multi = getChilds(label);
+				buff.put(label, multi);
+			}
+
+			if (multi.size() <= 1 || !multi.contains(c))
+				ret.add(c);
+		}
+		return ret;
 	}
 
 	public ArrayList<Node> getChilds(Label l)

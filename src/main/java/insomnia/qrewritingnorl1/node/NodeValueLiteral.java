@@ -15,7 +15,7 @@ public class NodeValueLiteral extends NodeValue
 	}
 
 	@Override
-	public boolean isString()
+	public boolean isLiteral()
 	{
 		return true;
 	}

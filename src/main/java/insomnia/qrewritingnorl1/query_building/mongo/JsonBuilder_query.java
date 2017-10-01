@@ -1,9 +1,9 @@
 package insomnia.qrewritingnorl1.query_building.mongo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import insomnia.json.Element;
+import insomnia.json.ElementArray;
 import insomnia.json.ElementLiteral;
 import insomnia.json.ElementNumber;
 import insomnia.json.ElementObject;
@@ -17,8 +17,19 @@ import insomnia.qrewritingnorl1.node.NodeValueExists;
 import insomnia.qrewritingnorl1.node.NodeValueLiteral;
 import insomnia.qrewritingnorl1.node.NodeValueNumber;
 import insomnia.qrewritingnorl1.node.NodeValueString;
-import insomnia.qrewritingnorl1.query_rewriting.query.Label;
 import insomnia.qrewritingnorl1.query_rewriting.query.Query;
+
+class BuildResult
+{
+	public String	path;
+	public Element	element;
+
+	public BuildResult(String p, Element e)
+	{
+		path = p;
+		element = e;
+	}
+}
 
 public class JsonBuilder_query extends JsonBuilder
 {
@@ -43,40 +54,6 @@ public class JsonBuilder_query extends JsonBuilder
 		return (Query) getData();
 	}
 
-	/**
-	 * Fusionne les enfants ayant le même label (supprime les exists node)
-	 */
-	private void merge(Node n)
-	{
-		ArrayList<Label> labels = n.getChilds().getChildsLabel();
-
-		for (Label label : labels)
-		{
-			// System.out.println(labels);
-			ArrayList<Node> childs = n.getChilds().getChilds(label);
-			int c = childs.size();
-			int i = c - 1;
-
-			// Plusieurs noeuds avec même label
-			while (c > 1)
-			{
-				Node nn = childs.get(i--);
-
-				// On supprime les noeuds d'existence
-				if (nn.getValue() instanceof NodeValueExists)
-				{
-					n.getChilds().deleteChild(nn.getId());
-					c--;
-				}
-			}
-		}
-
-		for (Node nn : n.getChilds().getChilds())
-		{
-			merge(nn);
-		}
-	}
-
 	@Override
 	public void build() throws JsonBuilderException
 	{
@@ -85,31 +62,38 @@ public class JsonBuilder_query extends JsonBuilder
 		if (!query.isUnfolded())
 			throw new JsonBuilderException("La Query doit être dépliée");
 
-		// System.out.println(query);
-		merge(query.getRoot());
-		// System.out.println(query);
-		final ElementObject e_new = new ElementObject();
+		ElementObject root = new ElementObject();
 		Json doc = getJson();
-		doc.setDocument(e_new);
-		p_build(query.getRoot(), e_new, "");
+		ElementArray eand = new ElementArray();
+
+		doc.setDocument(root);
+		root.getObject().put("$and", eand);
+
+		ArrayList<BuildResult> buildResults = new ArrayList<>();
+		ArrayList<Element> array = eand.getArray();
+
+		p_prebuild(query.getRoot(), "", buildResults);
+
+		for (BuildResult res : buildResults)
+		{
+			ElementObject eobj = new ElementObject();
+			array.add(eobj);
+			eobj.getObject().put(res.path, res.element);
+		}
 	}
 
-	private void p_build(Node n, ElementObject json_e, String label)
+	private void p_prebuild(Node n, String label, ArrayList<BuildResult> ret)
 			throws JsonBuilderException
 	{
-		HashMap<String, Element> map = json_e.getObject();
+		String tlabel;
 
-		for (Node child : n.getChilds())
+		for (Node child : n.getChilds().getChilds())
 		{
 			final int nbChilds = child.getChilds().size();
 			String k = child.getLabel().get();
 			NodeValue v = child.getValue();
-			String tlabel;
 
-			if (label.isEmpty())
-				tlabel = k;
-			else
-				tlabel = label + "." + k;
+			tlabel = label.isEmpty() ? k : label + "." + k;
 
 			// Feuille
 			if (nbChilds == 0)
@@ -121,41 +105,31 @@ public class JsonBuilder_query extends JsonBuilder
 					new_e = new ElementLiteral(ElementLiteral.Literal.TRUE);
 					ElementObject exists = new ElementObject();
 					exists.getObject().put("$exists", new_e);
-					map.put(tlabel, exists);
+					new_e = exists;
+				}
+				else if (v.isString())
+				{
+					new_e = new ElementString(
+						((NodeValueString) v).getString());
+				}
+				else if (v.isLiteral())
+				{
+					new_e = new ElementLiteral(
+						((NodeValueLiteral) v).toString());
+				}
+				else if (v.isNumber())
+				{
+					new_e = new ElementNumber(
+						((NodeValueNumber) v).getNumber());
 				}
 				else
-				{
-					if (v instanceof NodeValueString)
-					{
-						new_e = new ElementString(
-							((NodeValueString) v).getString());
-					}
-					else if (v instanceof NodeValueLiteral)
-					{
-						new_e = new ElementLiteral(
-							((NodeValueLiteral) v).toString());
-					}
-					else if (v instanceof NodeValueNumber)
-					{
-						new_e = new ElementNumber(
-							((NodeValueNumber) v).getNumber());
-					}
-					else
-						throw new JsonBuilderException(
-							"Query Element '" + v + "' non pris en charge");
-
-					map.put(tlabel, new_e);
-				}
+					throw new JsonBuilderException(
+						"Query Element '" + v + "' non pris en charge");
+				ret.add(new BuildResult(tlabel, new_e));
 			}
 			else
 			{
-				// ElementObject eMatch = new ElementObject();
-				// ElementObject new_e = new ElementObject(eMatch);
-				// eMatch.getObject().put("$elemMatch", new_e);
-				// map.put(k, eMatch);
-				// p_build(child, new_e);
-
-				p_build(child, json_e, tlabel);
+				p_prebuild(child, tlabel, ret);
 			}
 		}
 	}
