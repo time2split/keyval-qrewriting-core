@@ -32,6 +32,20 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 		super();
 	}
 
+	public void deleteChild(int id)
+	{
+		for (int i = 0; i < this.size(); i++)
+		{
+			Node n = this.get(i);
+			
+			if (n.getId() == id)
+			{
+				this.remove(i);
+				return;
+			}
+		}
+	}
+
 	public ArrayList<Label> getChildsLabel()
 	{
 		ArrayList<Label> ret = new ArrayList<>();
@@ -46,6 +60,20 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 	public ArrayList<Node> getChilds()
 	{
 		return this;
+	}
+
+	public ArrayList<Node> getChilds(Label l)
+	{
+		ArrayList<Node> ret = new ArrayList<>(this.size());
+
+		for (Node c : getChilds())
+		{
+			Label cl = c.getLabel();
+
+			if (cl.equals(l))
+				ret.add(c);
+		}
+		return ret;
 	}
 
 	public Node getChild(Label l)

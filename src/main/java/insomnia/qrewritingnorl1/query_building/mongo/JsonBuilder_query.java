@@ -1,5 +1,6 @@
 package insomnia.qrewritingnorl1.query_building.mongo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import insomnia.json.Element;
@@ -16,6 +17,7 @@ import insomnia.qrewritingnorl1.node.NodeValueExists;
 import insomnia.qrewritingnorl1.node.NodeValueLiteral;
 import insomnia.qrewritingnorl1.node.NodeValueNumber;
 import insomnia.qrewritingnorl1.node.NodeValueString;
+import insomnia.qrewritingnorl1.query_rewriting.query.Label;
 import insomnia.qrewritingnorl1.query_rewriting.query.Query;
 
 public class JsonBuilder_query extends JsonBuilder
@@ -41,6 +43,40 @@ public class JsonBuilder_query extends JsonBuilder
 		return (Query) getData();
 	}
 
+	/**
+	 * Fusionne les enfants ayant le même label (supprime les exists node)
+	 */
+	private void merge(Node n)
+	{
+		ArrayList<Label> labels = n.getChilds().getChildsLabel();
+
+		for (Label label : labels)
+		{
+			// System.out.println(labels);
+			ArrayList<Node> childs = n.getChilds().getChilds(label);
+			int c = childs.size();
+			int i = c - 1;
+
+			// Plusieurs noeuds avec même label
+			while (c > 1)
+			{
+				Node nn = childs.get(i--);
+
+				// On supprime les noeuds d'existence
+				if (nn.getValue() instanceof NodeValueExists)
+				{
+					n.getChilds().deleteChild(nn.getId());
+					c--;
+				}
+			}
+		}
+
+		for (Node nn : n.getChilds().getChilds())
+		{
+			merge(nn);
+		}
+	}
+
 	@Override
 	public void build() throws JsonBuilderException
 	{
@@ -49,6 +85,9 @@ public class JsonBuilder_query extends JsonBuilder
 		if (!query.isUnfolded())
 			throw new JsonBuilderException("La Query doit être dépliée");
 
+		// System.out.println(query);
+		merge(query.getRoot());
+		// System.out.println(query);
 		final ElementObject e_new = new ElementObject();
 		Json doc = getJson();
 		doc.setDocument(e_new);
@@ -66,12 +105,12 @@ public class JsonBuilder_query extends JsonBuilder
 			String k = child.getLabel().get();
 			NodeValue v = child.getValue();
 			String tlabel;
-			
-			if(label.isEmpty())
+
+			if (label.isEmpty())
 				tlabel = k;
 			else
 				tlabel = label + "." + k;
-			
+
 			// Feuille
 			if (nbChilds == 0)
 			{
@@ -110,13 +149,13 @@ public class JsonBuilder_query extends JsonBuilder
 			}
 			else
 			{
-//				ElementObject eMatch = new ElementObject();
-//				ElementObject new_e = new ElementObject(eMatch);
-//				eMatch.getObject().put("$elemMatch", new_e);
-//				map.put(k, eMatch);
-//				p_build(child, new_e);
-				
-				p_build(child, json_e, tlabel );
+				// ElementObject eMatch = new ElementObject();
+				// ElementObject new_e = new ElementObject(eMatch);
+				// eMatch.getObject().put("$elemMatch", new_e);
+				// map.put(k, eMatch);
+				// p_build(child, new_e);
+
+				p_build(child, json_e, tlabel);
 			}
 		}
 	}

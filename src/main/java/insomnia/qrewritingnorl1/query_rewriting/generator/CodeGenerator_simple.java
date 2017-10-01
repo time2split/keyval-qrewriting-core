@@ -24,24 +24,30 @@ public class CodeGenerator_simple extends CodeGenerator
 	{
 		super(q, rm);
 
-		if ( !q.isUnfolded() )
+		if (!q.isUnfolded())
 			throw new CodeGeneratorException("La requête doit être dépliée");
 
-		for ( Node n : q.getNodes() )
+		for (Node n : q.getNodes())
 		{
 			String k = n.getLabel().get();
 			RuleManager rapplicables = rm.getApplicables(k);
 			NodeValue val = n.getValue();
+			boolean existRule;
 
 			// Je suis une feuille existentielle
-			if ( n.isLeaf() && ( val instanceof NodeValueExists ) )
+			if (n.isLeaf() && (val instanceof NodeValueExists))
+			{
 				rapplicables = rm.getApplicables(k);
+				existRule = true;
+			}
 			else
+			{
 				rapplicables = rm.getApplicablesOnlyRAll(k);
-
+				existRule = false;
+			}
 			Set<String> applicables = rapplicables.getAllHypothesisWith(k);
 			Context c = new Context(k, (Collection<String>) applicables);
-			encoding.add(new NodeContext(n, c));
+			encoding.add(new NodeContext(n, c, existRule));
 		}
 	}
 }
