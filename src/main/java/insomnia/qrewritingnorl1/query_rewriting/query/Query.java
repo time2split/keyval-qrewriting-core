@@ -28,7 +28,7 @@ public class Query implements Cloneable
 	 */
 	public Query(Query q)
 	{
-		if(q.root != null)
+		if (q.root != null)
 			setRoot(q.root.clone());
 	}
 

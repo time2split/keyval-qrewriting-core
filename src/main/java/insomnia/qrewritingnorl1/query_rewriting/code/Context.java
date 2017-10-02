@@ -25,6 +25,10 @@ public class Context
 	private void setCodeNull(String k)
 	{
 		int i = getCodeState(k);
+		
+		if(i < 0)
+			return;
+		
 		String tmp = replacements[0];
 		replacements[i] = tmp;
 		replacements[0] = k;

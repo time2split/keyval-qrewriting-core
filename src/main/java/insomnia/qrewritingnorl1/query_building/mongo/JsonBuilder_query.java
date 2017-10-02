@@ -1,6 +1,8 @@
 package insomnia.qrewritingnorl1.query_building.mongo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import insomnia.json.Element;
 import insomnia.json.ElementArray;
@@ -33,6 +35,12 @@ class BuildResult
 
 public class JsonBuilder_query extends JsonBuilder
 {
+	enum MODE
+	{
+		ELEMMATCH, DOT
+	};
+
+	private MODE mode = MODE.ELEMMATCH;
 
 	public JsonBuilder_query()
 	{
@@ -53,6 +61,11 @@ public class JsonBuilder_query extends JsonBuilder
 	{
 		return (Query) getData();
 	}
+	
+	public void setMode (MODE mode)
+	{
+		this.mode = mode;
+	}
 
 	@Override
 	public void build() throws JsonBuilderException
@@ -62,75 +75,14 @@ public class JsonBuilder_query extends JsonBuilder
 		if (!query.isUnfolded())
 			throw new JsonBuilderException("La Query doit être dépliée");
 
-		ElementObject root = new ElementObject();
-		Json doc = getJson();
-		ElementArray eand = new ElementArray();
-
-		doc.setDocument(root);
-		root.getObject().put("$and", eand);
-
-		ArrayList<BuildResult> buildResults = new ArrayList<>();
-		ArrayList<Element> array = eand.getArray();
-
-		p_prebuild(query.getRoot(), "", buildResults);
-
-		for (BuildResult res : buildResults)
+		switch (mode)
 		{
-			ElementObject eobj = new ElementObject();
-			array.add(eobj);
-			eobj.getObject().put(res.path, res.element);
-		}
-	}
-
-	private void p_prebuild(Node n, String label, ArrayList<BuildResult> ret)
-			throws JsonBuilderException
-	{
-		String tlabel;
-
-		for (Node child : n.getChilds().getChilds())
-		{
-			final int nbChilds = child.getChilds().size();
-			String k = child.getLabel().get();
-			NodeValue v = child.getValue();
-
-			tlabel = label.isEmpty() ? k : label + "." + k;
-
-			// Feuille
-			if (nbChilds == 0)
-			{
-				Element new_e;
-
-				if (v instanceof NodeValueExists)
-				{
-					new_e = new ElementLiteral(ElementLiteral.Literal.TRUE);
-					ElementObject exists = new ElementObject();
-					exists.getObject().put("$exists", new_e);
-					new_e = exists;
-				}
-				else if (v.isString())
-				{
-					new_e = new ElementString(
-						((NodeValueString) v).getString());
-				}
-				else if (v.isLiteral())
-				{
-					new_e = new ElementLiteral(
-						((NodeValueLiteral) v).toString());
-				}
-				else if (v.isNumber())
-				{
-					new_e = new ElementNumber(
-						((NodeValueNumber) v).getNumber());
-				}
-				else
-					throw new JsonBuilderException(
-						"Query Element '" + v + "' non pris en charge");
-				ret.add(new BuildResult(tlabel, new_e));
-			}
-			else
-			{
-				p_prebuild(child, tlabel, ret);
-			}
+		case DOT:
+			buildDOT();
+			return;
+		case ELEMMATCH:
+			buildELEMMATCH();
+			return;
 		}
 	}
 
@@ -141,5 +93,189 @@ public class JsonBuilder_query extends JsonBuilder
 		setJson(ret);
 		build();
 		return ret;
+	}
+
+	// ===============================================================
+	// EMATCH
+	// ===============================================================
+
+	private Element fromValue(NodeValue v) throws JsonBuilderException
+	{
+		Element new_e;
+
+		if (v instanceof NodeValueExists)
+		{
+			new_e = new ElementLiteral(ElementLiteral.Literal.TRUE);
+			ElementObject exists = new ElementObject();
+			exists.getObject().put("$exists", new_e);
+			new_e = exists;
+		}
+		else if (v.isString())
+		{
+			new_e = new ElementString(((NodeValueString) v).getString());
+		}
+		else if (v.isLiteral())
+		{
+			new_e = new ElementLiteral(((NodeValueLiteral) v).toString());
+		}
+		else if (v.isNumber())
+		{
+			new_e = new ElementNumber(((NodeValueNumber) v).getNumber());
+		}
+		else
+		{
+			throw new JsonBuilderException(
+				"Query Element '" + v + "' non pris en charge");
+		}
+		return new_e;
+	}
+
+	public void buildELEMMATCH() throws JsonBuilderException
+	{
+		Query query = getQuery();
+		Json doc = getJson();
+		ElementObject root = new ElementObject();
+		doc.setDocument(root);
+		p_buildELEMMATCH(query.getRoot(), root);
+	}
+
+	private void p_buildELEMMATCH(Node n, ElementObject json_e)
+			throws JsonBuilderException
+	{
+		HashMap<String, Element> map = json_e.getObject();
+		boolean withEAnd = !n.getChilds().getMultipleChilds().isEmpty();
+		ArrayList<Element> array = null;
+		
+		if (withEAnd)
+		{
+			ElementArray json_array = new ElementArray();
+			map.put("$and", json_array);
+			array = json_array.getArray();
+		}
+
+		for (Node child : n.getChilds().getChilds())
+		{
+			final int nbChilds = child.getChilds().size();
+			NodeValue v = child.getValue();
+			String label = child.getLabel().get();
+
+			// Feuille
+			if (nbChilds == 0)
+			{
+				Element val = fromValue(v);
+
+				// Normalement impossible
+				if (withEAnd)
+				{
+					ElementObject base = new ElementObject();
+					base.getObject().put(label, val);
+					array.add(base);
+				}
+				else
+				{
+					map.put(label, val);
+				}
+			}
+			else
+			{
+				ElementObject ematch = new ElementObject();
+				ElementObject new_e = new ElementObject();
+				new_e.getObject().put("$elemMatch", ematch);
+
+				if (withEAnd)
+				{
+					ElementObject base = new ElementObject();
+					base.getObject().put(label, new_e);
+					array.add(base);
+				}
+				else
+				{
+					map.put(label, new_e);
+				}
+				p_buildELEMMATCH(child, ematch);
+			}
+		}
+	}
+
+	// ===============================================================
+	// DOT
+	// ===============================================================
+
+	public void buildDOT() throws JsonBuilderException
+	{
+		Query query = getQuery();
+		ElementObject root = new ElementObject();
+		Json doc = getJson();
+
+		doc.setDocument(root);
+
+		ArrayList<BuildResult> buildResults = new ArrayList<>();
+		boolean withEAnd = false;
+
+		p_prebuildDOT(query.getRoot(), "", buildResults);
+		{
+			HashSet<String> set = new HashSet();
+
+			for (BuildResult res : buildResults)
+			{
+				String path = res.path;
+
+				if (set.contains(path))
+				{
+					withEAnd = true;
+					break;
+				}
+				set.add(path);
+			}
+		}
+
+		// Des labels en commun existent
+		if (withEAnd)
+		{
+			ElementArray eand = new ElementArray();
+			ArrayList<Element> array = eand.getArray();
+			root.getObject().put("$and", eand);
+
+			for (BuildResult res : buildResults)
+			{
+				ElementObject eobj = new ElementObject();
+				array.add(eobj);
+				eobj.getObject().put(res.path, res.element);
+			}
+		}
+		else
+		{
+			HashMap<String, Element> map = root.getObject();
+
+			for (BuildResult res : buildResults)
+			{
+				map.put(res.path, res.element);
+			}
+		}
+	}
+
+	private void p_prebuildDOT(Node n, String label, ArrayList<BuildResult> ret)
+			throws JsonBuilderException
+	{
+		String tlabel;
+
+		for (Node child : n.getChilds().getChilds())
+		{
+			final int nbChilds = child.getChilds().size();
+			String k = child.getLabel().get();
+			NodeValue v = child.getValue();
+			tlabel = label.isEmpty() ? k : label + "." + k;
+
+			// Feuille
+			if (nbChilds == 0)
+			{
+				Element new_e = fromValue(v);
+				ret.add(new BuildResult(tlabel, new_e));
+			}
+			else
+			{
+				p_prebuildDOT(child, tlabel, ret);
+			}
+		}
 	}
 }

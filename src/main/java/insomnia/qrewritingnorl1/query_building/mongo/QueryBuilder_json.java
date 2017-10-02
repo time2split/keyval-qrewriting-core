@@ -19,6 +19,7 @@ import insomnia.qrewritingnorl1.query_rewriting.query.Query;
 import insomnia.qrewritingnorl1.query_rewriting.query.QueryBuilder;
 import insomnia.qrewritingnorl1.query_rewriting.query.QueryBuilderException;
 
+//TODO: migrer dans insomnia.qrewritingnorl1.query_building car n'est pas uniqement résérvé à mongodb
 /**
  * Construit une requête à partir d'un document Json
  * 
