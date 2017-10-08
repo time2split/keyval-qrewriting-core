@@ -106,7 +106,7 @@ public class QueryBuilder_json extends QueryBuilder
 		if (state == State.ELEM && cnt > 1)
 		{
 			throw new QueryBuilderException(
-				"Un objet ne peut être utilisé que avec $exists (représentation de valeur objet impossible)");
+				"Un objet ne peut être utilisé que avec $elemMatch ou $exists (représentation de valeur objet impossible)");
 		}
 
 		for (String k : childs.keySet())
@@ -115,19 +115,19 @@ public class QueryBuilder_json extends QueryBuilder
 
 			switch (k)
 			{
-			// case "$elemMatch":
-			//
-			// if (state == State.ELEM_MATCH)
-			// throw new QueryBuilderException("$elemMatch imbriquées
-			// impossible");
-			//
-			// if (!c.isObject())
-			// throw new QueryBuilderException("$elemMatch doit être un
-			// object");
-			//
-			// noElem = false;
-			// s_validate_obj((ElementObject) c, State.ELEM_MATCH);
-			// break;
+			case "$elemMatch":
+
+				if (state == State.ELEM_MATCH)
+					throw new QueryBuilderException(
+						"$elemMatch imbriquées impossible");
+
+				if (!c.isObject())
+					throw new QueryBuilderException(
+						"$elemMatch doit être un object");
+
+				noElem = false;
+				s_validate_obj((ElementObject) c, State.ELEM_MATCH);
+				break;
 
 			case "$exists":
 
