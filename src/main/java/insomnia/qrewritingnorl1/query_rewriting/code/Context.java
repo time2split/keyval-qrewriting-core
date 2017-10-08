@@ -38,6 +38,7 @@ public class Context
 	{
 		replacements = new String[e.size()];
 		e.toArray(replacements);
+		Arrays.sort(replacements);
 		setCodeNull(k);
 	}
 

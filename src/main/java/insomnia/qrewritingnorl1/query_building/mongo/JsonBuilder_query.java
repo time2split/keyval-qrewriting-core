@@ -35,7 +35,7 @@ class BuildResult
 
 public class JsonBuilder_query extends JsonBuilder
 {
-	enum MODE
+	public enum MODE
 	{
 		ELEMMATCH, DOT
 	};
