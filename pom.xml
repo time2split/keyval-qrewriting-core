@@ -14,8 +14,28 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<github.global.server>github</github.global.server>
 	</properties>
 
+	<distributionManagement>
+		<repository>
+			<id>internal.repo</id>
+			<name>Temporary Staging Repository</name>
+			<url>file://${project.build.directory}/mvn-repo</url>
+		</repository>
+	</distributionManagement>
+	
+	<repositories>
+		<repository>
+			<id>insomnia.mvn-repo</id>
+			<url>https://raw.github.com/zuri66/mvn-repo/gh-pages/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -28,15 +48,35 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.5</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.mongodb</groupId> -->
-		<!-- <artifactId>mongodb-driver</artifactId> -->
-		<!-- <version>3.5.0</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>insomnia</groupId>
 			<artifactId>lib</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
+	
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.12</version>
+				<configuration>
+					<message>Creating site for ${project.version}</message>
+					<repositoryName>mvn-repo</repositoryName>
+					<repositoryOwner>zuri66</repositoryOwner>
+					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
