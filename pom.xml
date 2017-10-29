@@ -15,7 +15,12 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
-
+	<repositories>
+		<repository>
+			<id>insomnia.mvn.repo</id>
+			<url>https://github.com/zuri66/mvn-repo</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -28,11 +33,6 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.5</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.mongodb</groupId> -->
-		<!-- <artifactId>mongodb-driver</artifactId> -->
-		<!-- <version>3.5.0</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>insomnia</groupId>
 			<artifactId>lib</artifactId>
