@@ -33,8 +33,8 @@ public class QPUSimple extends QPU
 	public QPUSimple(Query q, Interval i, Encoding e)
 	{
 		query = q;
-		codes = encoding.generateAllCodes(i);
 		encoding = e;
+		codes = encoding.generateAllCodes(i);
 	}
 
 	public QPUSimple(Query q, Collection<Code> codesset, Encoding e)
