@@ -2,11 +2,7 @@ package insomnia.qrewriting.database;
 
 public abstract class Driver
 {
-	/**
-	 * 
-	 * @return
-	 */
-//	abstract HashMap<String, String> driverInfos();
-	
-	public abstract void test();
+	public abstract void load() throws Exception;
+
+	public abstract void unload() throws Exception;
 }
