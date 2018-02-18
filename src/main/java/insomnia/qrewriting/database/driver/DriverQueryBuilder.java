@@ -2,8 +2,8 @@ package insomnia.qrewriting.database.driver;
 
 import java.io.Reader;
 
-import insomnia.qrewriting.query_rewriting.query.Query;
-import insomnia.qrewriting.query_rewriting.query.QueryBuilder;
+import insomnia.qrewriting.query.Query;
+import insomnia.qrewriting.query.QueryBuilder;
 
 /**
  * Le DriverQueryBuilder doit obligatoirement construire une Query à partir

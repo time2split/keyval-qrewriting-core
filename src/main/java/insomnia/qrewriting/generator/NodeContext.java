@@ -1,0 +1,50 @@
+package insomnia.qrewriting.generator;
+
+import insomnia.qrewriting.code.Context;
+import insomnia.qrewriting.query.node.Node;
+
+/**
+ * Association d'un noeud à son contexte de codage
+ * 
+ * @author zuri
+ * 
+ */
+public class NodeContext
+{
+	private Node	n;
+	private Context	c;
+	private boolean	existRule;
+
+	public NodeContext(Node nn, Context cc, boolean erule)
+	{
+		n = nn;
+		c = cc;
+		existRule = erule;
+	}
+
+	public Node getNode()
+	{
+		return n;
+	}
+
+	public Context getContext()
+	{
+		return c;
+	}
+
+	public boolean isForallRule()
+	{
+		return !existRule;
+	}
+
+	public boolean isExistRule()
+	{
+		return existRule;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "(" + n + "" + c + ")";
+	}
+}

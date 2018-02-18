@@ -14,15 +14,15 @@ import insomnia.json.ElementString;
 import insomnia.json.Json;
 import insomnia.json.JsonReader;
 import insomnia.qrewriting.database.driver.DriverQueryBuilder;
-import insomnia.qrewriting.node.Node;
-import insomnia.qrewriting.node.NodeChilds;
-import insomnia.qrewriting.node.NodeValueExists;
-import insomnia.qrewriting.node.NodeValueLiteral;
-import insomnia.qrewriting.node.NodeValueNumber;
-import insomnia.qrewriting.node.NodeValueString;
-import insomnia.qrewriting.query_rewriting.query.Label;
-import insomnia.qrewriting.query_rewriting.query.Query;
-import insomnia.qrewriting.query_rewriting.query.QueryBuilderException;
+import insomnia.qrewriting.query.Label;
+import insomnia.qrewriting.query.Query;
+import insomnia.qrewriting.query.QueryBuilderException;
+import insomnia.qrewriting.query.node.Node;
+import insomnia.qrewriting.query.node.NodeChilds;
+import insomnia.qrewriting.query.node.NodeValueExists;
+import insomnia.qrewriting.query.node.NodeValueLiteral;
+import insomnia.qrewriting.query.node.NodeValueNumber;
+import insomnia.qrewriting.query.node.NodeValueString;
 
 public class MyQueryBuilder extends DriverQueryBuilder
 {

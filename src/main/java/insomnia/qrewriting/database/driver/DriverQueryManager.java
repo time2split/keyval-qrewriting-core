@@ -2,8 +2,8 @@ package insomnia.qrewriting.database.driver;
 
 import java.util.Collection;
 
-import insomnia.qrewriting.query_rewriting.query.Query;
-import insomnia.qrewriting.query_rewriting.query.QueryManager;
+import insomnia.qrewriting.query.Query;
+import insomnia.qrewriting.query.QueryManager;
 
 public abstract class DriverQueryManager extends QueryManager
 {

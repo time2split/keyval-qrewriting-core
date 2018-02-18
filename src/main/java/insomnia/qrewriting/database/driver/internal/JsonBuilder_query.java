@@ -10,14 +10,14 @@ import insomnia.json.ElementString;
 import insomnia.json.Json;
 import insomnia.json.JsonBuilder;
 import insomnia.json.JsonBuilderException;
-import insomnia.qrewriting.node.Node;
-import insomnia.qrewriting.node.NodeChilds;
-import insomnia.qrewriting.node.NodeValue;
-import insomnia.qrewriting.node.NodeValueExists;
-import insomnia.qrewriting.node.NodeValueLiteral;
-import insomnia.qrewriting.node.NodeValueNumber;
-import insomnia.qrewriting.node.NodeValueString;
-import insomnia.qrewriting.query_rewriting.query.Query;
+import insomnia.qrewriting.query.Query;
+import insomnia.qrewriting.query.node.Node;
+import insomnia.qrewriting.query.node.NodeChilds;
+import insomnia.qrewriting.query.node.NodeValue;
+import insomnia.qrewriting.query.node.NodeValueExists;
+import insomnia.qrewriting.query.node.NodeValueLiteral;
+import insomnia.qrewriting.query.node.NodeValueNumber;
+import insomnia.qrewriting.query.node.NodeValueString;
 
 public class JsonBuilder_query extends JsonBuilder
 {

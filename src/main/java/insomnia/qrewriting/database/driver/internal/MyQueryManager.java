@@ -8,7 +8,7 @@ import java.util.Collection;
 import insomnia.json.Json;
 import insomnia.json.JsonWriter;
 import insomnia.qrewriting.database.driver.DriverQueryManager;
-import insomnia.qrewriting.query_rewriting.query.Query;
+import insomnia.qrewriting.query.Query;
 
 public class MyQueryManager extends DriverQueryManager
 {

@@ -7,12 +7,12 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 
 import insomnia.builder.BuilderException;
-import insomnia.qrewriting.query_rewriting.rule.Rule;
-import insomnia.qrewriting.query_rewriting.rule.RuleAll;
-import insomnia.qrewriting.query_rewriting.rule.RuleExists;
-import insomnia.qrewriting.query_rewriting.rule.RuleManager;
-import insomnia.qrewriting.query_rewriting.rule.RuleManagerBuilder;
-import insomnia.qrewriting.query_rewriting.rule.RuleManagerBuilderException;
+import insomnia.qrewriting.rule.Rule;
+import insomnia.qrewriting.rule.RuleAll;
+import insomnia.qrewriting.rule.RuleExists;
+import insomnia.qrewriting.rule.RuleManager;
+import insomnia.qrewriting.rule.RuleManagerBuilder;
+import insomnia.qrewriting.rule.RuleManagerBuilderException;
 import insomnia.reader.TextReader;
 
 /**
