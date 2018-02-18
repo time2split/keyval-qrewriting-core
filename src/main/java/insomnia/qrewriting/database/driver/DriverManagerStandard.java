@@ -1,7 +1,9 @@
-package insomnia.qrewriting.database;
+package insomnia.qrewriting.database.driver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import insomnia.qrewriting.database.Driver;
 
 public class DriverManagerStandard extends DriverManager
 {

@@ -1,6 +1,8 @@
-package insomnia.qrewriting.database;
+package insomnia.qrewriting.database.driver;
 
 import java.util.HashMap;
+
+import insomnia.qrewriting.database.Driver;
 
 /**
  * Gestion des drivers de base de données (récupération, stockage)
@@ -10,7 +12,7 @@ import java.util.HashMap;
  */
 public abstract class DriverManager
 {
-	private HashMap<String, Driver> drivers;
+	protected HashMap<String, Driver> drivers = new HashMap<>();
 
 	/**
 	 * 
@@ -19,7 +21,8 @@ public abstract class DriverManager
 	 * @return null|Driver null si driver non trouvé
 	 * @throws Exception
 	 */
-	abstract public Driver getDriver(String driverName) throws Exception;
+	abstract public Driver getDriver(String driverName)
+			throws ClassNotFoundException, Exception;
 
 	/**
 	 * 

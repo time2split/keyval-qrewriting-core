@@ -32,6 +32,11 @@ public class Query implements Cloneable
 			setRoot(q.root.clone());
 	}
 
+	public Query(Node root)
+	{
+		setRoot(root);
+	}
+
 	@Override
 	public Query clone()
 	{

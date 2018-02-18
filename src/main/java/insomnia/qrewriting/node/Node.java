@@ -21,6 +21,10 @@ public class Node implements Cloneable
 		label = new Label("");
 	}
 
+	/**
+	 * Constructeur par copie
+	 * @param n
+	 */
 	public Node(Node n)
 	{
 		setLabel(n.label);
