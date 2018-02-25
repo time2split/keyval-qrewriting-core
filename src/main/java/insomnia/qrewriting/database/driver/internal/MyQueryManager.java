@@ -65,4 +65,18 @@ public class MyQueryManager extends DriverQueryManager
 		return formats.toArray(new String[0]);
 	}
 
+	@Override
+	public Query merge(Query... queries)
+	{
+		// TODO
+		return null;
+	}
+
+	@Override
+	public boolean canMerge(Query... queries)
+	{
+		// TODO
+		return false;
+	}
+
 }
