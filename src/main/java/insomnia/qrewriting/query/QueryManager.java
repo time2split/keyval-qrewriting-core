@@ -1,6 +1,7 @@
 package insomnia.qrewriting.query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -59,26 +60,46 @@ public abstract class QueryManager
 		return canMerge(queries.toArray(new Query[0]));
 	}
 
+	public boolean canMerge()
+	{
+		return canMerge(queries);
+	}
+
 	public Query[] mergeByNumberOfQueries(int nbofQueries, Query... queries)
 	{
-		ArrayList<Query> ret = new ArrayList<>();
-		// TODO
-		return ret.toArray(new Query[0]);
+		final int sizeofQueries = queries.length / nbofQueries;
+		final int oneMore = (queries.length % nbofQueries) != 0 ? 1 : 0;
+		return mergeBySizeOfQueries(sizeofQueries + oneMore, queries);
 	}
 
 	public Query[] mergeBySizeOfQueries(int sizeofQueries, Query... queries)
 	{
-		ArrayList<Query> ret = new ArrayList<>();
-		// TODO
+		ArrayList<Query> ret = new ArrayList<>(
+			(sizeofQueries / queries.length) + 1);
+
+		final int c = queries.length;
+
+		for (int i = 0; i != c;)
+		{
+			final int size;
+
+			if (c - i < sizeofQueries)
+				size = c - i;
+			else
+				size = sizeofQueries;
+
+			ret.add(merge(Arrays.copyOfRange(queries, i, i + size)));
+			i += size;
+		}
 		return ret.toArray(new Query[0]);
 	}
 
-	public Query[] mergeAllByNumberOfQueries(int nbofQueries)
+	public Query[] mergeByNumberOfQueries(int nbofQueries)
 	{
 		return this.mergeByNumberOfQueries(nbofQueries, queries);
 	}
 
-	public Query[] mergeAllBySizeOfQueries(int sizeofQueries)
+	public Query[] mergeBySizeOfQueries(int sizeofQueries)
 	{
 		return this.mergeBySizeOfQueries(sizeofQueries, queries);
 	}

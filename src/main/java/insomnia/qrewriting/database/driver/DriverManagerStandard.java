@@ -2,6 +2,7 @@ package insomnia.qrewriting.database.driver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 import insomnia.qrewriting.database.Driver;
 
@@ -30,17 +31,16 @@ public class DriverManagerStandard extends DriverManager
 	 * {@inheritDoc}
 	 */
 	// @Override
-	public Driver getDriver(String driverName) throws Exception
+	public Driver getDriver(String driverName, Properties options)
+			throws Exception
 	{
-		{
-			Class<Driver> cls = driverClasses.get(driverName);
+		Class<Driver> cls = driverClasses.get(driverName);
 
-			if (cls != null)
-			{
-				Driver driver = cls.newInstance();
-				driver.load();
-				return driver;
-			}
+		if (cls != null)
+		{
+			Driver driver = cls.newInstance();
+			driver.load();
+			return driver;
 		}
 		return null;
 	}

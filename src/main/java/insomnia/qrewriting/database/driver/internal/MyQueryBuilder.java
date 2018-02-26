@@ -2,6 +2,7 @@ package insomnia.qrewriting.database.driver.internal;
 
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
 
@@ -75,11 +76,13 @@ public class MyQueryBuilder extends DriverQueryBuilder
 		int nbOfElements = objects.size();
 		NodeChilds childs = node.getChilds();
 
-		for (String key : objects.keySet())
+		for (Entry<String, Element> entry : objects.entrySet())
 		{
-			Element val = objects.get(key);
+			String key = entry.getKey();
+			Element val = entry.getValue();
 			Node newNode = new Node();
-				newNode.setId(nodeId++);
+			
+			newNode.setId(nodeId++);
 
 			switch (key)
 			{

@@ -2,6 +2,7 @@ package insomnia.qrewriting.database.driver;
 
 import java.io.Reader;
 
+import insomnia.qrewriting.database.Driver;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.QueryBuilder;
 
@@ -14,7 +15,8 @@ import insomnia.qrewriting.query.QueryBuilder;
  */
 public abstract class DriverQueryBuilder extends QueryBuilder
 {
-	Reader reader;
+	Reader	reader;
+	Driver	driver;
 
 	public DriverQueryBuilder()
 	{
@@ -41,5 +43,15 @@ public abstract class DriverQueryBuilder extends QueryBuilder
 	public Reader getReader()
 	{
 		return reader;
+	}
+
+	public void setDriver(Driver d)
+	{
+		driver = d;
+	}
+
+	public Driver getDriver()
+	{
+		return driver;
 	}
 }
