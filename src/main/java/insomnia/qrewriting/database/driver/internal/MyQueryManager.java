@@ -8,7 +8,7 @@ import java.util.Collection;
 import insomnia.json.Json;
 import insomnia.json.JsonWriter;
 import insomnia.qrewriting.database.driver.DriverQueryManager;
-import insomnia.qrewriting.database.driver.internal.query.MyNodeOperation;
+import insomnia.qrewriting.query.Label;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.node.Node;
 import insomnia.qrewriting.query.node.NodeChilds;
@@ -79,14 +79,16 @@ public class MyQueryManager extends DriverQueryManager
 		Query ret = new Query();
 		NodeChilds rootChilds;
 		{
-			Node root = new MyNodeOperation(MyNodeOperation.Operation.Or);
+			Node root = new Node();
 			ret.setRoot(root);
 			rootChilds = root.getChilds();
 		}
 		
 		for (Query q : queries)
 		{
-			rootChilds.add(q.getRoot());
+			Node tmp = new Node(new Label("$or"));
+			tmp.getChilds().addAll(q.getRoot().getChilds());
+			rootChilds.add(tmp);
 		}
 		return ret;
 	}

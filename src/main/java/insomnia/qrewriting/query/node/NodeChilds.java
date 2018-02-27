@@ -2,6 +2,8 @@ package insomnia.qrewriting.query.node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import insomnia.qrewriting.query.Label;
 
@@ -47,20 +49,39 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 		}
 	}
 
-	public ArrayList<Label> getChildsLabel()
+	public Label[] getChildsLabel()
 	{
-		ArrayList<Label> ret = new ArrayList<>();
+		HashSet<Label> ret = new HashSet<>(this.size() * 2);
 
 		for (Node n : this)
 		{
 			ret.add(n.getLabel());
 		}
+		return ret.toArray(new Label[0]);
+	}
+
+	public Map<Label, Integer> getChildsLabelCount()
+	{
+		HashMap<Label,Integer> ret = new HashMap<>(this.size() * 2);
+
+		for (Node n : this)
+		{
+			Label l = n.getLabel();
+			
+			if(ret.containsKey(l))
+			{
+				ret.put(l,ret.get(l) +1 );
+			}
+			else {
+				ret.put(l, 1);
+			}
+		}
 		return ret;
 	}
 
-	public ArrayList<Node> getChilds()
+	public Node[] getChilds()
 	{
-		return this;
+		return this.toArray(new Node[0]);
 	}
 
 	public ArrayList<Node> getMultipleChilds()
@@ -70,7 +91,7 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 
 		for (Node c : getChilds())
 		{
-			if(!unique.contains(c))
+			if (!unique.contains(c))
 			{
 				ret.add(c);
 			}
@@ -94,7 +115,7 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 			}
 			else
 			{
-				multi = getChilds(label);
+				multi = getChildsList(label);
 				buff.put(label, multi);
 			}
 
@@ -104,7 +125,12 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 		return ret;
 	}
 
-	public ArrayList<Node> getChilds(Label l)
+	public Node[] getChilds(Label l)
+	{
+		return getChildsList(l).toArray(new Node[0]);
+	}
+
+	private ArrayList<Node> getChildsList(Label l)
 	{
 		ArrayList<Node> ret = new ArrayList<>(this.size());
 

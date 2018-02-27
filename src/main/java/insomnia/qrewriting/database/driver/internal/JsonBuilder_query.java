@@ -1,8 +1,10 @@
 package insomnia.qrewriting.database.driver.internal;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import insomnia.json.Element;
+import insomnia.json.ElementArray;
 import insomnia.json.ElementLiteral;
 import insomnia.json.ElementNumber;
 import insomnia.json.ElementObject;
@@ -10,6 +12,7 @@ import insomnia.json.ElementString;
 import insomnia.json.Json;
 import insomnia.json.JsonBuilder;
 import insomnia.json.JsonBuilderException;
+import insomnia.qrewriting.query.Label;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.node.Node;
 import insomnia.qrewriting.query.node.NodeChilds;
@@ -67,9 +70,14 @@ public class JsonBuilder_query extends JsonBuilder
 		NodeChilds childs = n.getChilds();
 		Element newVal;
 
+		Map<Label, Integer> labelCount = childs.getChildsLabelCount();
+		HashMap<Label, ElementArray> labelElementArray = new HashMap<>(
+			childs.size());
+
 		for (Node ncur : childs)
 		{
 			NodeValue vcur = ncur.getValue();
+			Label lcur = ncur.getLabel();
 
 			if (ncur.isLeaf())
 			{
@@ -97,12 +105,30 @@ public class JsonBuilder_query extends JsonBuilder
 					throw new JsonBuilderException("Cannot make value " + vcur);
 				}
 			}
-			else
+			else if (labelCount.get(lcur) == 1)
 			{
 				newVal = new ElementObject();
 				makeJson((ElementObject) newVal, ncur);
 			}
-			jsonObjects.put(ncur.getLabel().get(), newVal);
+			// > 1
+			else
+			{
+				ElementArray earray = labelElementArray.get(lcur);
+
+				if (earray == null)
+				{
+					earray = new ElementArray();
+					labelElementArray.put(lcur, earray);
+					jsonObjects.put(lcur.get(), earray);
+				}
+				newVal = new ElementObject();
+				earray.getArray().add(newVal);
+				makeJson((ElementObject) newVal, ncur);
+				newVal = null;
+			}
+
+			if (newVal != null)
+				jsonObjects.put(lcur.get(), newVal);
 		}
 	}
 

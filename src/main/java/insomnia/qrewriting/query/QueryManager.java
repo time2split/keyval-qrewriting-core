@@ -28,6 +28,11 @@ public abstract class QueryManager
 		setQueries(queries);
 	}
 
+	final public void setQueries(Collection<? extends Query> queries)
+	{
+		this.queries = queries.toArray(new Query[0]);
+	}
+
 	final public void setQueries(Query... queries)
 	{
 		this.queries = queries;
@@ -50,12 +55,12 @@ public abstract class QueryManager
 
 	abstract public boolean canMerge(Query... queries);
 
-	public Query merge(Collection<Query> queries)
+	public Query merge(Collection<? extends Query> queries)
 	{
 		return merge(queries.toArray(new Query[0]));
 	}
 
-	public boolean canMerge(Collection<Query> queries)
+	public boolean canMerge(Collection<? extends Query> queries)
 	{
 		return canMerge(queries.toArray(new Query[0]));
 	}
@@ -63,6 +68,16 @@ public abstract class QueryManager
 	public boolean canMerge()
 	{
 		return canMerge(queries);
+	}
+
+	public Query[] mergeByNumberOfQueries(int nbofQueries, Collection<? extends Query> queries)
+	{
+		return mergeByNumberOfQueries(nbofQueries, queries.toArray(new Query[0]));
+	}
+
+	public Query[] mergeBySizeOfQueries(int nbofQueries, Collection<? extends Query> queries)
+	{
+		return mergeBySizeOfQueries(nbofQueries, queries.toArray(new Query[0]));
 	}
 
 	public Query[] mergeByNumberOfQueries(int nbofQueries, Query... queries)

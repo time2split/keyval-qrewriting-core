@@ -17,9 +17,9 @@ public class Label extends ArrayList<String>
 		add(l);
 	}
 
-	public ArrayList<String> getLabels()
+	public String[] getLabels()
 	{
-		return this;
+		return this.toArray(new String[0]);
 	}
 
 	@Override
@@ -47,18 +47,25 @@ public class Label extends ArrayList<String>
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o instanceof String)
+		if (o instanceof Label)
 		{
-			return this.contains(o);
-		}
-		else if (o instanceof Label)
-		{
-			for (String tmp : (Label) o)
-			{
-				if (this.equals(tmp))
-					return true;
-			}
+			return equals2(this, (Label) o);
 		}
 		return false;
+	}
+
+	private boolean equals2(Label a, Label b)
+	{
+		if (a.size() != b.size())
+			return false;
+
+		final int c = a.size();
+
+		for (int i = 0; i < c; i++)
+		{
+			if (!a.get(i).equals(b.get(i)))
+				return false;
+		}
+		return true;
 	}
 }
