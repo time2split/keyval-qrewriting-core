@@ -29,7 +29,7 @@ public class Encoding extends ArrayList<NodeContext>
 	 * 
 	 * @return
 	 */
-	public int[] getCoteFormat()
+	public int[] getCodeFormat()
 	{
 		final int size = this.size();
 		int format[] = new int[size];
@@ -37,7 +37,12 @@ public class Encoding extends ArrayList<NodeContext>
 		for (int i = 0; i < size; i++)
 		{
 			Context c = this.get(i).getContext();
-			format[i] = (int) (Math.floor(Math.log10(c.size() - 1))) + 1;
+			final int nbStates = c.size() - 1;
+			
+			if(nbStates > 0)
+				format[i] = (int) (Math.floor(Math.log10(nbStates))) + 1;
+			else
+				format[i] = 1;
 		}
 		return format;
 	}

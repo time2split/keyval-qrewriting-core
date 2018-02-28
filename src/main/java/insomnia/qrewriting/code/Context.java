@@ -65,7 +65,7 @@ public class Context
 	@Override
 	public String toString()
 	{
-		return "" + replacements;
+		return Arrays.toString(replacements);
 	}
 
 	public int size()

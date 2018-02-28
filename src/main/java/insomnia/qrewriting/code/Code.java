@@ -76,6 +76,6 @@ public class Code
 	@Override
 	public String toString()
 	{
-		return format(encoding.getCoteFormat());
+		return format(encoding.getCodeFormat());
 	}
 }
