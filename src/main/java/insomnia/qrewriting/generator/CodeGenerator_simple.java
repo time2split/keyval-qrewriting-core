@@ -32,22 +32,19 @@ public class CodeGenerator_simple extends CodeGenerator
 			String k = n.getLabel().get();
 			RuleManager rapplicables = rm.getApplicables(k);
 			NodeValue val = n.getValue();
-			boolean existRule;
 
 			// Je suis une feuille existentielle
 			if (n.isLeaf() && (val instanceof NodeValueExists))
 			{
 				rapplicables = rm.getApplicables(k);
-				existRule = true;
 			}
 			else
 			{
 				rapplicables = rm.getApplicablesOnlyRAll(k);
-				existRule = false;
 			}
 			Set<String> applicables = rapplicables.getAllHypothesisWith(k);
 			Context c = new Context(k, (Collection<String>) applicables);
-			encoding.add(new NodeContext(n, c, existRule));
+			encoding.add(new NodeContext(n, c));
 		}
 	}
 }

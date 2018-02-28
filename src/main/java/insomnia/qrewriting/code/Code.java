@@ -12,10 +12,12 @@ import java.util.Arrays;
 public class Code
 {
 	int code[];
-
-	public Code(int nbState)
+	Encoding encoding;
+	
+	public Code(int nbState, Encoding encoding)
 	{
 		code = new int[nbState];
+		this.encoding = encoding;
 	}
 
 	public int getCode(int pos)
@@ -40,6 +42,22 @@ public class Code
 		return true;
 	}
 
+	public String format(int ...nbDigits)
+	{
+		StringBuilder buffer = new StringBuilder(nbDigits.length * 3);
+		final int c = code.length;
+		
+		if(nbDigits.length < c)
+			return null;
+				
+		for(int i = 0 ; i < c ; i++)
+		{
+			String format = "%0" + nbDigits[i] + "d";
+			buffer.append(String.format(format, code[i]));
+		}
+		return buffer.toString();
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -58,12 +76,6 @@ public class Code
 	@Override
 	public String toString()
 	{
-		String ret = "";
-
-		for (int state : code)
-		{
-			ret += Integer.toString(state);
-		}
-		return ret;
+		return format(encoding.getCoteFormat());
 	}
 }

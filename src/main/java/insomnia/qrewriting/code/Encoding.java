@@ -24,6 +24,25 @@ public class Encoding extends ArrayList<NodeContext>
 	}
 
 	/**
+	 * Calcule pour chaque position d'un code de l'encodage le format
+	 * d'affichage, c-à-d le nombre de chiffres à afficher pour chaque code
+	 * 
+	 * @return
+	 */
+	public int[] getCoteFormat()
+	{
+		final int size = this.size();
+		int format[] = new int[size];
+
+		for (int i = 0; i < size; i++)
+		{
+			Context c = this.get(i).getContext();
+			format[i] = (int) (Math.floor(Math.log10(c.size() - 1))) + 1;
+		}
+		return format;
+	}
+
+	/**
 	 * 
 	 * @param c
 	 *            Représentation d'un code
@@ -31,7 +50,7 @@ public class Encoding extends ArrayList<NodeContext>
 	 */
 	public Code getCodeFrom(int c)
 	{
-		final Code ret = new Code(size());
+		final Code ret = new Code(size(),this);
 		final int size = size();
 		int num = c;
 		int rest;
