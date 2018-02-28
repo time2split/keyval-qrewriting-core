@@ -43,7 +43,12 @@ public abstract class QueryManager
 		return queries;
 	}
 
-	abstract public String[] getStrFormat();
+	abstract public String[] getStrFormat(Query... queries) throws Exception;
+
+	public String[] getStrFormat() throws Exception
+	{
+		return getStrFormat(queries);
+	}
 
 	/**
 	 * Fusionne plusieurs requêtes entre elles si c'est possible
@@ -72,7 +77,8 @@ public abstract class QueryManager
 
 	public Query[] mergeByNumberOfQueries(int nbofQueries, Collection<? extends Query> queries)
 	{
-		return mergeByNumberOfQueries(nbofQueries, queries.toArray(new Query[0]));
+		return mergeByNumberOfQueries(nbofQueries,
+			queries.toArray(new Query[0]));
 	}
 
 	public Query[] mergeBySizeOfQueries(int nbofQueries, Collection<? extends Query> queries)

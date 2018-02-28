@@ -11,7 +11,6 @@ import insomnia.qrewriting.database.driver.DriverQueryManager;
 import insomnia.qrewriting.query.Label;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.node.Node;
-import insomnia.qrewriting.query.node.NodeChilds;
 
 public class MyQueryManager extends DriverQueryManager
 {
@@ -32,43 +31,42 @@ public class MyQueryManager extends DriverQueryManager
 	}
 
 	@Override
-	public String[] getStrFormat()
+	public String[] getStrFormat(Query... queries) throws Exception
 	{
 		ArrayList<String> formats = new ArrayList<>(queries.length);
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		JsonWriter jsonWriter = new JsonWriter(buffer);
-		JsonBuilder_query jsonBuilder = new JsonBuilder_query();
-		
-		{
-			final boolean compactPrint = getDriver().getOption("json.prettyPrint","false").equals("false");
-			jsonWriter.getOptions().setCompact(compactPrint);
-		}
-		
-		for (Query q : queries)
-		{
-			jsonBuilder.setQuery(q);
-			Json json;
 
-			try
+		try (JsonWriter jsonWriter = new JsonWriter(buffer);)
+		{
+			JsonBuilder_query jsonBuilder = new JsonBuilder_query();
+
 			{
+				final boolean compactPrint = getDriver()
+						.getOption("json.prettyPrint", "false").equals("false");
+				jsonWriter.getOptions().setCompact(compactPrint);
+			}
+			for (Query q : queries)
+			{
+				System.out.println(q);
+				jsonBuilder.setQuery(q);
+				Json json;
+
+				// try
+				// {
 				json = jsonBuilder.newBuild();
 				jsonWriter.write(json);
 				formats.add(buffer.toString());
+				// }
+				// catch (Exception e)
+				// {
+				// formats.add(e.getMessage());
+				// }
+				buffer.reset();
 			}
-			catch (Exception e)
-			{
-				formats.add(e.getMessage());
-			}
-			buffer.reset();
-		}
-
-		try
-		{
-			jsonWriter.close();
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			throw e;
 		}
 		return formats.toArray(new String[0]);
 	}
@@ -77,18 +75,14 @@ public class MyQueryManager extends DriverQueryManager
 	public Query merge(Query... queries)
 	{
 		Query ret = new Query();
-		NodeChilds rootChilds;
-		{
-			Node root = new Node();
-			ret.setRoot(root);
-			rootChilds = root.getChilds();
-		}
-		
+		Node root = new Node();
+		ret.setRoot(root);
+
 		for (Query q : queries)
 		{
 			Node tmp = new Node(new Label("$or"));
-			tmp.getChilds().addAll(q.getRoot().getChilds());
-			rootChilds.add(tmp);
+			tmp.addChild(q.getRoot().getChilds().getChilds());
+			root.addChild(tmp);
 		}
 		return ret;
 	}

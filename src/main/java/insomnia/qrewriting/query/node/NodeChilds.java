@@ -3,7 +3,10 @@ package insomnia.qrewriting.query.node;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 import insomnia.qrewriting.query.Label;
 
@@ -13,41 +16,70 @@ import insomnia.qrewriting.query.Label;
  * @author zuri
  * 
  */
-public class NodeChilds extends ArrayList<Node> implements Cloneable
+public class NodeChilds implements Iterable<Node>, Cloneable
 {
-	private static final long serialVersionUID = 1L;
+	ArrayList<Node> childs;
 
-	public NodeChilds(int nb)
-	{
-		super(nb);
-	}
+	// public NodeChilds(int nb)
+	// {
+	// childs = new ArrayList<>(nb);
+	// }
 
-	public NodeChilds(NodeChilds childs)
+	public NodeChilds(NodeChilds childs, Node parent)
 	{
+		this.childs = new ArrayList<>(childs.childs.size());
+
 		for (Node tmp : childs)
 		{
-			add(new Node(tmp));
+			Node nn = new Node(tmp);
+			nn.setParent(parent);
+			this.childs.add(nn);
 		}
 	}
 
 	public NodeChilds()
 	{
-		super();
+		childs = new ArrayList<>();
 	}
 
-	public void deleteChild(int id)
+	// ============================================================
+	// PROTECTED
+
+	protected void setChildsParent(Node parent)
 	{
-		for (int i = 0; i < this.size(); i++)
+		for (Node n : this)
+			n.setParent(parent);
+	}
+
+	protected void deleteChild(int id)
+	{
+		final int size = size();
+
+		for (int i = 0; i < size; i++)
 		{
-			Node n = this.get(i);
+			Node n = childs.get(i);
 
 			if (n.getId() == id)
 			{
-				this.remove(i);
+				childs.remove(i);
 				return;
 			}
 		}
 	}
+
+	protected void add(Node... nodes)
+	{
+		for (Node n : nodes)
+			childs.add(n);
+	}
+
+	protected NodeChilds addMe(Node... nodes)
+	{
+		add(nodes);
+		return this;
+	}
+
+	// ============================================================
 
 	public Label[] getChildsLabel()
 	{
@@ -62,17 +94,18 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 
 	public Map<Label, Integer> getChildsLabelCount()
 	{
-		HashMap<Label,Integer> ret = new HashMap<>(this.size() * 2);
+		HashMap<Label, Integer> ret = new HashMap<>(this.size() * 2);
 
-		for (Node n : this)
+		for (Node n : childs)
 		{
 			Label l = n.getLabel();
-			
-			if(ret.containsKey(l))
+
+			if (ret.containsKey(l))
 			{
-				ret.put(l,ret.get(l) +1 );
+				ret.put(l, ret.get(l) + 1);
 			}
-			else {
+			else
+			{
 				ret.put(l, 1);
 			}
 		}
@@ -81,7 +114,7 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 
 	public Node[] getChilds()
 	{
-		return this.toArray(new Node[0]);
+		return childs.toArray(new Node[0]);
 	}
 
 	public ArrayList<Node> getMultipleChilds()
@@ -150,26 +183,29 @@ public class NodeChilds extends ArrayList<Node> implements Cloneable
 		{
 			Label cl = c.getLabel();
 
-			if (cl.equals(l))
+			if (cl == l || cl.equals(l))
 				return c;
 		}
 		return null;
 	}
 
-	public boolean add(Label l)
-	{
-		return add(new Node(l));
-	}
-
-	public boolean add(Label l, Node n)
-	{
-		n.setLabel(l);
-		return add(n);
-	}
+	// =======================================================
 
 	@Override
 	public NodeChilds clone()
 	{
-		return new NodeChilds(this);
+		throw new NotImplementedException(
+			this.getClass().getName() + ":clone()");
+	}
+
+	public int size()
+	{
+		return childs.size();
+	}
+
+	@Override
+	public Iterator<Node> iterator()
+	{
+		return childs.iterator();
 	}
 }

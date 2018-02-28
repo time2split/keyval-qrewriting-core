@@ -19,7 +19,6 @@ import insomnia.qrewriting.query.Label;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.QueryBuilderException;
 import insomnia.qrewriting.query.node.Node;
-import insomnia.qrewriting.query.node.NodeChilds;
 import insomnia.qrewriting.query.node.NodeValueExists;
 import insomnia.qrewriting.query.node.NodeValueLiteral;
 import insomnia.qrewriting.query.node.NodeValueNumber;
@@ -74,14 +73,13 @@ public class MyQueryBuilder extends DriverQueryBuilder
 
 		HashMap<String, Element> objects = ((ElementObject) jsonE).getObject();
 		int nbOfElements = objects.size();
-		NodeChilds childs = node.getChilds();
 
 		for (Entry<String, Element> entry : objects.entrySet())
 		{
 			String key = entry.getKey();
 			Element val = entry.getValue();
 			Node newNode = new Node();
-			
+
 			newNode.setId(nodeId++);
 
 			switch (key)
@@ -132,7 +130,8 @@ public class MyQueryBuilder extends DriverQueryBuilder
 				}
 			}
 			}
-			childs.add(new Label(key), newNode);
+			newNode.setLabel(new Label(key));
+			node.addChild(newNode);
 		}
 	}
 }

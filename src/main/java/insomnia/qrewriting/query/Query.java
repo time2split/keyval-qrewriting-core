@@ -1,7 +1,5 @@
 package insomnia.qrewriting.query;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 import insomnia.qrewriting.query.node.Node;
@@ -59,68 +57,45 @@ public class Query implements Cloneable
 		return "Query(" + root + ")";
 	}
 
+	// =========================================================================
+
+	/**
+	 * @see Node#isUnfolded()
+	 */
 	public boolean isUnfolded()
 	{
-		for (Node n : getNodes())
-		{
-			if (n.getLabel().size() > 1)
-				return false;
-		}
-		return true;
+		return root.isUnfolded();
 	}
 
 	/**
-	 * 
-	 * @return Toutes les clés de la requête (labels)
+	 * @see Node#getAllKeys()
 	 */
 	public Set<String> getAllKeys()
 	{
-		Set<String> ret = new HashSet<>();
-
-		for (Node n : getNodes())
-		{
-			Label l = n.getLabel();
-
-			if (l != null)
-			{
-				for (String k : l)
-					ret.add(k);
-			}
-		}
-		return ret;
+		return root.getAllKeys();
 	}
 
 	/**
-	 * 
-	 * @return Tous les noeuds sauf la racine
+	 * @see Node#getNodes()
 	 */
-	public ArrayList<Node> getNodes()
+	public Node[] getNodes()
 	{
-		ArrayList<Node> ret = new ArrayList<>();
-		s_getNodes(ret, root);
-		ret.remove(root);
-		return ret;
+		return root.getNodes();
 	}
 
 	/**
-	 * 
-	 * @return Le noeud dont l'identifiant est $id
+	 * @see Node#getNode(int)
 	 */
 	public Node getNode(int id)
 	{
-		for (Node n : getNodes())
-		{
-			if (n.getId() == id)
-				return n;
-		}
-		return null;
+		return root.getNode(id);
 	}
 
-	private void s_getNodes(ArrayList<Node> ret, Node n)
+	/**
+	 * Retourne le nombre de noeuds de la requête
+	 */
+	public int getNbNodes()
 	{
-		ret.add(n);
-
-		for (Node c : n.getChilds().getChilds())
-			s_getNodes(ret, c);
+		return root.getNbOfDescendant();
 	}
 }

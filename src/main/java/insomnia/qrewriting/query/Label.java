@@ -17,6 +17,16 @@ public class Label extends ArrayList<String>
 		add(l);
 	}
 
+	public Label(Label label)
+	{
+		addAll(label);
+	}
+
+	public Label()
+	{
+		this("");
+	}
+
 	public String[] getLabels()
 	{
 		return this.toArray(new String[0]);
@@ -67,5 +77,11 @@ public class Label extends ArrayList<String>
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public Label clone()
+	{
+		return new Label(this);
 	}
 }
