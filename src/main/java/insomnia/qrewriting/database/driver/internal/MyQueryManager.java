@@ -1,11 +1,12 @@
 package insomnia.qrewriting.database.driver.internal;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.Collection;
 
-import insomnia.json.Json;
+import org.apache.commons.io.output.WriterOutputStream;
+
 import insomnia.json.JsonWriter;
 import insomnia.qrewriting.database.driver.DriverQueryManager;
 import insomnia.qrewriting.query.Label;
@@ -31,10 +32,9 @@ public class MyQueryManager extends DriverQueryManager
 	}
 
 	@Override
-	public String[] getStrFormat(Query... queries) throws Exception
+	public void writeStrFormat(Writer writer, Query query) throws Exception
 	{
-		ArrayList<String> formats = new ArrayList<>(queries.length);
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		OutputStream buffer = new WriterOutputStream(writer,Charset.defaultCharset());
 
 		try (JsonWriter jsonWriter = new JsonWriter(buffer);)
 		{
@@ -45,29 +45,13 @@ public class MyQueryManager extends DriverQueryManager
 						.getOption("json.prettyPrint", "false").equals("false");
 				jsonWriter.getOptions().setCompact(compactPrint);
 			}
-			for (Query q : queries)
-			{
-				jsonBuilder.setQuery(q);
-				Json json;
-
-				// try
-				// {
-				json = jsonBuilder.newBuild();
-				jsonWriter.write(json);
-				formats.add(buffer.toString());
-				// }
-				// catch (Exception e)
-				// {
-				// formats.add(e.getMessage());
-				// }
-				buffer.reset();
-			}
+				jsonBuilder.setQuery(query);
+				jsonWriter.write(jsonBuilder.newBuild());
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			throw e;
 		}
-		return formats.toArray(new String[0]);
 	}
 
 	@Override

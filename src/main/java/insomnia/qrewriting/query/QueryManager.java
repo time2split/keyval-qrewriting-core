@@ -1,8 +1,10 @@
 package insomnia.qrewriting.query;
 
-import java.util.ArrayList;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collection;
+
+import org.apache.commons.io.output.StringBuilderWriter;
 
 /**
  * Gestion de requêtes
@@ -43,11 +45,52 @@ public abstract class QueryManager
 		return queries;
 	}
 
-	abstract public String[] getStrFormat(Query... queries) throws Exception;
+	private int getWriterCapacity(Query q, int nb)
+	{
+		return 512 * q.getNbNodes() * nb;
+	}
+
+	protected String getStrFormat(Query query, StringBuilderWriter writer)
+			throws Exception
+	{
+		writeStrFormat(writer, query);
+		return writer.getBuilder().toString();
+	}
+
+	public String getStrFormat(Query query) throws Exception
+	{
+		StringBuilderWriter writer = new StringBuilderWriter(
+			getWriterCapacity(query, 1));
+		return getStrFormat(query, writer);
+	}
+
+	public String[] getStrFormat(Query... queries) throws Exception
+	{
+		String[] ret = new String[queries.length];
+		StringBuilderWriter writer = new StringBuilderWriter(
+			getWriterCapacity(queries[0], queries.length));
+		int i = 0;
+
+		for (Query q : queries)
+		{
+			ret[i] = getStrFormat(q, writer);
+			writer.getBuilder().setLength(0);
+		}
+		return ret;
+	}
 
 	public String[] getStrFormat() throws Exception
 	{
 		return getStrFormat(queries);
+	}
+
+	abstract public void writeStrFormat(Writer writer, Query query)
+			throws Exception;
+
+	public void writeStrFormat(Writer writer, Query... queries) throws Exception
+	{
+		for (Query q : queries)
+			writeStrFormat(writer, q);
 	}
 
 	/**
@@ -95,10 +138,10 @@ public abstract class QueryManager
 
 	public Query[] mergeBySizeOfQueries(int sizeofQueries, Query... queries)
 	{
-		ArrayList<Query> ret = new ArrayList<>(
-			(sizeofQueries / queries.length) + 1);
+		Query[] ret = new Query[(sizeofQueries / queries.length) + 1];
 
 		final int c = queries.length;
+		int reti = 0;
 
 		for (int i = 0; i != c;)
 		{
@@ -109,10 +152,10 @@ public abstract class QueryManager
 			else
 				size = sizeofQueries;
 
-			ret.add(merge(Arrays.copyOfRange(queries, i, i + size)));
+			ret[reti++] = merge(Arrays.copyOfRange(queries, i, i + size));
 			i += size;
 		}
-		return ret.toArray(new Query[0]);
+		return ret;
 	}
 
 	public Query[] mergeByNumberOfQueries(int nbofQueries)
