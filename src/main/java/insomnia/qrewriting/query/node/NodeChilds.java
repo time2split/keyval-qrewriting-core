@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import insomnia.qrewriting.query.Label;
 
 /**
@@ -16,25 +14,26 @@ import insomnia.qrewriting.query.Label;
  * @author zuri
  * 
  */
-public class NodeChilds implements Iterable<Node>, Cloneable
+public class NodeChilds implements Iterable<Node>
 {
 	ArrayList<Node> childs;
 
-	// public NodeChilds(int nb)
-	// {
-	// childs = new ArrayList<>(nb);
-	// }
-
-	public NodeChilds(NodeChilds childs, Node parent)
+	protected NodeChilds(int nb)
 	{
-		this.childs = new ArrayList<>(childs.childs.size());
+		childs = new ArrayList<>(nb);
+	}
+
+	public NodeChilds copy(Node parent)
+	{
+		NodeChilds ret = new NodeChilds(childs.size());
 
 		for (Node tmp : childs)
 		{
 			Node nn = new Node(tmp);
 			nn.setParent(parent);
-			this.childs.add(nn);
+			ret.childs.add(nn);
 		}
+		return ret;
 	}
 
 	public NodeChilds()
@@ -51,21 +50,21 @@ public class NodeChilds implements Iterable<Node>, Cloneable
 			n.setParent(parent);
 	}
 
-	protected void deleteChild(int id)
-	{
-		final int size = size();
-
-		for (int i = 0; i < size; i++)
-		{
-			Node n = childs.get(i);
-
-			if (n.getId() == id)
-			{
-				childs.remove(i);
-				return;
-			}
-		}
-	}
+	// protected void deleteChild(int id)
+	// {
+	// final int size = size();
+	//
+	// for (int i = 0; i < size; i++)
+	// {
+	// Node n = childs.get(i);
+	//
+	// if (n.getId() == id)
+	// {
+	// childs.remove(i);
+	// return;
+	// }
+	// }
+	// }
 
 	protected void add(Node... nodes)
 	{
@@ -190,13 +189,6 @@ public class NodeChilds implements Iterable<Node>, Cloneable
 	}
 
 	// =======================================================
-
-	@Override
-	public NodeChilds clone()
-	{
-		throw new NotImplementedException(
-			this.getClass().getName() + ":clone()");
-	}
 
 	public int size()
 	{

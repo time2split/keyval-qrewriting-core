@@ -53,12 +53,12 @@ public class QPUSimple extends QPU
 	public ArrayList<Query> process()
 	{
 		ArrayList<Query> ret = new ArrayList<>(codes.length);
-		int nbNodes = query.getNbNodes() + 1;
+		int nbNodes = query.getNbOfDescendants() + 1;
 		int nbCodePos = nbNodes - 1;
 
 		for (Code code : codes)
 		{
-			Query q = query.clone();
+			Query q = new Query(query);
 			ret.add(q);
 
 			for (int pos = 0; pos < nbCodePos; pos++)

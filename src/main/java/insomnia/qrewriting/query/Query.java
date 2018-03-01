@@ -1,107 +1,124 @@
 package insomnia.qrewriting.query;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.List;
 
 import insomnia.qrewriting.query.node.Node;
 
 /**
- * Une requête
+ * Noeud représentant une requête Ce noeud à la particularité de définir un
+ * nouvel objet NodeInfos et de se baser sur celui-ci pour ces calculs
  * 
  * @author zuri
  * 
  */
-public class Query implements Cloneable
+public class Query extends Node
 {
-	private Node root;
+
+	private void initInfos()
+	{
+		infos = new QueryInfos();
+		setLabel((Label) null);
+		setInfos(infos);
+		infos.setQuery(this);
+	}
 
 	public Query()
 	{
-
+		super();
+		initInfos();
 	}
 
-	/**
-	 * Constructeur par copie
-	 * 
-	 * @param q
-	 */
 	public Query(Query q)
 	{
-		if (q.root != null)
-			setRoot(q.root.clone());
+		super(q);
+		infos = q.infos.clone();
+		s_getNodes(infos.nodes, q);
+		infos.nodes.remove(0);
 	}
-
-	public Query(Node root)
-	{
-		setRoot(root);
-	}
+	
+	// =========================================================================
+	
+	
+	
+	// =========================================================================
 
 	@Override
-	public Query clone()
+	public Query addChildMe(Collection<Node> childs)
 	{
-		return new Query(this);
-	}
-
-	public void setRoot(Node r)
-	{
-		root = r;
-	}
-
-	public Query setRootMe(Node r)
-	{
-		setRoot(r);
+		super.addChild(childs);
 		return this;
 	}
 
-	public Node getRoot()
+	@Override
+	public Query addChildMe(Node... childs)
 	{
-		return root;
+		super.addChild(childs);
+		return this;
 	}
+
+	@Override
+	public Query newChildMe()
+	{
+		return addChildMe(new Node());
+	}
+
+	public Query copy(Query q)
+	{
+		Query ret = new Query();
+		infos = new QueryInfos(q.infos);
+		ret.setInfos(infos);
+		ret.infos.setQuery(this);
+		return ret;
+	}
+
+//	@Override
+//	public Query clone()
+//	{
+//		return new Query(this);
+//	}
 
 	@Override
 	public String toString()
 	{
-		return "Query(" + root + ")";
+		return "Query[" + getNbOfDescendants() + "](" + super.childsToString()
+				+ ")";
 	}
 
 	// =========================================================================
 
 	/**
-	 * @see Node#isUnfolded()
+	 * Retourne tout les noeuds enfants de query
 	 */
-	public boolean isUnfolded()
+	@Override
+	public Node[] getDescendants()
 	{
-		return root.isUnfolded();
+		List<Node> nodes = infos.nodes;
+//		System.out.println(nodes.size() + " " + getNbOfDescendants());
+//		System.out.println(this + "\n");
+
+		assert nodes
+				.size() == getNbOfDescendants() : "infos.nodes must have the same number of childs as Query ("
+						+ nodes.size() + "," + getNbOfDescendants() + ")";
+
+		return nodes.toArray(new Node[getNbOfDescendants()]);
 	}
 
-	/**
-	 * @see Node#getAllKeys()
-	 */
-	public Set<String> getAllKeys()
+	@Override
+	public Node[] getPaths()
 	{
-		return root.getAllKeys();
+		if (infos.paths == null)
+			infos.paths = super.getPaths();
+
+		return infos.paths;
 	}
 
-	/**
-	 * @see Node#getNodes()
-	 */
-	public Node[] getNodes()
+	@Override
+	public Node[] getTrees()
 	{
-		return root.getDescendants();
-	}
+		if (infos.trees == null)
+			infos.trees = super.getTrees();
 
-	/**
-	 * @see Node#getNode(int)
-	 */
-	public Node getNode(int id)
-	{
-		return root.getNode(id);
-	}
-
-	/**
-	 * Retourne le nombre de noeuds de la requête
-	 */
-	public int getNbNodes()
-	{
-		return root.getNbOfDescendants();
+		return infos.trees;
 	}
 }

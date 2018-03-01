@@ -43,12 +43,11 @@ public class MyQueryBuilder extends DriverQueryBuilder
 				throw new Exception(
 					"The base document of a query must be an object");
 
-			makeTheQuery(root, doc.getDocument());
-			getQuery().setRoot(root);
+			makeTheQuery(getQuery(), doc.getDocument());
 		}
 		catch (Exception e)
 		{
-			throw new QueryBuilderException(e.getMessage());
+			throw new QueryBuilderException(e);
 		}
 	}
 

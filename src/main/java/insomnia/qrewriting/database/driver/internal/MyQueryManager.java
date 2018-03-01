@@ -58,14 +58,12 @@ public class MyQueryManager extends DriverQueryManager
 	public Query merge(Query... queries)
 	{
 		Query ret = new Query();
-		Node root = new Node();
-		ret.setRoot(root);
 
 		for (Query q : queries)
 		{
 			Node tmp = new Node().setLabelMe(new Label("$or"));
-			tmp.addChild(q.getRoot().getChilds().getChilds());
-			root.addChild(tmp);
+			tmp.addChild(q.getChilds().getChilds());
+			q.addChild(tmp);
 		}
 		return ret;
 	}

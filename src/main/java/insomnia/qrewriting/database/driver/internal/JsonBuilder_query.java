@@ -51,13 +51,12 @@ public class JsonBuilder_query extends JsonBuilder
 	public void build() throws JsonBuilderException
 	{
 		Json json = getJson();
-		Node queryRoot = query.getRoot();
 
-		if (queryRoot.isLeaf())
+		if (query.isLeaf())
 		{
 			throw new JsonBuilderException("Bad query structure for " + query);
 		}
-		json.setDocument(makeJson(queryRoot));
+		json.setDocument(makeJson(query));
 	}
 
 	private Element makeJson(Node node) throws JsonBuilderException
@@ -113,7 +112,7 @@ public class JsonBuilder_query extends JsonBuilder
 				}
 				else
 				{
-					throw new JsonBuilderException("Cannot make value " + vcur);
+					throw new JsonBuilderException("Cannot make value " + vcur + " of " + ncur);
 				}
 			}
 			else

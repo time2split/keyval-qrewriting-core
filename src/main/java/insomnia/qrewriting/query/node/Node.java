@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import insomnia.qrewriting.query.Label;
+import insomnia.qrewriting.query.QueryInfos;
 
 /**
  * Noeud d'une requête
@@ -18,23 +19,27 @@ import insomnia.qrewriting.query.Label;
  * @author zuri
  * 
  */
-public class Node implements Iterable<Node>, Cloneable
+public class Node implements Iterable<Node>
 {
-	private Node		parent;
-	private Label		label;
-	private NodeChilds	childs;
-	private NodeValue	value;
-	private int			id				= 0;
-	private boolean		isPath			= true;
+	private Node			parent;
+	private Label			label;
+	private NodeChilds		childs;
+	private NodeValue		value;
+	private int				id				= -1;
+	private boolean			isPath			= true;
 
-	private int			nbOfDescendants	= 0;
-	private int			nbOfParents		= 0;
+	private int				nbOfDescendants	= 0;
+	private int				nbOfParents		= 0;
+
+	protected QueryInfos	infos;
 
 	public Node()
 	{
 		childs = new NodeChilds();
 		setLabel(new Label());
 	}
+
+	// =======================================================
 
 	/**
 	 * Constructeur par copie
@@ -43,11 +48,22 @@ public class Node implements Iterable<Node>, Cloneable
 	 */
 	public Node(Node n)
 	{
-		setLabel(new Label(n.label));
-		setId(n.id);
-		childs = new NodeChilds(n.childs, this);
+		if (n.label != null)
+			setLabel(new Label(n.label));
+
+		id = n.id;
+		childs = n.childs.copy(this);
+		// Node[] newChilds = new Node[childs.size()];
+		// int i = 0;
+		//
+		// for(Node child : childs)
+		// newChilds[i] = child.clone();
+		//
+		// addChild(newChilds);
+
 		isPath = n.isPath;
 		nbOfDescendants = n.nbOfDescendants;
+		nbOfParents = n.nbOfParents;
 
 		if (n.value != null)
 			setValue(n.value.clone());
@@ -132,6 +148,30 @@ public class Node implements Iterable<Node>, Cloneable
 
 	// =======================================================
 
+	public void setInfos(QueryInfos i)
+	{
+		infos = i;
+	}
+
+	public Node setInfosMe(QueryInfos i)
+	{
+		setInfos(i);
+		return this;
+	}
+
+	public QueryInfos setInfosHim(QueryInfos i)
+	{
+		setInfos(i);
+		return infos;
+	}
+
+	public QueryInfos getInfos()
+	{
+		return infos;
+	}
+
+	// =======================================================
+
 	public NodeChilds getChilds()
 	{
 		return childs;
@@ -189,7 +229,7 @@ public class Node implements Iterable<Node>, Cloneable
 
 	// =======================================================
 
-	public Node[] getLeafs()
+	public Node[] getLeaves()
 	{
 		ArrayList<Node> ret = new ArrayList<>();
 
@@ -247,7 +287,7 @@ public class Node implements Iterable<Node>, Cloneable
 	 * @param ret
 	 * @param n
 	 */
-	public Node[] getPaths(boolean ignoreRoot)
+	private Node[] getPaths(boolean ignoreRoot)
 	{
 		ArrayList<Node> ret = new ArrayList<>();
 		s_getPaths(this, ret, ignoreRoot);
@@ -260,14 +300,24 @@ public class Node implements Iterable<Node>, Cloneable
 	 * @param ret
 	 * @param n
 	 */
-	public Node[] getTrees(boolean ignoreRoot)
+	private Node[] getTrees(boolean ignoreRoot)
 	{
 		ArrayList<Node> ret = new ArrayList<>();
 		s_getTrees(this, ret, ignoreRoot);
 		return ret.toArray(new Node[0]);
 	}
 
-	private void s_getPaths(Node node, ArrayList<Node> ret, boolean ignoreRoot)
+	public Node[] getTrees()
+	{
+		return getTrees(true);
+	}
+
+	public Node[] getPaths()
+	{
+		return getPaths(true);
+	}
+
+	protected void s_getPaths(Node node, ArrayList<Node> ret, boolean ignoreRoot)
 	{
 		if (node.isPath && !(ignoreRoot && node.parent == null))
 		{
@@ -279,7 +329,7 @@ public class Node implements Iterable<Node>, Cloneable
 			s_getPaths(child, ret, ignoreRoot);
 	}
 
-	private void s_getTrees(Node node, ArrayList<Node> ret, boolean ignoreRoot)
+	protected void s_getTrees(Node node, ArrayList<Node> ret, boolean ignoreRoot)
 	{
 		if (!node.isPath && !(ignoreRoot && node.parent == null))
 			ret.add(node);
@@ -289,7 +339,7 @@ public class Node implements Iterable<Node>, Cloneable
 	}
 
 	/**
-	 * @return Tous les descendants
+	 * @return Tous les descendants, noeud this inclus
 	 */
 	public Node[] getDescendants()
 	{
@@ -299,7 +349,7 @@ public class Node implements Iterable<Node>, Cloneable
 		return ret.toArray(new Node[0]);
 	}
 
-	private void s_getNodes(ArrayList<Node> ret, Node n)
+	protected void s_getNodes(ArrayList<Node> ret, Node n)
 	{
 		ret.add(n);
 
@@ -334,6 +384,7 @@ public class Node implements Iterable<Node>, Cloneable
 			for (Node child : childs)
 			{
 				this.childs.add(child);
+				child.setInfos(infos);
 				child.setParent(this);
 				tmpNbOfDesc += 1 + child.nbOfDescendants;
 
@@ -344,6 +395,11 @@ public class Node implements Iterable<Node>, Cloneable
 					child.deepPropagation(n -> n.nbOfParents++);
 			}
 			moreNbOfDesc = tmpNbOfDesc;
+		}
+
+		if (infos != null)
+		{
+			infos.addNode(childs);
 		}
 
 		if (isPath)
@@ -404,6 +460,7 @@ public class Node implements Iterable<Node>, Cloneable
 		return addChildHim(new Node());
 	}
 
+	// =======================================================
 	/**
 	 * Applique une méthode depuis le noeud courant exclu jusqu'aux feuilles
 	 */
@@ -468,35 +525,74 @@ public class Node implements Iterable<Node>, Cloneable
 	@Override
 	public String toString()
 	{
-		boolean doonce = false;
-		String ret = "" + label + "(" + id + ":p" + nbOfParents + ":d"
-				+ nbOfDescendants + ":P" + isPath + ")";
+		String ret = "<" + id + label + "[p" + nbOfParents + ":d"
+				+ nbOfDescendants + ":c" + getNbOfChilds() + ":P" + isPath
+				+ "]";
 
 		if (value != null)
-			ret += "(=" + value + ")";
+			ret += "=" + value;
 
-		ret += " => {";
+		ret += id + ">";
+
+		if (!isLeaf())
+			ret += " => " + childsToString();
+
+		return ret;
+	}
+
+	public String childsToString()
+	{
+		StringBuilder ret = new StringBuilder();
+		boolean doonce = false;
+
+		ret.append("{" + id + " ");
 
 		for (Node c : childs.getChilds())
 		{
 			if (doonce)
-				ret += ", ";
+				ret.append(", ");
 
-			ret += c;
+			ret.append(c);
 			doonce = true;
 		}
-		return ret + "}";
+		return ret + " " + id + "}";
 	}
 
-	@Override
-	public Node clone()
-	{
-		return new Node(this);
-	}
+	// @Override
+	// public Node clone()
+	// {
+	// return new Node(this);
+	// }
 
 	@Override
 	public Iterator<Node> iterator()
 	{
 		return getChilds().iterator();
+	}
+
+	/**
+	 * La comparaison se fait sur le hashcode
+	 * 
+	 * @see #hashCode()
+	 */
+	@Override
+	public boolean equals(Object e)
+	{
+		if (e instanceof Node)
+		{
+			return ((Node) e).hashCode() == hashCode();
+		}
+		return false;
+	}
+
+	/**
+	 * Le code est fonction de l'id du noeud et de sa requête d'appartenance Il
+	 * faut faire attention à bien comparer des noeuds déjà présents dans une
+	 * requête
+	 */
+	@Override
+	public int hashCode()
+	{
+		return id;
 	}
 }

@@ -4,7 +4,12 @@ import insomnia.builder.BuilderException;
 
 public class QueryBuilderException extends BuilderException
 {
-	private static final long	serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
+
+	public QueryBuilderException(Exception e)
+	{
+		super(e);
+	}
 
 	public QueryBuilderException(String m)
 	{

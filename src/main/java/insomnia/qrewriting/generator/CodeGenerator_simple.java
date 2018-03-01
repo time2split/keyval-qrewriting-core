@@ -27,7 +27,7 @@ public class CodeGenerator_simple extends CodeGenerator
 		if (!q.isUnfolded())
 			throw new CodeGeneratorException("La requête doit être dépliée");
 
-		for (Node n : q.getNodes())
+		for (Node n : q.getDescendants())
 		{
 			String k = n.getLabel().get();
 			RuleManager rapplicables = rm.getApplicables(k);
