@@ -25,6 +25,11 @@ abstract public class NodeValue implements Cloneable
 		return false;
 	}
 
+	public boolean isArray()
+	{
+		return false;
+	}
+
 	@Override
 	public String toString()
 	{

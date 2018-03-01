@@ -1,6 +1,5 @@
 package insomnia.qrewriting.database.driver.internal;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import insomnia.json.Element;
@@ -18,6 +17,7 @@ import insomnia.qrewriting.query.node.Node;
 import insomnia.qrewriting.query.node.NodeChilds;
 import insomnia.qrewriting.query.node.NodeValue;
 import insomnia.qrewriting.query.node.NodeValueExists;
+import insomnia.qrewriting.query.node.NodeValueFantom;
 import insomnia.qrewriting.query.node.NodeValueLiteral;
 import insomnia.qrewriting.query.node.NodeValueNumber;
 import insomnia.qrewriting.query.node.NodeValueString;
@@ -51,30 +51,37 @@ public class JsonBuilder_query extends JsonBuilder
 	public void build() throws JsonBuilderException
 	{
 		Json json = getJson();
-		ElementObject root = new ElementObject();
-		json.setDocument(root);
 		Node queryRoot = query.getRoot();
 
 		if (queryRoot.isLeaf())
 		{
 			throw new JsonBuilderException("Bad query structure for " + query);
 		}
-		makeJson(root, queryRoot);
+		json.setDocument(makeJson(queryRoot));
 	}
 
-	private void makeJson(ElementObject jsonObject, Node n)
-			throws JsonBuilderException
+	private Element makeJson(Node node) throws JsonBuilderException
 	{
-		HashMap<String, Element> jsonObjects = jsonObject.getObject();
-
-		NodeChilds childs = n.getChilds();
+		Element ret;
 		Element newVal;
+		NodeChilds childs = node.getChilds();
 
 		Map<Label, Integer> labelCount = childs.getChildsLabelCount();
-		HashMap<Label, ElementArray> labelElementArray = new HashMap<>(
-			childs.size());
 
-		for (Node ncur : childs)
+		// On vérifie les labels vides
+		if (labelCount.get(new Label("")) != null)
+		{
+			boolean haveOthers = labelCount.size() > 1;
+
+			if (haveOthers)
+				throw new JsonBuilderException("Bad structure of " + node);
+
+			ret = new ElementArray();
+		}
+		else
+			ret = new ElementObject();
+
+		for (Node ncur : node)
 		{
 			NodeValue vcur = ncur.getValue();
 			Label lcur = ncur.getLabel();
@@ -100,36 +107,24 @@ public class JsonBuilder_query extends JsonBuilder
 				{
 					newVal = new ElementLiteral(ElementLiteral.Literal.TRUE);
 				}
+				else if (vcur instanceof NodeValueFantom)
+				{
+					newVal = null;
+				}
 				else
 				{
 					throw new JsonBuilderException("Cannot make value " + vcur);
 				}
 			}
-			else if (labelCount.get(lcur) == 1)
-			{
-				newVal = new ElementObject();
-				makeJson((ElementObject) newVal, ncur);
-			}
-			// > 1
 			else
 			{
-				ElementArray earray = labelElementArray.get(lcur);
-
-				if (earray == null)
-				{
-					earray = new ElementArray();
-					labelElementArray.put(lcur, earray);
-					jsonObjects.put(lcur.get(), earray);
-				}
-				newVal = new ElementObject();
-				earray.getArray().add(newVal);
-				makeJson((ElementObject) newVal, ncur);
-				newVal = null;
+				newVal = makeJson(ncur);
 			}
 
 			if (newVal != null)
-				jsonObjects.put(lcur.get(), newVal);
+				ret.add(newVal, lcur.get());
 		}
+		return ret;
 	}
 
 	@Override

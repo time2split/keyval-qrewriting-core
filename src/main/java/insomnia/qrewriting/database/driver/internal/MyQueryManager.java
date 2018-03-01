@@ -47,7 +47,6 @@ public class MyQueryManager extends DriverQueryManager
 			}
 			for (Query q : queries)
 			{
-				System.out.println(q);
 				jsonBuilder.setQuery(q);
 				Json json;
 
@@ -80,7 +79,7 @@ public class MyQueryManager extends DriverQueryManager
 
 		for (Query q : queries)
 		{
-			Node tmp = new Node(new Label("$or"));
+			Node tmp = new Node().setLabelMe(new Label("$or"));
 			tmp.addChild(q.getRoot().getChilds().getChilds());
 			root.addChild(tmp);
 		}

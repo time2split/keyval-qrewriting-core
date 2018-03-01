@@ -14,7 +14,8 @@ public class MyNodeOperation extends Node
 
 	public MyNodeOperation(Operation op)
 	{
-		super(new Label(op.toString()));
+		super();
+		setLabel(new Label(op.toString()));
 		setOperation(op);
 	}
 

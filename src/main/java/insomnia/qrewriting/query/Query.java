@@ -46,6 +46,12 @@ public class Query implements Cloneable
 		root = r;
 	}
 
+	public Query setRootMe(Node r)
+	{
+		setRoot(r);
+		return this;
+	}
+
 	public Node getRoot()
 	{
 		return root;
@@ -80,7 +86,7 @@ public class Query implements Cloneable
 	 */
 	public Node[] getNodes()
 	{
-		return root.getNodes();
+		return root.getDescendants();
 	}
 
 	/**
@@ -96,6 +102,6 @@ public class Query implements Cloneable
 	 */
 	public int getNbNodes()
 	{
-		return root.getNbOfDescendant();
+		return root.getNbOfDescendants();
 	}
 }
