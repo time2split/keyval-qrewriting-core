@@ -26,7 +26,7 @@ import insomnia.qrewriting.query.node.NodeValueString;
 
 public class MyQueryBuilder extends DriverQueryBuilder
 {
-	private int nodeId = 0;
+//	private int nodeId = 0;
 
 	@Override
 	public void build() throws QueryBuilderException
@@ -36,8 +36,6 @@ public class MyQueryBuilder extends DriverQueryBuilder
 		try (JsonReader jsonReader = new JsonReader(IOUtils.toString(r));)
 		{
 			Json doc = jsonReader.read();
-			Node root = new Node();
-			root.setId(nodeId++);
 
 			if (!doc.getDocument().isObject())
 				throw new Exception(
@@ -79,7 +77,7 @@ public class MyQueryBuilder extends DriverQueryBuilder
 			Element val = entry.getValue();
 			Node newNode = new Node();
 
-			newNode.setId(nodeId++);
+//			newNode.setId(nodeId++);
 
 			switch (key)
 			{

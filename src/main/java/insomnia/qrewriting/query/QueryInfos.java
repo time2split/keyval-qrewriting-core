@@ -14,6 +14,7 @@ public class QueryInfos implements Cloneable
 	ArrayList<Node>	nodes	= new ArrayList<>(100);
 	Node[]			trees;
 	Node[]			paths;
+	int				nextId	= 0;
 
 	public QueryInfos()
 	{
@@ -32,10 +33,15 @@ public class QueryInfos implements Cloneable
 		query = q;
 	}
 
-	public Query getQuery()
+	public int nextId()
 	{
-		return query;
+		return nextId++;
 	}
+
+	// public Query getQuery()
+	// {
+	// return query;
+	// }
 
 	// ==========================================================
 
@@ -50,9 +56,13 @@ public class QueryInfos implements Cloneable
 		trees = null;
 		paths = null;
 		nodes.add(n);
-
+		n.setId(nextId());
+		
 		for (Node desc : n.getDescendants())
+		{
 			nodes.add(desc);
+			desc.setId(nextId());
+		}
 	}
 
 	// public List<Node> getNodes()

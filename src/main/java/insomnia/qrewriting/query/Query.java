@@ -27,6 +27,7 @@ public class Query extends Node
 	{
 		super();
 		initInfos();
+		setId(infos.nextId());
 	}
 
 	public Query(Query q)

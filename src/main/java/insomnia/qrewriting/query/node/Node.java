@@ -3,10 +3,8 @@ package insomnia.qrewriting.query.node;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -135,11 +133,11 @@ public class Node implements Iterable<Node>
 		id = i;
 	}
 
-	public Node setIdMe(int i)
-	{
-		setId(i);
-		return this;
-	}
+	// public Node setIdMe(int i)
+	// {
+	// setId(i);
+	// return this;
+	// }
 
 	public int getId()
 	{
@@ -244,25 +242,25 @@ public class Node implements Iterable<Node>
 	/**
 	 * @return Toutes les clés à partir du noeud
 	 */
-	public Set<String> getAllKeys()
-	{
-		Set<String> ret = new HashSet<>();
-
-		for (Node n : getDescendants())
-		{
-			Label l = n.getLabel();
-
-			if (l != null)
-			{
-				for (String k : l)
-					ret.add(k);
-			}
-		}
-		return ret;
-	}
+	// public Set<String> getAllKeys()
+	// {
+	// Set<String> ret = new HashSet<>();
+	//
+	// for (Node n : getDescendants())
+	// {
+	// Label l = n.getLabel();
+	//
+	// if (l != null)
+	// {
+	// for (String k : l)
+	// ret.add(k);
+	// }
+	// }
+	// return ret;
+	// }
 
 	/**
-	 * Récupère toutes les parents de chemins
+	 * Récupère tous les parents du noeud
 	 * 
 	 * @param ret
 	 * @param n
@@ -397,7 +395,7 @@ public class Node implements Iterable<Node>
 			moreNbOfDesc = tmpNbOfDesc;
 		}
 
-		if (infos != null)
+		 if (infos != null)
 		{
 			infos.addNode(childs);
 		}
