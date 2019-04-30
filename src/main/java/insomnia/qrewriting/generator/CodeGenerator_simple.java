@@ -3,7 +3,7 @@ package insomnia.qrewriting.generator;
 import java.util.Collection;
 import java.util.Set;
 
-import insomnia.qrewriting.code.Context;
+import insomnia.qrewriting.code.CodeContext;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.node.Node;
 import insomnia.qrewriting.query.node.NodeValue;
@@ -43,7 +43,7 @@ public class CodeGenerator_simple extends CodeGenerator
 				rapplicables = rm.getApplicablesOnlyRAll(k);
 			}
 			Set<String> applicables = rapplicables.getAllHypothesisWith(k);
-			Context c = new Context(k, (Collection<String>) applicables);
+			CodeContext c = new CodeContext(k, (Collection<String>) applicables);
 			encoding.add(new NodeContext(n, c));
 		}
 	}

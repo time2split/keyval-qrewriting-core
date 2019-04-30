@@ -36,7 +36,7 @@ public class Encoding extends ArrayList<NodeContext>
 
 		for (int i = 0; i < size; i++)
 		{
-			Context c = this.get(i).getContext();
+			CodeContext c = this.get(i).getContext();
 			final int nbStates = c.size() - 1;
 			
 			if(nbStates > 0)
@@ -63,7 +63,7 @@ public class Encoding extends ArrayList<NodeContext>
 		for (int i = size - 1; i >= 0; i--)
 		{
 			NodeContext nc = this.get(i);
-			Context ctx = nc.getContext();
+			CodeContext ctx = nc.getContext();
 			final int base = ctx.size();
 			rest = num % base;
 			num /= base;

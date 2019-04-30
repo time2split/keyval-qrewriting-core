@@ -1,6 +1,6 @@
 package insomnia.qrewriting.generator;
 
-import insomnia.qrewriting.code.Context;
+import insomnia.qrewriting.code.CodeContext;
 import insomnia.qrewriting.query.node.Node;
 
 /**
@@ -12,9 +12,9 @@ import insomnia.qrewriting.query.node.Node;
 public class NodeContext
 {
 	private Node	n;
-	private Context	c;
+	private CodeContext	c;
 
-	public NodeContext(Node nn, Context cc)
+	public NodeContext(Node nn, CodeContext cc)
 	{
 		n = nn;
 		c = cc;
@@ -25,7 +25,7 @@ public class NodeContext
 		return n;
 	}
 
-	public Context getContext()
+	public CodeContext getContext()
 	{
 		return c;
 	}

@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import insomnia.numeric.Interval;
 import insomnia.qrewriting.code.Code;
-import insomnia.qrewriting.code.Context;
+import insomnia.qrewriting.code.CodeContext;
 import insomnia.qrewriting.code.Encoding;
 import insomnia.qrewriting.generator.NodeContext;
 import insomnia.qrewriting.query.Label;
@@ -21,9 +21,9 @@ import insomnia.qrewriting.query.node.Node;
 public class QPUSimple extends QPU
 {
 
-	Query		query;
-	Code[]		codes;
-	Encoding	encoding;
+	Query    query;
+	Code[]   codes;
+	Encoding encoding;
 
 	public QPUSimple(Query q, Encoding e)
 	{
@@ -32,9 +32,9 @@ public class QPUSimple extends QPU
 
 	public QPUSimple(Query q, Interval i, Encoding e)
 	{
-		query = q;
+		query    = q;
 		encoding = e;
-		codes = encoding.generateAllCodes(i);
+		codes    = encoding.generateAllCodes(i);
 	}
 
 	public QPUSimple(Query q, Collection<Code> codesset, Encoding e)
@@ -44,17 +44,17 @@ public class QPUSimple extends QPU
 
 	public QPUSimple(Query q, Code[] c, Encoding e)
 	{
-		query = q;
-		codes = c;
+		query    = q;
+		codes    = c;
 		encoding = e;
 	}
 
 	@Override
 	public ArrayList<Query> process()
 	{
-		ArrayList<Query> ret = new ArrayList<>(codes.length);
-		int nbNodes = query.getNbOfDescendants() + 1;
-		int nbCodePos = nbNodes - 1;
+		ArrayList<Query> ret       = new ArrayList<>(codes.length);
+		int              nbNodes   = query.getNbOfDescendants() + 1;
+		int              nbCodePos = nbNodes - 1;
 
 		for (Code code : codes)
 		{
@@ -63,11 +63,11 @@ public class QPUSimple extends QPU
 
 			for (int pos = 0; pos < nbCodePos; pos++)
 			{
-				NodeContext nc = encoding.get(pos);
-				Node qRefNode = nc.getNode();
-				int id = qRefNode.getId();
+				NodeContext nc       = encoding.get(pos);
+				Node        qRefNode = nc.getNode();
+				int         id       = qRefNode.getId();
 
-				Context ctx = nc.getContext();
+				CodeContext ctx = nc.getContext();
 
 				Node myNode = q.getNode(id);
 
