@@ -7,22 +7,21 @@ import insomnia.qrewriting.query.node.Node;
  * Association d'un noeud à son contexte de codage
  * 
  * @author zuri
- * 
  */
 public class NodeContext
 {
-	private Node	n;
-	private CodeContext	c;
+	private int         nodeId;
+	private CodeContext c;
 
 	public NodeContext(Node nn, CodeContext cc)
 	{
-		n = nn;
-		c = cc;
+		nodeId = nn.getId();
+		c      = cc;
 	}
 
-	public Node getNode()
+	public int getNodeId()
 	{
-		return n;
+		return nodeId;
 	}
 
 	public CodeContext getContext()
@@ -33,6 +32,6 @@ public class NodeContext
 	@Override
 	public String toString()
 	{
-		return "(" + n + "" + c + ")";
+		return this.getClass().getSimpleName() + "(" + nodeId + ":" + c + ")";
 	}
 }
