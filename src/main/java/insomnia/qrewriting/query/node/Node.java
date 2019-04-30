@@ -15,26 +15,30 @@ import insomnia.qrewriting.query.QueryInfos;
  * Noeud d'une requête
  * 
  * @author zuri
- * 
  */
 public class Node implements Iterable<Node>
 {
-	private Node			parent;
-	private Label			label;
-	private NodeChilds		childs;
-	private NodeValue		value;
-	private int				id				= -1;
-	private boolean			isPath			= true;
+	private Node       parent;
+	private Label      label;
+	private NodeChilds childs;
+	private NodeValue  value;
+	private int        id     = -1;
+	private boolean    isPath = true;
 
-	private int				nbOfDescendants	= 0;
-	private int				nbOfParents		= 0;
+	private int nbOfDescendants = 0;
+	private int nbOfParents     = 0;
 
-	protected QueryInfos	infos;
+	protected QueryInfos infos;
+
+	public Node(Label label)
+	{
+		childs = new NodeChilds();
+		setLabel(label);
+	}
 
 	public Node()
 	{
 		childs = new NodeChilds();
-		setLabel(new Label());
 	}
 
 	// =======================================================
@@ -47,9 +51,9 @@ public class Node implements Iterable<Node>
 	public Node(Node n)
 	{
 		if (n.label != null)
-			setLabel(new Label(n.label));
+			setLabel(n.label);
 
-		id = n.id;
+		id     = n.id;
 		childs = n.childs.copy(this);
 		// Node[] newChilds = new Node[childs.size()];
 		// int i = 0;
@@ -59,9 +63,9 @@ public class Node implements Iterable<Node>
 		//
 		// addChild(newChilds);
 
-		isPath = n.isPath;
+		isPath          = n.isPath;
 		nbOfDescendants = n.nbOfDescendants;
-		nbOfParents = n.nbOfParents;
+		nbOfParents     = n.nbOfParents;
 
 		if (n.value != null)
 			setValue(n.value.clone());
@@ -88,17 +92,6 @@ public class Node implements Iterable<Node>
 	public void setLabel(Label l)
 	{
 		label = l;
-	}
-
-	public Node setLabelMe(String l)
-	{
-		setLabel(l);
-		return this;
-	}
-
-	public void setLabel(String l)
-	{
-		label = new Label(l);
 	}
 
 	public Node setLabelMe(Label l)
@@ -268,7 +261,7 @@ public class Node implements Iterable<Node>
 	public Node[] getParents()
 	{
 		ArrayList<Node> ret = new ArrayList<>();
-		Node n = this.getParent();
+		Node            n   = this.getParent();
 
 		while (n != null)
 		{
@@ -372,7 +365,7 @@ public class Node implements Iterable<Node>
 
 	public void addChild(Node... childs)
 	{
-		final int moreNbOfDesc;
+		final int     moreNbOfDesc;
 		final boolean nisPath = isPath;
 
 		// Calcul du nombre de descendants à ajouter
@@ -395,7 +388,7 @@ public class Node implements Iterable<Node>
 			moreNbOfDesc = tmpNbOfDesc;
 		}
 
-		 if (infos != null)
+		if (infos != null)
 		{
 			infos.addNode(childs);
 		}
@@ -416,8 +409,7 @@ public class Node implements Iterable<Node>
 			}
 		}
 		// Mise à jour des noeuds parents
-		backPropagation(n ->
-		{
+		backPropagation(n -> {
 			n.nbOfDescendants += moreNbOfDesc;
 
 			if (nisPath && !isPath)
@@ -482,8 +474,7 @@ public class Node implements Iterable<Node>
 		{
 			method.accept(n);
 			n = n.getParent();
-		}
-		while (n != null);
+		} while (n != null);
 	}
 
 	/**
@@ -494,7 +485,7 @@ public class Node implements Iterable<Node>
 	public <T> List<T> backCollect(Function<Node, T> collect, boolean reverse, boolean jumpRoot)
 	{
 		ArrayList<T> ret = new ArrayList<>();
-		Node n = this;
+		Node         n   = this;
 
 		do
 		{
@@ -503,8 +494,7 @@ public class Node implements Iterable<Node>
 
 			ret.add(collect.apply(n));
 			n = n.getParent();
-		}
-		while (n != null);
+		} while (n != null);
 
 		if (reverse && ret.size() > 1)
 			Collections.reverse(ret);
@@ -523,9 +513,7 @@ public class Node implements Iterable<Node>
 	@Override
 	public String toString()
 	{
-		String ret = "<" + id + label + "[p" + nbOfParents + ":d"
-				+ nbOfDescendants + ":c" + getNbOfChilds() + ":P" + isPath
-				+ "]";
+		String ret = "<" + id + ":" + label + "[p" + nbOfParents + ":d" + nbOfDescendants + ":c" + getNbOfChilds() + ":P" + isPath + "]";
 
 		if (value != null)
 			ret += "=" + value;
@@ -540,8 +528,8 @@ public class Node implements Iterable<Node>
 
 	public String childsToString()
 	{
-		StringBuilder ret = new StringBuilder();
-		boolean doonce = false;
+		StringBuilder ret    = new StringBuilder();
+		boolean       doonce = false;
 
 		ret.append("{" + id + " ");
 
