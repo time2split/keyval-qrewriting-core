@@ -44,7 +44,8 @@ public class Node implements Iterable<Node>
 	// =======================================================
 
 	/**
-	 * Constructeur par copie
+	 * Constructeur par copie.
+	 * Ne modifie pas (QueryInfos)$infos.
 	 * 
 	 * @param n
 	 */
@@ -543,12 +544,6 @@ public class Node implements Iterable<Node>
 		}
 		return ret + " " + id + "}";
 	}
-
-	// @Override
-	// public Node clone()
-	// {
-	// return new Node(this);
-	// }
 
 	@Override
 	public Iterator<Node> iterator()

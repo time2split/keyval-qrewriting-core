@@ -1,29 +1,30 @@
 package insomnia.qrewriting.query;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import insomnia.qrewriting.query.node.Node;
 
-public class QueryInfos implements Cloneable
+public class QueryInfos
 {
-	protected Query	query;
+	private Query query;
 
 	/**
 	 * Tous les noeuds de la requête
 	 */
-	ArrayList<Node>	nodes	= new ArrayList<>(100);
-	Node[]			trees;
-	Node[]			paths;
-	int				nextId	= 0;
+	List<Node> nodes;
+	int nextId;
 
 	public QueryInfos()
 	{
-
+		nodes  = new ArrayList<>();
+		nextId = 0;
 	}
 
 	public QueryInfos(QueryInfos infos)
 	{
-
+		this();
+		nextId = infos.nextId;
 	}
 
 	// ==========================================================
@@ -38,10 +39,10 @@ public class QueryInfos implements Cloneable
 		return nextId++;
 	}
 
-	// public Query getQuery()
-	// {
-	// return query;
-	// }
+	public Query getQuery()
+	{
+		return query;
+	}
 
 	// ==========================================================
 
@@ -53,22 +54,35 @@ public class QueryInfos implements Cloneable
 
 	public void addNode(Node n)
 	{
-		trees = null;
-		paths = null;
+		addNode(n, true);
+	}
+
+	public void addNode(Node n, boolean changeId)
+	{
 		nodes.add(n);
-		n.setId(nextId());
-		
+
+		if (changeId)
+			n.setId(nextId());
+
 		for (Node desc : n.getDescendants())
 		{
 			nodes.add(desc);
-			desc.setId(nextId());
+
+			if (changeId)
+				desc.setId(nextId());
 		}
 	}
 
-	// public List<Node> getNodes()
-	// {
-	// return nodes;
-	// }
+	public List<Node> getNodes()
+	{
+		return nodes;
+	}
+
+	public void addQuery(Query q)
+	{
+		addNode(q, false);
+		nodes.remove(0);
+	}
 
 	// public Node[] getTrees()
 	// {
@@ -85,12 +99,4 @@ public class QueryInfos implements Cloneable
 	//
 	// return Arrays.copyOf(paths,paths.length);
 	// }
-
-	// ==========================================================
-
-	@Override
-	public QueryInfos clone()
-	{
-		return new QueryInfos((QueryInfos) this);
-	}
 }

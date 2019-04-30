@@ -44,27 +44,27 @@ public class NodeChilds implements Iterable<Node>
 	// ============================================================
 	// PROTECTED
 
-	protected void setChildsParent(Node parent)
-	{
-		for (Node n : this)
-			n.setParent(parent);
-	}
+//	protected void setChildsParent(Node parent)
+//	{
+//		for (Node n : this)
+//			n.setParent(parent);
+//	}
 
-	// protected void deleteChild(int id)
-	// {
-	// final int size = size();
-	//
-	// for (int i = 0; i < size; i++)
-	// {
-	// Node n = childs.get(i);
-	//
-	// if (n.getId() == id)
-	// {
-	// childs.remove(i);
-	// return;
-	// }
-	// }
-	// }
+//	protected void deleteChild(int id)
+//	{
+//		final int size = size();
+//
+//		for (int i = 0; i < size; i++)
+//		{
+//			Node n = childs.get(i);
+//
+//			if (n.getId() == id)
+//			{
+//				childs.remove(i);
+//				return;
+//			}
+//		}
+//	}
 
 	protected void add(Node... nodes)
 	{
