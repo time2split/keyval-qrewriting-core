@@ -7,34 +7,33 @@ import java.util.Collection;
  * Contexte de codage
  * 
  * @author zuri
- * 
  */
-public class Context
+public class CodeContext
 {
 	private String[] replacements;
 
-	public Context(String k)
+	public CodeContext(String k)
 	{
-		replacements = new String[1];
+		replacements    = new String[1];
 		replacements[0] = k;
 	}
-	
+
 	/**
 	 * Met replacements[0] à k
 	 */
 	private void setCodeNull(String k)
 	{
 		int i = getCodeState(k);
-		
-		if(i < 0)
+
+		if (i < 0)
 			return;
-		
+
 		String tmp = replacements[0];
 		replacements[i] = tmp;
 		replacements[0] = k;
 	}
 
-	public Context(String k, Collection<String> e)
+	public CodeContext(String k, Collection<String> e)
 	{
 		replacements = new String[e.size()];
 		e.toArray(replacements);
@@ -53,7 +52,6 @@ public class Context
 	}
 
 	/**
-	 * 
 	 * @param k
 	 * @return l'index ou une valeur négative si rien n'est trouvé
 	 */
