@@ -1,87 +1,26 @@
 package insomnia.qrewriting.query;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 /**
- * Clé d'un arc d'une requête
+ * Interface représentant un ensemble de labels d'un arc d'une requête.
  * 
  * @author zuri
- * 
  */
-public class Label extends ArrayList<String>
+public interface Label extends Collection<String>
 {
-	private static final long serialVersionUID = 1L;
-
-	public Label(String l)
+	public default String[] getLabels()
 	{
-		add(l);
+		return toArray(new String[0]);
 	}
 
-	public Label(Label label)
-	{
-		addAll(label);
-	}
-
-	public Label()
-	{
-		this("");
-	}
-
-	public String[] getLabels()
-	{
-		return this.toArray(new String[0]);
-	}
-
-	@Override
-	public String toString()
-	{
-		return super.toString();
-	}
-
-	public String get()
+	public default String get()
 	{
 		return get(0);
 	}
 
-	@Override
-	public int hashCode()
+	public default String get(int i)
 	{
-		int ret = 0;
-		for (String tmp : this)
-		{
-			ret += tmp.hashCode();
-		}
-		return ret;
-	}
-
-	@Override
-	public boolean equals(Object o)
-	{
-		if (o instanceof Label)
-		{
-			return equals2(this, (Label) o);
-		}
-		return false;
-	}
-
-	private boolean equals2(Label a, Label b)
-	{
-		if (a.size() != b.size())
-			return false;
-
-		final int c = a.size();
-
-		for (int i = 0; i < c; i++)
-		{
-			if (!a.get(i).equals(b.get(i)))
-				return false;
-		}
-		return true;
-	}
-
-	@Override
-	public Label clone()
-	{
-		return new Label(this);
+		return getLabels()[i];
 	}
 }
