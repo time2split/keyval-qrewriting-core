@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 
 import insomnia.builder.BuilderException;
+import insomnia.qrewriting.context.Context;
+import insomnia.qrewriting.query.LabelFactory;
 import insomnia.qrewriting.rule.Rule;
 import insomnia.qrewriting.rule.RuleAll;
 import insomnia.qrewriting.rule.RuleExists;
@@ -22,25 +24,23 @@ import insomnia.reader.TextReader;
  * espaces en début et fin de lignes sont ignorés.
  * 
  * @author zuri
- * 
  */
 public class RuleManagerBuilder_text extends RuleManagerBuilder
 {
-	private TextReader	reader;
-	private int			iline	= 0;
+	private TextReader reader;
+	private int        iline = 0;
 
-	public RuleManagerBuilder_text()
+	public RuleManagerBuilder_text(Context context)
 	{
-		super(new RuleManager());
+		super(context, new RuleManager());
 	}
 
-	public RuleManagerBuilder_text(RuleManager rman)
+	public RuleManagerBuilder_text(Context context, RuleManager rman)
 	{
-		super(rman);
+		super(context, rman);
 	}
 
-	public RuleManagerBuilder_text addLines(BufferedReader reader)
-			throws RuleManagerBuilderException
+	public RuleManagerBuilder_text addLines(BufferedReader reader) throws RuleManagerBuilderException
 	{
 		try
 		{
@@ -52,31 +52,28 @@ public class RuleManagerBuilder_text extends RuleManagerBuilder
 		}
 	}
 
-	public RuleManagerBuilder_text addLines(List<String> lines)
-			throws RuleManagerBuilderException
+	public RuleManagerBuilder_text addLines(List<String> lines) throws RuleManagerBuilderException
 	{
 		for (String line : lines)
 			addLine(line);
 		return this;
 	}
 
-	public RuleManagerBuilder_text addLines(String[] lines)
-			throws RuleManagerBuilderException
+	public RuleManagerBuilder_text addLines(String[] lines) throws RuleManagerBuilderException
 	{
 		for (String line : lines)
 			addLine(line);
 		return this;
 	}
 
-	RuleManagerBuilder_text addLine(String line)
-			throws RuleManagerBuilderException
+	RuleManagerBuilder_text addLine(String line) throws RuleManagerBuilderException
 	{
 		if (line.isEmpty() || line.charAt(0) == '#')
 			return this;
 
-		boolean rexists = line.charAt(0) == '?';
-		final RuleManager rm = getRuleManager();
-
+		boolean            rexists      = line.charAt(0) == '?';
+		final RuleManager  rm           = getRuleManager();
+		final LabelFactory labelFactory = getContext().getLabelFactory();
 		if (rexists)
 			line = line.substring(1).trim();
 
@@ -84,13 +81,12 @@ public class RuleManagerBuilder_text extends RuleManagerBuilder
 		String[] words = line.split("[\\s]+");
 
 		if (words.length != 2)
-			throw new RuleManagerBuilderException(
-				"'" + reader.getSource().toString() + "' ligne " + iline
-						+ " la règle doit contenir 2 éléments : " + words.length
-						+ " trouvés");
+			throw new RuleManagerBuilderException("'" + reader.getSource().toString() + "' ligne " + iline + " la règle doit contenir 2 éléments : " + words.length + " trouvés");
 
-		Rule r = rexists ? new RuleExists(words[0], words[1])
-				: new RuleAll(words[0], words[1]);
+		Rule r = rexists //
+			? new RuleExists(labelFactory.from(words[0]), labelFactory.from(words[1])) //
+			: new RuleAll(labelFactory.from(words[0]), labelFactory.from(words[1])) //
+		;
 		rm.add(r);
 		return this;
 	}

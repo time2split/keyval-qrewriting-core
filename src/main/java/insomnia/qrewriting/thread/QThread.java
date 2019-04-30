@@ -10,6 +10,8 @@ import insomnia.builder.BuilderException;
 import insomnia.numeric.Interval;
 import insomnia.qrewriting.code.Code;
 import insomnia.qrewriting.code.Encoding;
+import insomnia.qrewriting.context.Context;
+import insomnia.qrewriting.context.HasContext;
 import insomnia.qrewriting.qpu.QPUSimple;
 import insomnia.qrewriting.query.Query;
 
@@ -18,18 +20,19 @@ import insomnia.qrewriting.query.Query;
  * directs)
  * 
  * @author zuri
- * 
  */
-public class QThread implements Callable<ArrayList<QThreadResult>>
+public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 {
-	private Code[]				codes;
-	private Interval			interval;
-	private Query				query;
-	private Encoding			encoding;
-	private BuilderDataFactory	builderDataFactory;
+	private Context            context;
+	private Code[]             codes;
+	private Interval           interval;
+	private Query              query;
+	private Encoding           encoding;
+	private BuilderDataFactory builderDataFactory;
 
-	public QThread(Query q, Interval i, Encoding e)
+	public QThread(Context context, Query q, Interval i, Encoding e)
 	{
+		setContext(context);
 		setQuery(q);
 		setCodes(i);
 		setEncoding(e);
@@ -45,6 +48,18 @@ public class QThread implements Callable<ArrayList<QThreadResult>>
 		encoding = e;
 	}
 
+	@Override
+	public void setContext(Context context)
+	{
+		this.context = context;
+	}
+
+	@Override
+	public Context getContext()
+	{
+		return context;
+	}
+
 	public void setQuery(Query q)
 	{
 		query = q;
@@ -53,13 +68,13 @@ public class QThread implements Callable<ArrayList<QThreadResult>>
 	public void setCodes(Collection<Code> c)
 	{
 		interval = null;
-		codes = c.toArray(new Code[0]);
+		codes    = c.toArray(new Code[0]);
 	}
 
 	public void setCodes(Interval i)
 	{
 		interval = i;
-		codes = null;
+		codes    = null;
 	}
 
 	private void s_computeCodes()
@@ -81,9 +96,8 @@ public class QThread implements Callable<ArrayList<QThreadResult>>
 		// System.out.println(Thread.currentThread().getName() + " : " +
 		// interval);
 		s_computeCodes();
-		ArrayList<Query> qpuRes = new QPUSimple(query, codes, encoding)
-				.process();
-		ArrayList<QThreadResult> ret = new ArrayList<>(qpuRes.size());
+		ArrayList<Query>         qpuRes = new QPUSimple(context, query, codes, encoding).process();
+		ArrayList<QThreadResult> ret    = new ArrayList<>(qpuRes.size());
 
 		if (builderDataFactory == null)
 		{

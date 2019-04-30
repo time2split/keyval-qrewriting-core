@@ -2,21 +2,26 @@ package insomnia.qrewriting.rule;
 
 import insomnia.builder.Builder;
 import insomnia.builder.BuilderException;
+import insomnia.qrewriting.context.Context;
+import insomnia.qrewriting.context.HasContext;
 
 /**
  * Constructeur de RuleManager
  * 
  * @author zuri
- * 
  */
-abstract public class RuleManagerBuilder extends Builder
+abstract public class RuleManagerBuilder extends Builder implements HasContext
 {
-	public RuleManagerBuilder()
+	private Context context;
+
+	public RuleManagerBuilder(Context context)
 	{
+		setContext(context);
 	}
 
-	public RuleManagerBuilder(RuleManager rman)
+	public RuleManagerBuilder(Context context, RuleManager rman)
 	{
+		setContext(context);
 		setRuleManager(rman);
 	}
 
@@ -28,6 +33,18 @@ abstract public class RuleManagerBuilder extends Builder
 	public void setRuleManager(RuleManager rman)
 	{
 		setBuilded(rman);
+	}
+
+	@Override
+	public void setContext(Context context)
+	{
+		this.context = context;
+	}
+
+	@Override
+	public Context getContext()
+	{
+		return context;
 	}
 
 	// @Override

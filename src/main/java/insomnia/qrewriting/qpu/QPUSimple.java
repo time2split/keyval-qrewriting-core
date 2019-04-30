@@ -7,8 +7,9 @@ import insomnia.numeric.Interval;
 import insomnia.qrewriting.code.Code;
 import insomnia.qrewriting.code.CodeContext;
 import insomnia.qrewriting.code.Encoding;
+import insomnia.qrewriting.context.Context;
+import insomnia.qrewriting.context.HasContext;
 import insomnia.qrewriting.generator.NodeContext;
-import insomnia.qrewriting.query.Label;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.node.Node;
 
@@ -16,37 +17,50 @@ import insomnia.qrewriting.query.node.Node;
  * Implémentation d'un qpu avec algo simple
  * 
  * @author zuri
- * 
  */
-public class QPUSimple extends QPU
+public class QPUSimple extends QPU implements HasContext
 {
-
+	Context  context;
 	Query    query;
 	Code[]   codes;
 	Encoding encoding;
 
-	public QPUSimple(Query q, Encoding e)
+	public QPUSimple(Context context, Query q, Encoding e)
 	{
-		this(q, e.generateAllCodes(), e);
+		this(context, q, e.generateAllCodes(), e);
 	}
 
-	public QPUSimple(Query q, Interval i, Encoding e)
+	public QPUSimple(Context context, Query q, Interval i, Encoding e)
 	{
 		query    = q;
 		encoding = e;
 		codes    = encoding.generateAllCodes(i);
+		setContext(context);
 	}
 
-	public QPUSimple(Query q, Collection<Code> codesset, Encoding e)
-	{
-		this(q, codesset.toArray(new Code[0]), e);
-	}
-
-	public QPUSimple(Query q, Code[] c, Encoding e)
+	public QPUSimple(Context context, Query q, Code[] c, Encoding e)
 	{
 		query    = q;
 		codes    = c;
 		encoding = e;
+		setContext(context);
+	}
+
+	public QPUSimple(Context context, Query q, Collection<Code> codesset, Encoding e)
+	{
+		this(context, q, codesset.toArray(new Code[0]), e);
+	}
+
+	@Override
+	public void setContext(Context context)
+	{
+		this.context = context;
+	}
+
+	@Override
+	public Context getContext()
+	{
+		return context;
 	}
 
 	@Override
@@ -71,7 +85,7 @@ public class QPUSimple extends QPU
 
 				Node myNode = q.getNode(id);
 
-				myNode.setLabel(new Label(ctx.getK(code.getCode(pos))));
+				myNode.setLabel(context.getLabelFactory().from(ctx.getK(code.getCode(pos))));
 			}
 		}
 		return ret;
