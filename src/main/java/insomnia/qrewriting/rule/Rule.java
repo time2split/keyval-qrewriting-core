@@ -10,10 +10,10 @@ import insomnia.qrewriting.query.Label;
 public abstract class Rule
 {
 	// Seul le premier élément de Label sera utilisé (utile pour le futur ?)
-	protected Label	h;
-	protected Label	c;
+	protected Label h;
+	protected Label c;
 
-	public Rule(String hh, String cc)
+	public Rule(Label hh, Label cc)
 	{
 		setHypothesis(hh);
 		setConclusion(cc);
@@ -27,16 +27,6 @@ public abstract class Rule
 	public void setConclusion(Label cc)
 	{
 		c = cc;
-	}
-
-	public void setHypothesis(String hh)
-	{
-		h = new Label(hh);
-	}
-
-	public void setConclusion(String cc)
-	{
-		c = new Label(cc);
 	}
 
 	public String getHypothesis()

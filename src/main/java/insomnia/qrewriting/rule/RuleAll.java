@@ -1,5 +1,7 @@
 package insomnia.qrewriting.rule;
 
+import insomnia.qrewriting.query.Label;
+
 /**
  * forall-rules
  * 
@@ -8,7 +10,7 @@ package insomnia.qrewriting.rule;
  */
 public class RuleAll extends Rule
 {
-	public RuleAll(String hh, String cc)
+	public RuleAll(Label hh, Label cc)
 	{
 		super(hh, cc);
 	}
