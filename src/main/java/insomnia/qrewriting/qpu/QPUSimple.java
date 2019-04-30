@@ -77,9 +77,8 @@ public class QPUSimple extends QPU implements HasContext
 
 			for (int pos = 0; pos < nbCodePos; pos++)
 			{
-				NodeContext nc       = encoding.get(pos);
-				Node        qRefNode = nc.getNode();
-				int         id       = qRefNode.getId();
+				NodeContext nc = encoding.get(pos);
+				int         id = nc.getNodeId();
 
 				CodeContext ctx = nc.getContext();
 
