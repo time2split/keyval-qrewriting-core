@@ -2,16 +2,19 @@ package insomnia.qrewriting.database;
 
 import java.util.Properties;
 
+import insomnia.qrewriting.context.Context;
+import insomnia.qrewriting.context.HasContext;
 import insomnia.qrewriting.database.driver.DriverQueryBuilder;
 import insomnia.qrewriting.database.driver.DriverQueryManager;
 
-public abstract class Driver
+public abstract class Driver implements HasContext
 {
+	private Context    context;
 	private Properties options;
 
-	public void load() throws Exception
+	public void load(Context context) throws Exception
 	{
-
+		this.context = context;
 	}
 
 	public void unload() throws Exception
@@ -19,25 +22,31 @@ public abstract class Driver
 
 	}
 
-	public abstract Class<? extends DriverQueryBuilder> getQueryBuilderClass();
-
-	public abstract Class<? extends DriverQueryManager> getQueryManagerClass();
-
-	public DriverQueryBuilder getAQueryBuilder(Object... params)
-			throws Exception
+	@Override
+	public Context getContext()
 	{
-		DriverQueryBuilder ret = getQueryBuilderClass().getConstructor()
-				.newInstance(this, params);
-		ret.setDriver(this);
+		return context;
+	}
+
+	@Override
+	public void setContext(Context context)
+	{
+		this.context = context;
+	}
+
+	protected abstract Class<? extends DriverQueryBuilder> getQueryBuilderClass();
+
+	protected abstract Class<? extends DriverQueryManager> getQueryManagerClass();
+
+	public DriverQueryBuilder getAQueryBuilder() throws Exception
+	{
+		DriverQueryBuilder ret = getQueryBuilderClass().getConstructor(Driver.class).newInstance(this);
 		return ret;
 	}
 
-	public DriverQueryManager getAQueryManager(Object... params)
-			throws Exception
+	public DriverQueryManager getAQueryManager() throws Exception
 	{
-		DriverQueryManager ret = getQueryManagerClass().getConstructor()
-				.newInstance(params);
-		ret.setDriver(this);
+		DriverQueryManager ret = getQueryManagerClass().getConstructor(Driver.class).newInstance(this);
 		return ret;
 	}
 

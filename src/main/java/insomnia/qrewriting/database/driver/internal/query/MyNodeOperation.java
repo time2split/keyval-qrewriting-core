@@ -1,6 +1,6 @@
 package insomnia.qrewriting.database.driver.internal.query;
 
-import insomnia.qrewriting.query.Label;
+import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.query.node.Node;
 
 public class MyNodeOperation extends Node
@@ -12,10 +12,10 @@ public class MyNodeOperation extends Node
 
 	Operation operation;
 
-	public MyNodeOperation(Operation op)
+	public MyNodeOperation(Context context, Operation op)
 	{
 		super();
-		setLabel(new Label(op.toString()));
+		setLabel(context.getLabelFactory().from(op.toString()));
 		setOperation(op);
 	}
 

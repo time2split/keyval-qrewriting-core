@@ -14,8 +14,8 @@ import insomnia.json.ElementObject;
 import insomnia.json.ElementString;
 import insomnia.json.Json;
 import insomnia.json.JsonReader;
+import insomnia.qrewriting.database.Driver;
 import insomnia.qrewriting.database.driver.DriverQueryBuilder;
-import insomnia.qrewriting.query.Label;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.QueryBuilderException;
 import insomnia.qrewriting.query.node.Node;
@@ -26,7 +26,10 @@ import insomnia.qrewriting.query.node.NodeValueString;
 
 public class MyQueryBuilder extends DriverQueryBuilder
 {
-//	private int nodeId = 0;
+	public MyQueryBuilder(Driver driver)
+	{
+		super(driver);
+	}
 
 	@Override
 	public void build() throws QueryBuilderException
@@ -38,8 +41,7 @@ public class MyQueryBuilder extends DriverQueryBuilder
 			Json doc = jsonReader.read();
 
 			if (!doc.getDocument().isObject())
-				throw new Exception(
-					"The base document of a query must be an object");
+				throw new Exception("The base document of a query must be an object");
 
 			makeTheQuery(getQuery(), doc.getDocument());
 		}
@@ -68,14 +70,14 @@ public class MyQueryBuilder extends DriverQueryBuilder
 	private void makeTheQuery(Node node, Element jsonE) throws Exception
 	{
 
-		HashMap<String, Element> objects = ((ElementObject) jsonE).getObject();
-		int nbOfElements = objects.size();
+		HashMap<String, Element> objects      = ((ElementObject) jsonE).getObject();
+		int                      nbOfElements = objects.size();
 
 		for (Entry<String, Element> entry : objects.entrySet())
 		{
-			String key = entry.getKey();
-			Element val = entry.getValue();
-			Node newNode = new Node();
+			String  key     = entry.getKey();
+			Element val     = entry.getValue();
+			Node    newNode = new Node();
 
 //			newNode.setId(nodeId++);
 
@@ -88,8 +90,7 @@ public class MyQueryBuilder extends DriverQueryBuilder
 					Literal sval = ((ElementLiteral) val).getLiteral();
 
 					if (sval != Literal.TRUE)
-						throw new Exception(
-							"$exists operator must be a true literal");
+						throw new Exception("$exists operator must be a true literal");
 				}
 
 				if (nbOfElements > 1)
@@ -107,27 +108,23 @@ public class MyQueryBuilder extends DriverQueryBuilder
 				}
 				else if (val.isLiteral())
 				{
-					newNode.setValue(new NodeValueLiteral(
-						((ElementLiteral) val).getLiteral().toString()));
+					newNode.setValue(new NodeValueLiteral(((ElementLiteral) val).getLiteral().toString()));
 				}
 				else if (val.isNumber())
 				{
-					newNode.setValue(
-						new NodeValueNumber(((ElementNumber) val).getNumber()));
+					newNode.setValue(new NodeValueNumber(((ElementNumber) val).getNumber()));
 				}
 				else if (val.isString())
 				{
-					newNode.setValue(
-						new NodeValueString(((ElementString) val).getString()));
+					newNode.setValue(new NodeValueString(((ElementString) val).getString()));
 				}
 				else
 				{
-					throw new Exception(
-						"Internal QueryBuilder cannot take the val " + val);
+					throw new Exception("Internal QueryBuilder cannot take the val " + val);
 				}
 			}
 			}
-			newNode.setLabel(new Label(key));
+			newNode.setLabel(getDriver().getContext().getLabelFactory().from(key));
 			node.addChild(newNode);
 		}
 	}

@@ -11,6 +11,7 @@ import insomnia.json.ElementString;
 import insomnia.json.Json;
 import insomnia.json.JsonBuilder;
 import insomnia.json.JsonBuilderException;
+import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.query.Label;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.node.Node;
@@ -24,27 +25,37 @@ import insomnia.qrewriting.query.node.NodeValueString;
 
 public class JsonBuilder_query extends JsonBuilder
 {
-	Query query;
+	Context context;
+	Query   query;
 
-	public JsonBuilder_query()
+	public JsonBuilder_query(Context context)
 	{
 		super();
+		setContext(context);
 	}
 
-	public JsonBuilder_query(Json j)
+	public JsonBuilder_query(Context context, Json j)
 	{
 		super(j);
+		setContext(context);
 	}
 
-	public JsonBuilder_query(Json j, Query q)
+	public JsonBuilder_query(Context context, Json j, Query q)
 	{
 		super(j);
+		setContext(context);
 		setQuery(q);
+		setJson(j);
 	}
 
-	public void setQuery(Query q)
+	public void setQuery(Query query)
 	{
-		query = q;
+		this.query = query;
+	}
+
+	private void setContext(Context context)
+	{
+		this.context = context;
 	}
 
 	@Override
@@ -61,14 +72,14 @@ public class JsonBuilder_query extends JsonBuilder
 
 	private Element makeJson(Node node) throws JsonBuilderException
 	{
-		Element ret;
-		Element newVal;
+		Element    ret;
+		Element    newVal;
 		NodeChilds childs = node.getChilds();
 
 		Map<Label, Integer> labelCount = childs.getChildsLabelCount();
 
 		// On vérifie les labels vides
-		if (labelCount.get(new Label("")) != null)
+		if (labelCount.get(context.getLabelFactory().emptyLabel()) != null)
 		{
 			boolean haveOthers = labelCount.size() > 1;
 
@@ -83,24 +94,21 @@ public class JsonBuilder_query extends JsonBuilder
 		for (Node ncur : node)
 		{
 			NodeValue vcur = ncur.getValue();
-			Label lcur = ncur.getLabel();
+			Label     lcur = ncur.getLabel();
 
 			if (ncur.isLeaf())
 			{
 				if (vcur instanceof NodeValueNumber)
 				{
-					newVal = new ElementNumber(
-						((NodeValueNumber) vcur).getNumber());
+					newVal = new ElementNumber(((NodeValueNumber) vcur).getNumber());
 				}
 				else if (vcur instanceof NodeValueString)
 				{
-					newVal = new ElementString(
-						((NodeValueString) vcur).getString());
+					newVal = new ElementString(((NodeValueString) vcur).getString());
 				}
 				else if (vcur instanceof NodeValueLiteral)
 				{
-					newVal = new ElementLiteral(
-						((NodeValueLiteral) vcur).getLiteral());
+					newVal = new ElementLiteral(((NodeValueLiteral) vcur).getLiteral());
 				}
 				else if (vcur instanceof NodeValueExists)
 				{

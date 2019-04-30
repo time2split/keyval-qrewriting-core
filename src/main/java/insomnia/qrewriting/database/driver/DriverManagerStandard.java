@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.database.Driver;
 
 public class DriverManagerStandard extends DriverManager
@@ -30,8 +31,8 @@ public class DriverManagerStandard extends DriverManager
 	/**
 	 * {@inheritDoc}
 	 */
-	// @Override
-	public Driver getDriver(String driverName, Properties options)
+	 @Override
+	public Driver getDriver(String driverName, Properties options, Context context)
 			throws Exception
 	{
 		Class<Driver> cls = driverClasses.get(driverName);
@@ -39,7 +40,7 @@ public class DriverManagerStandard extends DriverManager
 		if (cls != null)
 		{
 			Driver driver = cls.newInstance();
-			driver.load();
+			driver.load(context);
 			return driver;
 		}
 		return null;
