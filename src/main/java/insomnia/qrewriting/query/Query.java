@@ -1,7 +1,6 @@
 package insomnia.qrewriting.query;
 
 import java.util.Collection;
-import java.util.List;
 
 import insomnia.qrewriting.query.node.Node;
 
@@ -10,7 +9,6 @@ import insomnia.qrewriting.query.node.Node;
  * nouvel objet NodeInfos et de se baser sur celui-ci pour ces calculs
  * 
  * @author zuri
- * 
  */
 public class Query extends Node
 {
@@ -37,11 +35,7 @@ public class Query extends Node
 		s_getNodes(infos.nodes, q);
 		infos.nodes.remove(0);
 	}
-	
-	// =========================================================================
-	
-	
-	
+
 	// =========================================================================
 
 	@Override
@@ -73,37 +67,13 @@ public class Query extends Node
 		return ret;
 	}
 
-//	@Override
-//	public Query clone()
-//	{
-//		return new Query(this);
-//	}
-
 	@Override
 	public String toString()
 	{
-		return "Query[" + getNbOfDescendants() + "](" + super.childsToString()
-				+ ")";
+		return "Query[" + getNbOfDescendants() + "](" + super.childsToString() + ")";
 	}
 
 	// =========================================================================
-
-	/**
-	 * Retourne tout les noeuds enfants de query
-	 */
-	@Override
-	public Node[] getDescendants()
-	{
-		List<Node> nodes = infos.nodes;
-//		System.out.println(nodes.size() + " " + getNbOfDescendants());
-//		System.out.println(this + "\n");
-
-		assert nodes
-				.size() == getNbOfDescendants() : "infos.nodes must have the same number of childs as Query ("
-						+ nodes.size() + "," + getNbOfDescendants() + ")";
-
-		return nodes.toArray(new Node[getNbOfDescendants()]);
-	}
 
 	@Override
 	public Node[] getPaths()
