@@ -10,6 +10,7 @@ import insomnia.qrewriting.code.Encoding;
 import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.context.HasContext;
 import insomnia.qrewriting.generator.NodeContext;
+import insomnia.qrewriting.query.DefaultQuery;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.node.Node;
 
@@ -67,12 +68,12 @@ public class QPUSimple extends QPU implements HasContext
 	public ArrayList<Query> process()
 	{
 		ArrayList<Query> ret       = new ArrayList<>(codes.length);
-		int              nbNodes   = query.getNbOfDescendants() + 1;
+		int              nbNodes   = query.getRoot().getNbOfDescendants() + 1;
 		int              nbCodePos = nbNodes - 1;
 
 		for (Code code : codes)
 		{
-			Query q = new Query(query);
+			Query q = new DefaultQuery(query);
 			ret.add(q);
 
 			for (int pos = 0; pos < nbCodePos; pos++)
@@ -82,7 +83,7 @@ public class QPUSimple extends QPU implements HasContext
 
 				CodeContext ctx = nc.getContext();
 
-				Node myNode = q.getNode(id);
+				Node myNode = q.getRoot().getNode(id);
 
 				myNode.setLabel(context.getLabelFactory().from(ctx.getK(code.getCode(pos))));
 			}

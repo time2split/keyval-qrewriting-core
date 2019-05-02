@@ -63,11 +63,12 @@ public class JsonBuilder_query extends JsonBuilder
 	{
 		Json json = getJson();
 
-		if (query.isLeaf())
+		if (query.getRoot().isLeaf())
 		{
 			throw new JsonBuilderException("Bad query structure for " + query);
 		}
-		json.setDocument(makeJson(query));
+		//TODO: del the root node ?
+		json.setDocument(makeJson(query.getRoot()));
 	}
 
 	private Element makeJson(Node node) throws JsonBuilderException

@@ -24,10 +24,10 @@ public class CodeGenerator_simple extends CodeGenerator
 	{
 		super(q, rm);
 
-		if (!q.isUnfolded())
+		if (!q.getRoot().isUnfolded())
 			throw new CodeGeneratorException("La requête doit être dépliée");
 
-		for (Node n : q.getDescendants())
+		for (Node n : q.getRoot().getDescendants())
 		{
 			String k = n.getLabel().get();
 			RuleManager rapplicables = rm.getApplicables(k);

@@ -1,9 +1,9 @@
 package insomnia.qrewriting.database.driver.internal.query;
 
 import insomnia.qrewriting.context.Context;
-import insomnia.qrewriting.query.node.Node;
+import insomnia.qrewriting.query.node.DefaultNode;
 
-public class MyNodeOperation extends Node
+public class MyNodeOperation extends DefaultNode
 {
 	public enum Operation
 	{
