@@ -6,13 +6,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import insomnia.builder.BuilderException;
 import insomnia.qrewriting.query.Label;
+import insomnia.qrewriting.query.Query;
 
 /**
- * Enfants d'un noeud
+ * Childs of a node.
  * 
  * @author zuri
- * 
  */
 public class NodeChilds implements Iterable<Node>
 {
@@ -23,59 +24,40 @@ public class NodeChilds implements Iterable<Node>
 		childs = new ArrayList<>(nb);
 	}
 
-	public NodeChilds copy(Node parent)
-	{
-		NodeChilds ret = new NodeChilds(childs.size());
-
-		for (Node tmp : childs)
-		{
-			Node nn = new Node(tmp);
-			nn.setParent(parent);
-			ret.childs.add(nn);
-		}
-		return ret;
-	}
-
 	public NodeChilds()
 	{
 		childs = new ArrayList<>();
 	}
 
+	public NodeChilds copy(Query query, Node parent)
+	{
+		NodeChilds  ret      = new NodeChilds(childs.size());
+		NodeBuilder nbuilder = new NodeBuilder(parent.getClass());
+		nbuilder.setTheQuery(query);
+		nbuilder.generateNodeId(false);
+
+		try
+		{
+			for (Node tmp : childs)
+			{
+				nbuilder.root(tmp).setParent(parent).build();
+				ret.childs.add(nbuilder.getNode());
+			}
+		}
+		catch (BuilderException e)
+		{
+			throw new RuntimeException(e);
+		}
+		return ret;
+	}
+
 	// ============================================================
 	// PROTECTED
-
-//	protected void setChildsParent(Node parent)
-//	{
-//		for (Node n : this)
-//			n.setParent(parent);
-//	}
-
-//	protected void deleteChild(int id)
-//	{
-//		final int size = size();
-//
-//		for (int i = 0; i < size; i++)
-//		{
-//			Node n = childs.get(i);
-//
-//			if (n.getId() == id)
-//			{
-//				childs.remove(i);
-//				return;
-//			}
-//		}
-//	}
 
 	protected void add(Node... nodes)
 	{
 		for (Node n : nodes)
 			childs.add(n);
-	}
-
-	protected NodeChilds addMe(Node... nodes)
-	{
-		add(nodes);
-		return this;
 	}
 
 	// ============================================================
@@ -118,7 +100,7 @@ public class NodeChilds implements Iterable<Node>
 
 	public ArrayList<Node> getMultipleChilds()
 	{
-		ArrayList<Node> ret = new ArrayList<>(this.size());
+		ArrayList<Node> ret    = new ArrayList<>(this.size());
 		ArrayList<Node> unique = getUniqueChilds();
 
 		for (Node c : getChilds())
@@ -133,13 +115,13 @@ public class NodeChilds implements Iterable<Node>
 
 	public ArrayList<Node> getUniqueChilds()
 	{
-		ArrayList<Node> ret = new ArrayList<>(this.size());
+		ArrayList<Node>                 ret  = new ArrayList<>(this.size());
 		HashMap<Label, ArrayList<Node>> buff = new HashMap<>();
 
 		for (Node c : getChilds())
 		{
 			ArrayList<Node> multi;
-			Label label = c.getLabel();
+			Label           label = c.getLabel();
 
 			if (buff.containsKey(label))
 			{

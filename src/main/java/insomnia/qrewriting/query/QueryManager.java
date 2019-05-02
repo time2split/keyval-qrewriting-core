@@ -47,7 +47,7 @@ public abstract class QueryManager
 
 	private int getWriterCapacity(Query q, int nb)
 	{
-		return 512 * q.getNbOfDescendants() * nb;
+		return 512 * q.getRoot().getNbOfDescendants() * nb;
 	}
 
 	protected String getStrFormat(Query query, StringBuilderWriter writer)

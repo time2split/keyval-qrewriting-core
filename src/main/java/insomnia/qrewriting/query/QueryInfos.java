@@ -5,14 +5,19 @@ import java.util.List;
 
 import insomnia.qrewriting.query.node.Node;
 
-public class QueryInfos
+public final class QueryInfos
 {
-	private Query query;
+//	Node[]			trees;
+//	Node[]			paths;
 
 	/**
 	 * Tous les noeuds de la requête
 	 */
 	List<Node> nodes;
+
+	/**
+	 * L'identifiant d'arc suivant
+	 */
 	int nextId;
 
 	public QueryInfos()
@@ -29,36 +34,23 @@ public class QueryInfos
 
 	// ==========================================================
 
-	public void setQuery(Query q)
-	{
-		query = q;
-	}
-
 	public int nextId()
 	{
 		return nextId++;
 	}
 
-	public Query getQuery()
-	{
-		return query;
-	}
-
 	// ==========================================================
 
-	public void addNode(Node... nodes)
+	public void addNode(boolean generateNodeId, Node... nodes)
 	{
 		for (Node n : nodes)
-			addNode(n);
+			addOneNode(n, generateNodeId);
 	}
 
-	public void addNode(Node n)
+	private void addOneNode(Node n, boolean changeId)
 	{
-		addNode(n, true);
-	}
-
-	public void addNode(Node n, boolean changeId)
-	{
+//		trees = null;
+//		paths = null;
 		nodes.add(n);
 
 		if (changeId)
@@ -78,25 +70,19 @@ public class QueryInfos
 		return nodes;
 	}
 
-	public void addQuery(Query q)
-	{
-		addNode(q, false);
-		nodes.remove(0);
-	}
-
-	// public Node[] getTrees()
-	// {
-	// if (trees == null)
-	// trees = query.s_getTrees();
-	//
-	// return Arrays.copyOf(trees,trees.length);
-	// }
-	//
-	// public Node[] getPaths()
-	// {
-	// if (paths == null)
-	// paths = query.getPaths();
-	//
-	// return Arrays.copyOf(paths,paths.length);
-	// }
+//	public Node[] getTrees()
+//	{
+//		if (trees == null)
+//			trees = query.s_getTrees();
+//
+//		return Arrays.copyOf(trees, trees.length);
+//	}
+//
+//	public Node[] getPaths()
+//	{
+//		if (paths == null)
+//			paths = query.getPaths();
+//
+//		return Arrays.copyOf(paths, paths.length);
+//	}
 }

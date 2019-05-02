@@ -8,7 +8,7 @@ import insomnia.builder.Builder;
  * @author zuri
  * 
  */
-abstract public class QueryBuilder extends Builder
+abstract public class QueryBuilder extends Builder<Query>
 {
 	public QueryBuilder()
 	{
@@ -27,7 +27,7 @@ abstract public class QueryBuilder extends Builder
 
 	final public Query getQuery()
 	{
-		return (Query) getBuilded();
+		return getBuilded();
 	}
 
 	@Override
