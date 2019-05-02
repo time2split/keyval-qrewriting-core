@@ -18,9 +18,9 @@ import insomnia.qrewriting.query.node.Node;
 import insomnia.qrewriting.query.node.NodeChilds;
 import insomnia.qrewriting.query.node.NodeValue;
 import insomnia.qrewriting.query.node.NodeValueExists;
-import insomnia.qrewriting.query.node.NodeValueFantom;
 import insomnia.qrewriting.query.node.NodeValueLiteral;
 import insomnia.qrewriting.query.node.NodeValueNumber;
+import insomnia.qrewriting.query.node.NodeValuePhantom;
 import insomnia.qrewriting.query.node.NodeValueString;
 
 public class JsonBuilder_query extends JsonBuilder
@@ -115,7 +115,7 @@ public class JsonBuilder_query extends JsonBuilder
 				{
 					newVal = new ElementLiteral(ElementLiteral.Literal.TRUE);
 				}
-				else if (vcur instanceof NodeValueFantom)
+				else if (vcur instanceof NodeValuePhantom)
 				{
 					newVal = null;
 				}
