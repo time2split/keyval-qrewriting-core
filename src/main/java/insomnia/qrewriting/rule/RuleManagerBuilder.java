@@ -10,7 +10,7 @@ import insomnia.qrewriting.context.HasContext;
  * 
  * @author zuri
  */
-abstract public class RuleManagerBuilder extends Builder implements HasContext
+abstract public class RuleManagerBuilder extends Builder<RuleManager> implements HasContext
 {
 	private Context context;
 

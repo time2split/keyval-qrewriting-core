@@ -39,7 +39,7 @@ public class DriverManagerStandard extends DriverManager
 
 		if (cls != null)
 		{
-			Driver driver = cls.newInstance();
+			Driver driver = cls.getDeclaredConstructor().newInstance();
 			driver.load(context);
 			return driver;
 		}

@@ -99,7 +99,7 @@ public class QThreadManager implements HasContext
 
 	public ArrayList<QThreadResult> compute() throws InterruptedException, ExecutionException
 	{
-		return compute((BuilderDataFactory) null);
+		return compute((BuilderDataFactory<Object,Query>) null);
 	}
 
 	public ArrayList<QThreadResult> compute(ExecutorService exec) throws InterruptedException, ExecutionException
@@ -107,12 +107,12 @@ public class QThreadManager implements HasContext
 		return compute(null, exec);
 	}
 
-	public ArrayList<QThreadResult> compute(BuilderDataFactory factory) throws InterruptedException, ExecutionException
+	public ArrayList<QThreadResult> compute(BuilderDataFactory<Object,Query> factory) throws InterruptedException, ExecutionException
 	{
 		return compute(factory, Executors.newCachedThreadPool());
 	}
 
-	public ArrayList<QThreadResult> compute(BuilderDataFactory factory, ExecutorService exec) throws InterruptedException, ExecutionException
+	public ArrayList<QThreadResult> compute(BuilderDataFactory<Object,Query> factory, ExecutorService exec) throws InterruptedException, ExecutionException
 	{
 		int                 nbThread;
 		ArrayList<Interval> intervals;

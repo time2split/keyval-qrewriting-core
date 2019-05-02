@@ -28,7 +28,7 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 	private Interval           interval;
 	private Query              query;
 	private Encoding           encoding;
-	private BuilderDataFactory builderDataFactory;
+	private BuilderDataFactory<Object,Query> builderDataFactory;
 
 	public QThread(Context context, Query q, Interval i, Encoding e)
 	{
@@ -38,7 +38,7 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 		setEncoding(e);
 	}
 
-	public void setBuilderDataFactory(BuilderDataFactory b)
+	public void setBuilderDataFactory(BuilderDataFactory<Object,Query> b)
 	{
 		builderDataFactory = b;
 	}
@@ -108,7 +108,7 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 		}
 		else
 		{
-			BuilderData b = builderDataFactory.create();
+			BuilderData<Object,Query> b = builderDataFactory.create();
 
 			for (Query q : qpuRes)
 			{

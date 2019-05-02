@@ -6,7 +6,6 @@ import insomnia.qrewriting.database.driver.DriverQueryManager;
 
 public class TheDriver extends Driver
 {
-
 	@Override
 	public Class<? extends DriverQueryBuilder> getQueryBuilderClass()
 	{
@@ -18,5 +17,4 @@ public class TheDriver extends Driver
 	{
 		return MyQueryManager.class;
 	}
-
 }

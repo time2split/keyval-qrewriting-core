@@ -21,9 +21,9 @@ public class NodeValueNumber extends NodeValue
 	}
 
 	@Override
-	public Object getValue()
+	public Double getValue()
 	{
-		return new Double(n);
+		return Double.valueOf(n);
 	}
 
 	@Override
