@@ -18,6 +18,7 @@ import insomnia.json.JsonReader;
 import insomnia.qrewriting.database.Driver;
 import insomnia.qrewriting.database.driver.DriverQueryBuilder;
 import insomnia.qrewriting.query.DefaultQuery;
+import insomnia.qrewriting.query.LabelFactory;
 import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.QueryBuilderException;
 import insomnia.qrewriting.query.node.NodeBuilder;
@@ -30,10 +31,12 @@ public class MyQueryBuilder extends DriverQueryBuilder
 {
 	private static final String[] sep = { Pattern.quote(".") };
 	private Pattern               sepPattern;
+	private LabelFactory          labelFactory;
 
 	public MyQueryBuilder(Driver driver)
 	{
 		super(driver);
+		labelFactory = getDriver().getContext().getLabelFactory();
 		StringBuilder sbuilder = new StringBuilder();
 
 		for (String s : sep)
@@ -60,7 +63,7 @@ public class MyQueryBuilder extends DriverQueryBuilder
 				throw new Exception("The base document of a query must be an object");
 
 			NodeBuilder nbuilder = new NodeBuilder(getQuery().getRoot());
-			nbuilder.setLabel(getDriver().getContext().getLabelFactory().from("@root"));
+			nbuilder.setLabel(labelFactory.from("@root"));
 			makeTheQuery(nbuilder, doc.getDocument());
 			nbuilder.build();
 		}
@@ -93,10 +96,8 @@ public class MyQueryBuilder extends DriverQueryBuilder
 
 		for (Entry<String, Element> entry : objects.entrySet())
 		{
-			int nbEnd = 1;
 			String  key = entry.getKey();
 			Element val = entry.getValue();
-			nbuilder.child();
 
 			switch (key)
 			{
@@ -111,14 +112,16 @@ public class MyQueryBuilder extends DriverQueryBuilder
 				}
 
 				if (nbOfElements > 1)
-				{
 					throw new Exception("Operator $exists must be alone");
-				}
+
 				nbuilder.setValue(new NodeValueExists());
-				break;
+				return;
 
 			default:
 			{
+				nbuilder.child();
+				int nbEnd = 1;
+
 				checkKeyCut:
 				{
 					String[] cut = sepPattern.split(key, -1);
@@ -126,11 +129,11 @@ public class MyQueryBuilder extends DriverQueryBuilder
 					if (cut.length == 1)
 						break checkKeyCut;
 
-					key   = cut[cut.length-1];
+					key   = cut[cut.length - 1];
 					nbEnd = cut.length;
 
 					for (int i = 0; i < cut.length - 1; i++)
-						nbuilder.setLabel(getDriver().getContext().getLabelFactory().from(cut[i])).child();
+						nbuilder.setLabel(labelFactory.from(cut[i])).child();
 				}
 
 				if (val.isObject())
@@ -147,18 +150,35 @@ public class MyQueryBuilder extends DriverQueryBuilder
 				}
 				else if (val.isString())
 				{
-					nbuilder.setValue(new NodeValueString(((ElementString) val).getString()));
+					String sval = ((ElementString) val).getString();
+
+					if (sval.startsWith("$"))
+					{
+						switch (sval)
+						{
+						case "$exists":
+							nbuilder.setValue(new NodeValueExists());
+							sval = null;
+							break;
+
+						default:
+							nbuilder.setValue(new NodeValueString(sval));
+						}
+					}
+					else
+						nbuilder.setValue(new NodeValueString(sval));
 				}
 				else
 				{
 					throw new Exception("Internal QueryBuilder cannot take the val " + val);
 				}
-			}
-			}
-				nbuilder.setLabel(getDriver().getContext().getLabelFactory().from(key));
+				nbuilder.setLabel(labelFactory.from(key));
 
-			while (nbEnd-- > 0)
-				nbuilder.end();
-		}
+				while (nbEnd-- > 0)
+					nbuilder.end();
+			}
+			} // End Switch
+
+		} // End For
 	}
 }
