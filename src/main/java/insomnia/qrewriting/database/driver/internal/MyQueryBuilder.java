@@ -3,6 +3,7 @@ package insomnia.qrewriting.database.driver.internal;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
@@ -27,9 +28,23 @@ import insomnia.qrewriting.query.node.NodeValueString;
 
 public class MyQueryBuilder extends DriverQueryBuilder
 {
+	private static final String[] sep = { Pattern.quote(".") };
+	private Pattern               sepPattern;
+
 	public MyQueryBuilder(Driver driver)
 	{
 		super(driver);
+		StringBuilder sbuilder = new StringBuilder();
+
+		for (String s : sep)
+		{
+
+			if (sbuilder.length() > 0)
+				sbuilder.append('|');
+
+			sbuilder.append(s);
+		}
+		sepPattern = Pattern.compile(sbuilder.toString());
 	}
 
 	@Override
@@ -78,6 +93,7 @@ public class MyQueryBuilder extends DriverQueryBuilder
 
 		for (Entry<String, Element> entry : objects.entrySet())
 		{
+			int nbEnd = 1;
 			String  key = entry.getKey();
 			Element val = entry.getValue();
 			nbuilder.child();
@@ -103,6 +119,20 @@ public class MyQueryBuilder extends DriverQueryBuilder
 
 			default:
 			{
+				checkKeyCut:
+				{
+					String[] cut = sepPattern.split(key, -1);
+
+					if (cut.length == 1)
+						break checkKeyCut;
+
+					key   = cut[cut.length-1];
+					nbEnd = cut.length;
+
+					for (int i = 0; i < cut.length - 1; i++)
+						nbuilder.setLabel(getDriver().getContext().getLabelFactory().from(cut[i])).child();
+				}
+
 				if (val.isObject())
 				{
 					makeTheQuery(nbuilder, val);
@@ -125,8 +155,10 @@ public class MyQueryBuilder extends DriverQueryBuilder
 				}
 			}
 			}
-			nbuilder.setLabel(getDriver().getContext().getLabelFactory().from(key));
-			nbuilder.end();
+				nbuilder.setLabel(getDriver().getContext().getLabelFactory().from(key));
+
+			while (nbEnd-- > 0)
+				nbuilder.end();
 		}
 	}
 }
