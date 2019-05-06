@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.database.Driver;
+import insomnia.qrewriting.database.DriverException;
 
 /**
  * Gestion des drivers de base de données (récupération, stockage)
@@ -34,7 +35,7 @@ public abstract class DriverManager
 	 *            nom du driver
 	 * @return null|Driver null si le driver n'existait pas
 	 */
-	public Driver forgetDriver(String driverName) throws Exception
+	public Driver forgetDriver(String driverName) throws DriverException
 	{
 		Driver driver = drivers.remove(driverName);
 
