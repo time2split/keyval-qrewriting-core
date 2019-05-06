@@ -62,7 +62,7 @@ public class MyQueryBuilder extends DriverQueryBuilder
 			if (!doc.getDocument().isObject())
 				throw new Exception("The base document of a query must be an object");
 
-			NodeBuilder nbuilder = new NodeBuilder(getQuery().getRoot());
+			NodeBuilder nbuilder = new NodeBuilder(getBuilded().getRoot());
 			nbuilder.setLabel(labelFactory.from("@root"));
 			makeTheQuery(nbuilder, doc.getDocument());
 			nbuilder.build();
@@ -77,7 +77,7 @@ public class MyQueryBuilder extends DriverQueryBuilder
 	public Query newBuild() throws QueryBuilderException
 	{
 		Query query = new DefaultQuery();
-		setQuery(query);
+		setBuilded(query);
 		build();
 		return query;
 	}
@@ -115,11 +115,10 @@ public class MyQueryBuilder extends DriverQueryBuilder
 					throw new Exception("Operator $exists must be alone");
 
 				nbuilder.setValue(new NodeValueExists());
-				return;
+				break;
 
 			default:
 			{
-				nbuilder.child();
 				int nbEnd = 1;
 
 				checkKeyCut:
@@ -133,23 +132,27 @@ public class MyQueryBuilder extends DriverQueryBuilder
 					nbEnd = cut.length;
 
 					for (int i = 0; i < cut.length - 1; i++)
-						nbuilder.setLabel(labelFactory.from(cut[i])).child();
+						nbuilder.child().setLabel(labelFactory.from(cut[i]));
 				}
 
 				if (val.isObject())
 				{
+					nbuilder.child().setLabel(labelFactory.from(key));
 					makeTheQuery(nbuilder, val);
 				}
 				else if (val.isLiteral())
 				{
+					nbuilder.child().setLabel(labelFactory.from(key));
 					nbuilder.setValue(new NodeValueLiteral(((ElementLiteral) val).getLiteral().toString()));
 				}
 				else if (val.isNumber())
 				{
+					nbuilder.child().setLabel(labelFactory.from(key));
 					nbuilder.setValue(new NodeValueNumber(((ElementNumber) val).getNumber()));
 				}
 				else if (val.isString())
 				{
+					nbuilder.child().setLabel(labelFactory.from(key));
 					String sval = ((ElementString) val).getString();
 
 					if (sval.startsWith("$"))
@@ -171,14 +174,13 @@ public class MyQueryBuilder extends DriverQueryBuilder
 				else
 				{
 					throw new Exception("Internal QueryBuilder cannot take the val " + val);
+					}
 				}
-				nbuilder.setLabel(labelFactory.from(key));
 
 				while (nbEnd-- > 0)
 					nbuilder.end();
 			}
 			} // End Switch
-
 		} // End For
 	}
 }
