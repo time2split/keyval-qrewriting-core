@@ -45,7 +45,7 @@ public class JsonBuilder_query extends JsonBuilder
 		super(j);
 		setContext(context);
 		setQuery(q);
-		setJson(j);
+		setBuilded(j);
 	}
 
 	public void setQuery(Query query)
@@ -61,7 +61,7 @@ public class JsonBuilder_query extends JsonBuilder
 	@Override
 	public void build() throws JsonBuilderException
 	{
-		Json json = getJson();
+		Json json = getBuilded();
 
 		if (query.getRoot().isLeaf())
 		{
@@ -139,7 +139,7 @@ public class JsonBuilder_query extends JsonBuilder
 	public Json newBuild() throws JsonBuilderException
 	{
 		Json json = new Json();
-		setJson(json);
+		setBuilded(json);
 		build();
 		return json;
 	}
