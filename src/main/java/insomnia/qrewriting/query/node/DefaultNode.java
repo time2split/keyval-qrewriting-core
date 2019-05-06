@@ -342,7 +342,6 @@ public class DefaultNode implements Node
 	@Override
 	public void addChild(boolean generateNodeId, Node... childs)
 	{
-		assert (query != null);
 		final int     moreNbOfDesc;
 		final boolean nisPath = isPath;
 
@@ -366,7 +365,9 @@ public class DefaultNode implements Node
 			}
 			moreNbOfDesc = tmpNbOfDesc;
 		}
-		query.addNode(generateNodeId, childs);
+
+		if (query != null)
+			query.addNode(generateNodeId, childs);
 
 		if (isPath)
 		{
