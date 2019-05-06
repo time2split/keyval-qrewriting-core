@@ -9,7 +9,7 @@ import insomnia.qrewriting.query.node.Node;
 import insomnia.qrewriting.query.node.NodeValue;
 import insomnia.qrewriting.query.node.NodeValueNumber;
 
-public class ElementFactory_node extends Factory<Element>
+public class ElementFactory_node implements Factory<Element>
 {
 	/**
 	 * Query node

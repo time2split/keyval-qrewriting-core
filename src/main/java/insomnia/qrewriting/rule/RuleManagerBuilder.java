@@ -1,6 +1,6 @@
 package insomnia.qrewriting.rule;
 
-import insomnia.builder.Builder;
+import insomnia.builder.AbstractBuilder;
 import insomnia.builder.BuilderException;
 import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.context.HasContext;
@@ -10,7 +10,7 @@ import insomnia.qrewriting.context.HasContext;
  * 
  * @author zuri
  */
-abstract public class RuleManagerBuilder extends Builder<RuleManager> implements HasContext
+abstract public class RuleManagerBuilder extends AbstractBuilder<RuleManager> implements HasContext
 {
 	private Context context;
 

@@ -3,12 +3,12 @@ package insomnia.qrewriting.query.node;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Stack;
 
-import insomnia.builder.Builder;
+import insomnia.builder.AbstractBuilder;
 import insomnia.builder.BuilderException;
 import insomnia.qrewriting.query.Label;
 import insomnia.qrewriting.query.Query;
 
-public final class NodeBuilder extends Builder<Node>
+public final class NodeBuilder extends AbstractBuilder<Node>
 {
 	Class<? extends Node> nodeClass;
 	Stack<Node>           stack_node;

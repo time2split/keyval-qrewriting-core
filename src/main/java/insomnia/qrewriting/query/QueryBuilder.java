@@ -2,12 +2,11 @@ package insomnia.qrewriting.query;
 
 import java.lang.reflect.InvocationTargetException;
 
-import insomnia.builder.Builder;
+import insomnia.builder.AbstractBuilder;
 import insomnia.builder.BuilderException;
-import insomnia.qrewriting.query.Query;
 import insomnia.qrewriting.query.node.NodeBuilder;
 
-public class QueryBuilder extends Builder<Query>
+public class QueryBuilder extends AbstractBuilder<Query>
 {
 	private Class<? extends Query> queryClass;
 
