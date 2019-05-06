@@ -1,6 +1,6 @@
 package insomnia.qrewriting.qpu;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import insomnia.qrewriting.query.Query;
 
@@ -19,5 +19,5 @@ abstract public class QPU
 	 * 
 	 * @return Les requêtes réécrites
 	 */
-	abstract public ArrayList<Query> process();
+	abstract public Collection<Query> process();
 }
