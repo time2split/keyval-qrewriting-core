@@ -1,8 +1,10 @@
 package insomnia.qrewriting.query;
 
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.output.StringBuilderWriter;
 
@@ -138,10 +140,9 @@ public abstract class QueryManager
 
 	public Query[] mergeBySizeOfQueries(int sizeofQueries, Query... queries)
 	{
-		Query[] ret = new Query[(sizeofQueries / queries.length) + 1];
+		List<Query> ret = new ArrayList<>();
 
 		final int c = queries.length;
-		int reti = 0;
 
 		for (int i = 0; i != c;)
 		{
@@ -152,10 +153,10 @@ public abstract class QueryManager
 			else
 				size = sizeofQueries;
 
-			ret[reti++] = merge(Arrays.copyOfRange(queries, i, i + size));
+			ret.add(merge(Arrays.copyOfRange(queries, i, i + size)));
 			i += size;
 		}
-		return ret;
+		return ret.toArray(new Query[0]);
 	}
 
 	public Query[] mergeByNumberOfQueries(int nbofQueries)
