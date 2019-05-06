@@ -169,6 +169,11 @@ public class NodeChilds implements Iterable<Node>
 		}
 		return null;
 	}
+	
+	public boolean removeChild(Node child)
+	{
+		return childs.remove(child);
+	}
 
 	// =======================================================
 
