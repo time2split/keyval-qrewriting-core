@@ -1,38 +1,74 @@
 package insomnia.qrewriting.query;
 
+import java.lang.reflect.InvocationTargetException;
+
 import insomnia.builder.Builder;
+import insomnia.builder.BuilderException;
+import insomnia.qrewriting.query.Query;
+import insomnia.qrewriting.query.node.NodeBuilder;
 
-/**
- * Permet de construire une requête
- * 
- * @author zuri
- * 
- */
-abstract public class QueryBuilder extends Builder<Query>
+public class QueryBuilder extends Builder<Query>
 {
-	public QueryBuilder()
+	private Class<? extends Query> queryClass;
+
+	protected QueryBuilder()
 	{
 
 	}
 
-	public QueryBuilder(Query q)
+	public QueryBuilder(Class<? extends Query> queryClass)
 	{
-		setQuery(q);
+		super();
+		setQueryClass(queryClass);
 	}
 
-	public void setQuery(Query q)
+	public QueryBuilder(Query builded)
 	{
-		setBuilded(q);
+		super(builded);
+		setQueryClass(builded.getClass());
 	}
 
-	final public Query getQuery()
+	protected void setQueryClass(Class<? extends Query> queryClass)
 	{
-		return getBuilded();
+		this.queryClass = queryClass;
+	}
+
+	// ========================================================================
+
+	public static Query newQuery(Class<? extends Query> queryClass) throws BuilderException
+	{
+		try
+		{
+			return queryClass.getDeclaredConstructor().newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e)
+		{
+			throw new BuilderException(e);
+		}
+	}
+
+	private Query newQuery() throws BuilderException
+	{
+		return newQuery(queryClass);
 	}
 
 	@Override
-	abstract public void build() throws QueryBuilderException;
+	public void build() throws BuilderException
+	{
+
+	}
 
 	@Override
-	abstract public Query newBuild() throws QueryBuilderException;
+	public Query newBuild() throws BuilderException
+	{
+		Query build = newQuery();
+		setBuilded(build);
+		build();
+		return build;
+	}
+
+	public NodeBuilder getRootNodeFactory()
+	{
+		return new NodeBuilder(getBuilded().getRoot());
+	}
 }
