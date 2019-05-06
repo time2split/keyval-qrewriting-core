@@ -53,8 +53,7 @@ public class QThreadManager implements HasContext
 		setContext(context);
 	}
 
-	@Override
-	public void setContext(Context context)
+	protected void setContext(Context context)
 	{
 		this.context = context;
 	}

@@ -48,8 +48,7 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 		encoding = e;
 	}
 
-	@Override
-	public void setContext(Context context)
+	protected void setContext(Context context)
 	{
 		this.context = context;
 	}

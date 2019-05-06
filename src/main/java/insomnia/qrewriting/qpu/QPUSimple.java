@@ -52,8 +52,7 @@ public class QPUSimple extends QPU implements HasContext
 		this(context, q, codesset.toArray(new Code[0]), e);
 	}
 
-	@Override
-	public void setContext(Context context)
+	protected void setContext(Context context)
 	{
 		this.context = context;
 	}

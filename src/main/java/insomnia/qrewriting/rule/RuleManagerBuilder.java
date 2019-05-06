@@ -35,8 +35,7 @@ abstract public class RuleManagerBuilder extends Builder<RuleManager> implements
 		setBuilded(rman);
 	}
 
-	@Override
-	public void setContext(Context context)
+	protected void setContext(Context context)
 	{
 		this.context = context;
 	}
