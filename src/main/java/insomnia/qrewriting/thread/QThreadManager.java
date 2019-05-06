@@ -98,7 +98,7 @@ public class QThreadManager implements HasContext
 
 	public ArrayList<QThreadResult> compute() throws InterruptedException, ExecutionException
 	{
-		return compute((BuilderDataFactory<Object,Query>) null);
+		return compute((BuilderDataFactory<Object, Query>) null);
 	}
 
 	public ArrayList<QThreadResult> compute(ExecutorService exec) throws InterruptedException, ExecutionException
@@ -106,12 +106,12 @@ public class QThreadManager implements HasContext
 		return compute(null, exec);
 	}
 
-	public ArrayList<QThreadResult> compute(BuilderDataFactory<Object,Query> factory) throws InterruptedException, ExecutionException
+	public ArrayList<QThreadResult> compute(BuilderDataFactory<Object, Query> factory) throws InterruptedException, ExecutionException
 	{
 		return compute(factory, Executors.newCachedThreadPool());
 	}
 
-	public ArrayList<QThreadResult> compute(BuilderDataFactory<Object,Query> factory, ExecutorService exec) throws InterruptedException, ExecutionException
+	public ArrayList<QThreadResult> compute(BuilderDataFactory<Object, Query> factory, ExecutorService exec) throws InterruptedException, ExecutionException
 	{
 		int                 nbThread;
 		ArrayList<Interval> intervals;
@@ -122,7 +122,15 @@ public class QThreadManager implements HasContext
 		{
 		case NB_THREAD:
 			nbThread = modeData;
-			intervals = encoding.generateCodeInterval().cutByNumberOfIntervals(nbThread);
+			Interval initialInterval = encoding.generateCodeInterval();
+			intervals = initialInterval.cutByNumberOfIntervals(nbThread);
+
+			if (intervals.isEmpty())
+			{
+				nbThread  = 1;
+				intervals = new ArrayList<>();
+				intervals.add(initialInterval);
+			}
 			break;
 
 		case SIZEOF_THREAD:
