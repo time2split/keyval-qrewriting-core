@@ -75,7 +75,7 @@ public class RuleManagerBuilder_textDemo extends RuleManagerBuilder
 
 		final RuleManager  rm           = getRuleManager();
 		final LabelFactory labelFactory = getContext().getLabelFactory();
-		Pattern            p            = Pattern.compile("([^\\s]+) *-> (\\[E\\])? *([^\\s]+)");
+		Pattern            p            = Pattern.compile("([^\\s]+) *-> *(\\[E\\])? *([^\\s]+)");
 		Matcher            m            = p.matcher(line);
 
 		if (m.matches() == false)
