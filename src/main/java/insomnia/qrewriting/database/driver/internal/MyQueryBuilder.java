@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 
 import insomnia.json.Element;
+import insomnia.json.ElementArray;
 import insomnia.json.ElementLiteral;
 import insomnia.json.ElementLiteral.Literal;
 import insomnia.json.ElementNumber;
@@ -171,11 +172,19 @@ public class MyQueryBuilder extends DriverQueryBuilder
 					else
 						nbuilder.setValue(new NodeValueString(sval));
 				}
-				else
+				else if (val.isArray())
 				{
-					throw new Exception("Internal QueryBuilder cannot take the val " + val);
+					nbEnd--;
+
+					for (Element e : ((ElementArray) val).getArray())
+					{
+						ElementObject eobj = new ElementObject();
+						eobj.add(key, e);
+						makeTheQuery(nbuilder, eobj);
 					}
 				}
+				else
+					throw new Exception("Internal QueryBuilder cannot take the val " + val);
 
 				while (nbEnd-- > 0)
 					nbuilder.end();
