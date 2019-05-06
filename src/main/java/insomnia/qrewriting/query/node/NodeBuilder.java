@@ -13,7 +13,6 @@ public final class NodeBuilder extends Builder<Node>
 	Class<? extends Node> nodeClass;
 	Stack<Node>           stack_node;
 	Node                  currentNode;
-	Query                 query;
 	boolean               opt_generateNodeId = true;
 
 	public NodeBuilder(Class<? extends Node> nodeClass)
@@ -25,7 +24,6 @@ public final class NodeBuilder extends Builder<Node>
 	public NodeBuilder(Node builded)
 	{
 		super(builded);
-		setTheQuery(builded.getQuery());
 		setNodeClass(builded.getClass());
 	}
 
@@ -35,27 +33,12 @@ public final class NodeBuilder extends Builder<Node>
 	}
 
 	@Override
-	protected void setBuilded(Node node)
+	public void setBuilded(Node node)
 	{
 		super.setBuilded(node);
 		currentNode = node;
 		stack_node  = new Stack<>();
 		stack_node.add(currentNode);
-	}
-
-	public void setNode(Node node)
-	{
-		setBuilded(node);
-	}
-
-	public Node getNode()
-	{
-		return (Node) getBuilded();
-	}
-
-	public void setTheQuery(Query q)
-	{
-		query = q;
 	}
 
 	public void generateNodeId(boolean v)
@@ -80,7 +63,26 @@ public final class NodeBuilder extends Builder<Node>
 		return build;
 	}
 
-	private Node newCopy(Node toCopy) throws BuilderException
+	public static Node newNode(Class<? extends Node> nodeClass) throws BuilderException
+	{
+		return newNode(null, nodeClass);
+	}
+
+	public static Node newNode(Query query, Class<? extends Node> nodeClass) throws BuilderException
+	{
+		try
+		{
+			Node ret = nodeClass.getDeclaredConstructor().newInstance();
+			ret.setQuery(query);
+			return ret;
+		}
+		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e)
+		{
+			throw new BuilderException(e);
+		}
+	}
+
+	private static Node newCopy(Query query, Node toCopy, Class<? extends Node> nodeClass) throws BuilderException
 	{
 		try
 		{
@@ -92,16 +94,19 @@ public final class NodeBuilder extends Builder<Node>
 		}
 	}
 
+	private Node newCopy(Query query, Node toCopy) throws BuilderException
+	{
+		return newCopy(query, toCopy, nodeClass);
+	}
+
 	private Node newNode() throws BuilderException
 	{
-		try
-		{
-			return nodeClass.getDeclaredConstructor().newInstance();
-		}
-		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e)
-		{
-			throw new BuilderException(e);
-		}
+		return newNode((Query) null);
+	}
+
+	private Node newNode(Query query) throws BuilderException
+	{
+		return newNode(query, nodeClass);
 	}
 
 	// ========================================================================
@@ -130,61 +135,64 @@ public final class NodeBuilder extends Builder<Node>
 		return this;
 	}
 
+	public NodeBuilder addChild(boolean generateNodeId, Node... child)
+	{
+		currentNode.addChild(generateNodeId, child);
+		return this;
+	}
+
 	// ========================================================================
 
-	public NodeBuilder root() throws BuilderException
+	public NodeBuilder root(Query query) throws BuilderException
 	{
-		__root(newNode());
+		__root(newNode(query));
 		return this;
 	}
 
-	public NodeBuilder root(Node toCopy) throws BuilderException
+	public NodeBuilder root(Query query, Node toCopy) throws BuilderException
 	{
-		__root(newCopy(toCopy));
+		__root(newCopy(query, toCopy));
 		return this;
 	}
 
-	public NodeBuilder __root(Node root) throws BuilderException
+	private NodeBuilder __root(Node root) throws BuilderException
 	{
 		setBuilded(root);
 
-		if (query == null)
-			query = root.getQuery();
-		else if (root.getQuery() == null)
-			root.setQuery(query);
+//		if (query == null)
+//			query = root.getQuery();
+//		else if (root.getQuery() == null)
+//			root.setQuery(query);
 
 		return this;
 	}
 
 	public NodeBuilder child() throws BuilderException
 	{
-		if (getNode() == null)
+		if (getBuilded() == null)
 		{
-			root();
+			root(null);
 			return this;
 		}
-		__child(newNode());
+		__child(newNode(currentNode.getQuery()));
 		return this;
 	}
 
 	public NodeBuilder child(Node toCopy) throws BuilderException
 	{
-		if (getNode() == null)
+		if (getBuilded() == null)
 		{
-			root(toCopy);
+			root(null, toCopy);
 			return this;
 		}
-		__child(newCopy(toCopy));
+		__child(newCopy(currentNode.getQuery(), toCopy));
 		return this;
 	}
 
 	private NodeBuilder __child(Node child) throws BuilderException
 	{
 		stack_node.add(currentNode);
-
 		currentNode.addChild(opt_generateNodeId, child);
-		child.setParent(currentNode);
-
 		currentNode = child;
 		return this;
 	}
@@ -195,6 +203,17 @@ public final class NodeBuilder extends Builder<Node>
 			throw new BuilderException("No more parent to reach");
 
 		currentNode = stack_node.pop();
+		return this;
+	}
+
+	public NodeBuilder remove() throws BuilderException
+	{
+		if (stack_node.empty())
+			throw new BuilderException("No more parent to reach");
+
+		Node parent = stack_node.pop();
+		parent.getChilds().removeChild(currentNode);
+		currentNode = parent;
 		return this;
 	}
 }
