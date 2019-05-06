@@ -1,20 +1,21 @@
 package insomnia.qrewriting.database.driver.internal;
 
-import insomnia.qrewriting.database.Driver;
+import insomnia.qrewriting.database.AbstractDriver;
+import insomnia.qrewriting.database.DriverException;
 import insomnia.qrewriting.database.driver.DriverQueryBuilder;
 import insomnia.qrewriting.database.driver.DriverQueryManager;
 
-public class TheDriver extends Driver
+public class TheDriver extends AbstractDriver
 {
 	@Override
-	public Class<? extends DriverQueryBuilder> getQueryBuilderClass()
+	public DriverQueryBuilder getAQueryBuilder() throws DriverException
 	{
-		return MyQueryBuilder.class;
+		return new MyQueryBuilder(this);
 	}
 
 	@Override
-	public Class<? extends DriverQueryManager> getQueryManagerClass()
+	public DriverQueryManager getAQueryManager() throws DriverException
 	{
-		return MyQueryManager.class;
+		return new MyQueryManager(this);
 	}
 }
