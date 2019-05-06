@@ -33,15 +33,14 @@ public class NodeChilds implements Iterable<Node>
 	{
 		NodeChilds  ret      = new NodeChilds(childs.size());
 		NodeBuilder nbuilder = new NodeBuilder(parent.getClass());
-		nbuilder.setTheQuery(query);
 		nbuilder.generateNodeId(false);
 
 		try
 		{
 			for (Node tmp : childs)
 			{
-				nbuilder.root(tmp).setParent(parent).build();
-				ret.childs.add(nbuilder.getNode());
+				nbuilder.root(query,tmp).setParent(parent).build();
+				ret.childs.add(nbuilder.getBuilded());
 			}
 		}
 		catch (BuilderException e)
