@@ -3,21 +3,26 @@ package insomnia.qrewriting.code;
 import java.util.Arrays;
 
 /**
- * Code rerpésentant une requête. Attention pour les calculs, le premier élément
- * d'un code (affichage à gauche) est indexé à 0
+ * Code représentant une requête.
+ * Attention pour les calculs, le premier élément d'un code (affichage à gauche) est indexé à 0
  * 
  * @author zuri
- * 
  */
 public class Code
 {
-	int code[];
-	Encoding encoding;
-	
+	private int      code[];
+	private Encoding encoding;
+
 	public Code(int nbState, Encoding encoding)
 	{
-		code = new int[nbState];
+		code          = new int[nbState];
 		this.encoding = encoding;
+	}
+
+	public Code(Code toCpy)
+	{
+		code     = toCpy.code.clone();
+		encoding = toCpy.encoding;
 	}
 
 	public int getCode(int pos)
@@ -42,15 +47,15 @@ public class Code
 		return true;
 	}
 
-	public String format(int ...nbDigits)
+	public String format(int... nbDigits)
 	{
 		StringBuilder buffer = new StringBuilder(nbDigits.length * 3);
-		final int c = code.length;
-		
-		if(nbDigits.length < c)
+		final int     c      = code.length;
+
+		if (nbDigits.length < c)
 			return null;
-				
-		for(int i = 0 ; i < c ; i++)
+
+		for (int i = 0; i < c; i++)
 		{
 			String format = "%0" + nbDigits[i] + "d";
 			buffer.append(String.format(format, code[i]));
