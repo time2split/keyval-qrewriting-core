@@ -1,10 +1,12 @@
 package insomnia.qrewriting.thread;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 import insomnia.builder.BuilderDataFactory;
 import insomnia.numeric.Interval;
@@ -45,12 +47,19 @@ public class QThreadManager implements HasContext
 	private int                      modeData;
 	private Mode                     mode = Mode.AUTO;
 
+	private Consumer<Collection<QThreadResult>> callback;
+
 	public QThreadManager(Context context, Query q, Encoding e)
 	{
 		super();
 		setQuery(q);
 		setEncoding(e);
 		setContext(context);
+	}
+
+	public void setCallback(Consumer<Collection<QThreadResult>> callback)
+	{
+		this.callback = callback;
 	}
 
 	protected void setContext(Context context)
@@ -145,19 +154,19 @@ public class QThreadManager implements HasContext
 			nbThread = intervals.size();
 			break;
 		}
-		ArrayList<Future<ArrayList<QThreadResult>>> loaded = new ArrayList<>(nbThread);
+		Collection<Future<Collection<QThreadResult>>> loaded = new ArrayList<>(nbThread);
 
 		for (Interval i : intervals)
 		{
 			QThread th = new QThread(context, query, i, encoding);
+			th.setCallback(callback);
 			th.setBuilderDataFactory(factory);
 			loaded.add(executor.submit(th));
 		}
 
-		for (Future<ArrayList<QThreadResult>> ft : loaded)
-		{
+		for (Future<Collection<QThreadResult>> ft : loaded)
 			result.addAll(ft.get());
-		}
+
 		executor.shutdown();
 		return result;
 	}
