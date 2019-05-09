@@ -23,7 +23,6 @@ import insomnia.qrewriting.query.Query;
 public class QThread implements Callable<Collection<QThreadResult>>, HasContext
 {
 	private Context  context;
-	private Code[]             codes;
 	private Interval interval;
 	private Query    query;
 	private Encoding encoding;
@@ -36,7 +35,7 @@ public class QThread implements Callable<Collection<QThreadResult>>, HasContext
 	{
 		setContext(context);
 		setQuery(q);
-		setCodes(i);
+		setInterval(i);
 		setEncoding(e);
 	}
 
@@ -60,6 +59,11 @@ public class QThread implements Callable<Collection<QThreadResult>>, HasContext
 		this.context = context;
 	}
 	
+	public void setInterval(Interval i)
+	{
+		interval = i;
+	}
+
 	@Override
 	public Context getContext()
 	{
@@ -71,25 +75,6 @@ public class QThread implements Callable<Collection<QThreadResult>>, HasContext
 		query = q;
 	}
 
-	public void setCodes(Collection<Code> c)
-	{
-		interval = null;
-		codes    = c.toArray(new Code[0]);
-	}
-
-	public void setCodes(Interval i)
-	{
-		interval = i;
-		codes    = null;
-	}
-
-	private void s_computeCodes()
-	{
-		if (codes != null)
-			return;
-
-		codes = encoding.generateAllCodes(interval);
-	}
 	/**
 	 * Calcul les codes, $query n'est pas ajouté au résultat
 	 * 
@@ -98,8 +83,7 @@ public class QThread implements Callable<Collection<QThreadResult>>, HasContext
 	@Override
 	public Collection<QThreadResult> call() throws BuilderException
 	{
-		s_computeCodes();
-		ArrayList<Query>         qpuRes = new QPUSimple(context, query, codes, encoding).process();
+		ArrayList<Query>         qpuRes = new QPUSimple(context, query, interval, encoding).process();
 		ArrayList<QThreadResult> ret    = new ArrayList<>(qpuRes.size());
 
 		if (builderDataFactory == null)
