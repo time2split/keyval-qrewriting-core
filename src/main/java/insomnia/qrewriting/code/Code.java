@@ -25,6 +25,11 @@ public class Code
 		encoding = toCpy.encoding;
 	}
 
+	public void add(int val)
+	{
+		encoding.add(this, val);
+	}
+
 	public int getCode(int pos)
 	{
 		if (pos < 0 || pos >= code.length)
