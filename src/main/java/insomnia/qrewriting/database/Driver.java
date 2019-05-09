@@ -5,6 +5,7 @@ import java.util.Properties;
 import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.context.HasContext;
 import insomnia.qrewriting.database.driver.DriverQueryBuilder;
+import insomnia.qrewriting.database.driver.DriverQueryEvaluator;
 import insomnia.qrewriting.database.driver.DriverQueryManager;
 
 public interface Driver extends HasContext
@@ -16,6 +17,8 @@ public interface Driver extends HasContext
 	DriverQueryBuilder getAQueryBuilder() throws DriverException;
 
 	DriverQueryManager getAQueryManager() throws DriverException;
+	
+	DriverQueryEvaluator getAQueryEvaluator() throws DriverException;
 
 	Object getOption(String name);
 
