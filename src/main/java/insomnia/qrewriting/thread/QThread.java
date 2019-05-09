@@ -3,12 +3,12 @@ package insomnia.qrewriting.thread;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import insomnia.builder.BuilderData;
 import insomnia.builder.BuilderDataFactory;
 import insomnia.builder.BuilderException;
 import insomnia.numeric.Interval;
-import insomnia.qrewriting.code.Code;
 import insomnia.qrewriting.code.Encoding;
 import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.context.HasContext;
@@ -16,19 +16,21 @@ import insomnia.qrewriting.qpu.QPUSimple;
 import insomnia.qrewriting.query.Query;
 
 /**
- * Permet de calculer les réécritures d'une requête (par intervalle ou codes
- * directs)
+ * Permet de calculer les réécritures d'une requête (par intervalle ou codes directs)
  * 
  * @author zuri
  */
-public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
+public class QThread implements Callable<Collection<QThreadResult>>, HasContext
 {
-	private Context            context;
+	private Context  context;
 	private Code[]             codes;
-	private Interval           interval;
-	private Query              query;
-	private Encoding           encoding;
-	private BuilderDataFactory<Object,Query> builderDataFactory;
+	private Interval interval;
+	private Query    query;
+	private Encoding encoding;
+
+	private BuilderDataFactory<Object, Query> builderDataFactory;
+
+	private Consumer<Collection<QThreadResult>> callback;
 
 	public QThread(Context context, Query q, Interval i, Encoding e)
 	{
@@ -38,7 +40,12 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 		setEncoding(e);
 	}
 
-	public void setBuilderDataFactory(BuilderDataFactory<Object,Query> b)
+	public void setCallback(Consumer<Collection<QThreadResult>> callback)
+	{
+		this.callback = callback;
+	}
+
+	public void setBuilderDataFactory(BuilderDataFactory<Object, Query> b)
 	{
 		builderDataFactory = b;
 	}
@@ -52,7 +59,7 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 	{
 		this.context = context;
 	}
-
+	
 	@Override
 	public Context getContext()
 	{
@@ -83,17 +90,14 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 
 		codes = encoding.generateAllCodes(interval);
 	}
-
 	/**
 	 * Calcul les codes, $query n'est pas ajouté au résultat
 	 * 
 	 * @throws BuilderException
 	 */
 	@Override
-	public ArrayList<QThreadResult> call() throws BuilderException
+	public Collection<QThreadResult> call() throws BuilderException
 	{
-		// System.out.println(Thread.currentThread().getName() + " : " +
-		// interval);
 		s_computeCodes();
 		ArrayList<Query>         qpuRes = new QPUSimple(context, query, codes, encoding).process();
 		ArrayList<QThreadResult> ret    = new ArrayList<>(qpuRes.size());
@@ -107,7 +111,7 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 		}
 		else
 		{
-			BuilderData<Object,Query> b = builderDataFactory.create();
+			BuilderData<Object, Query> b = builderDataFactory.create();
 
 			for (Query q : qpuRes)
 			{
@@ -115,6 +119,10 @@ public class QThread implements Callable<ArrayList<QThreadResult>>, HasContext
 				ret.add(new QThreadResult(q, b.newBuild()));
 			}
 		}
+
+		if (callback != null)
+			callback.accept(ret);
+
 		return ret;
 	}
 }
