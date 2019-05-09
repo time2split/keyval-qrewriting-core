@@ -1,7 +1,6 @@
 package insomnia.qrewriting.qpu;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import insomnia.numeric.Interval;
 import insomnia.qrewriting.code.Code;
@@ -23,33 +22,20 @@ public class QPUSimple extends QPU implements HasContext
 {
 	Context  context;
 	Query    query;
-	Code[]   codes;
 	Encoding encoding;
+	Interval interval;
 
 	public QPUSimple(Context context, Query q, Encoding e)
 	{
-		this(context, q, e.generateAllCodes(), e);
+		this(context, q, e.generateCodeInterval(), e);
 	}
 
 	public QPUSimple(Context context, Query q, Interval i, Encoding e)
 	{
 		query    = q;
 		encoding = e;
-		codes    = encoding.generateAllCodes(i);
+		interval = i;
 		setContext(context);
-	}
-
-	public QPUSimple(Context context, Query q, Code[] c, Encoding e)
-	{
-		query    = q;
-		codes    = c;
-		encoding = e;
-		setContext(context);
-	}
-
-	public QPUSimple(Context context, Query q, Collection<Code> codesset, Encoding e)
-	{
-		this(context, q, codesset.toArray(new Code[0]), e);
 	}
 
 	protected void setContext(Context context)
@@ -66,11 +52,13 @@ public class QPUSimple extends QPU implements HasContext
 	@Override
 	public ArrayList<Query> process()
 	{
-		ArrayList<Query> ret       = new ArrayList<>(codes.length);
+		int              nbCodes   = (int) interval.size();
+		ArrayList<Query> ret       = new ArrayList<>(nbCodes);
 		int              nbNodes   = query.getRoot().getNbOfDescendants() + 1;
 		int              nbCodePos = nbNodes - 1;
+		Code             code      = encoding.getCodeFrom((int) interval.geta());
 
-		for (Code code : codes)
+		while (nbCodes-- > 0)
 		{
 			Query q = new DefaultQuery(query);
 			ret.add(q);
@@ -86,6 +74,7 @@ public class QPUSimple extends QPU implements HasContext
 
 				myNode.setLabel(context.getLabelFactory().from(ctx.getK(code.getCode(pos))));
 			}
+			code.add(1);
 		}
 		return ret;
 	}
