@@ -3,8 +3,6 @@ package insomnia.qrewriting.thread;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import insomnia.builder.BuilderData;
-import insomnia.builder.BuilderDataFactory;
 import insomnia.builder.BuilderException;
 import insomnia.numeric.Interval;
 import insomnia.qrewriting.code.Encoding;
@@ -24,19 +22,12 @@ public class QThreadRewriting extends AbstractQThread
 	private Query    query;
 	private Encoding encoding;
 
-	private BuilderDataFactory<Object, Query> builderDataFactory;
-
 	public QThreadRewriting(Context context, Query q, Interval i, Encoding e)
 	{
 		setContext(context);
 		setQuery(q);
 		setInterval(i);
 		setEncoding(e);
-	}
-
-	public void setBuilderDataFactory(BuilderDataFactory<Object, Query> b)
-	{
-		builderDataFactory = b;
 	}
 
 	private void setEncoding(Encoding e)
@@ -48,7 +39,7 @@ public class QThreadRewriting extends AbstractQThread
 	{
 		this.context = context;
 	}
-	
+
 	public void setInterval(Interval i)
 	{
 		interval = i;
@@ -76,21 +67,8 @@ public class QThreadRewriting extends AbstractQThread
 		ArrayList<Query>         qpuRes = new QPUSimple(context, query, interval, encoding).process();
 		ArrayList<QThreadResult> ret    = new ArrayList<>(qpuRes.size());
 
-		if (builderDataFactory == null)
-		{
-			for (Query q : qpuRes)
-				ret.add(new QThreadResult(q, null));
-		}
-		else
-		{
-			BuilderData<Object, Query> b = builderDataFactory.create();
-
-			for (Query q : qpuRes)
-			{
-				b.setData(q);
-				ret.add(new QThreadResult(q, b.newBuild()));
-			}
-		}
+		for (Query q : qpuRes)
+			ret.add(new QThreadResult(q, null));
 
 		if (callback != null)
 			callback.accept(ret);
