@@ -2,8 +2,6 @@ package insomnia.qrewriting.thread;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
 
 import insomnia.builder.BuilderData;
 import insomnia.builder.BuilderDataFactory;
@@ -11,7 +9,6 @@ import insomnia.builder.BuilderException;
 import insomnia.numeric.Interval;
 import insomnia.qrewriting.code.Encoding;
 import insomnia.qrewriting.context.Context;
-import insomnia.qrewriting.context.HasContext;
 import insomnia.qrewriting.qpu.QPUSimple;
 import insomnia.qrewriting.query.Query;
 
@@ -20,7 +17,7 @@ import insomnia.qrewriting.query.Query;
  * 
  * @author zuri
  */
-public class QThread implements Callable<Collection<QThreadResult>>, HasContext
+public class QThreadRewriting extends AbstractQThread
 {
 	private Context  context;
 	private Interval interval;
@@ -29,19 +26,12 @@ public class QThread implements Callable<Collection<QThreadResult>>, HasContext
 
 	private BuilderDataFactory<Object, Query> builderDataFactory;
 
-	private Consumer<Collection<QThreadResult>> callback;
-
-	public QThread(Context context, Query q, Interval i, Encoding e)
+	public QThreadRewriting(Context context, Query q, Interval i, Encoding e)
 	{
 		setContext(context);
 		setQuery(q);
 		setInterval(i);
 		setEncoding(e);
-	}
-
-	public void setCallback(Consumer<Collection<QThreadResult>> callback)
-	{
-		this.callback = callback;
 	}
 
 	public void setBuilderDataFactory(BuilderDataFactory<Object, Query> b)
@@ -89,9 +79,7 @@ public class QThread implements Callable<Collection<QThreadResult>>, HasContext
 		if (builderDataFactory == null)
 		{
 			for (Query q : qpuRes)
-			{
 				ret.add(new QThreadResult(q, null));
-			}
 		}
 		else
 		{
