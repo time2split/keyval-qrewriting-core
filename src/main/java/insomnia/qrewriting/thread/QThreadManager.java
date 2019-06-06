@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
-import insomnia.builder.BuilderDataFactory;
 import insomnia.numeric.Interval;
 import insomnia.qrewriting.code.Encoding;
 import insomnia.qrewriting.context.Context;
@@ -107,20 +106,10 @@ public class QThreadManager implements HasContext
 
 	public ArrayList<QThreadResult> compute() throws InterruptedException, ExecutionException
 	{
-		return compute((BuilderDataFactory<Object, Query>) null);
+		return compute(Executors.newCachedThreadPool());
 	}
 
 	public ArrayList<QThreadResult> compute(ExecutorService exec) throws InterruptedException, ExecutionException
-	{
-		return compute(null, exec);
-	}
-
-	public ArrayList<QThreadResult> compute(BuilderDataFactory<Object, Query> factory) throws InterruptedException, ExecutionException
-	{
-		return compute(factory, Executors.newCachedThreadPool());
-	}
-
-	public ArrayList<QThreadResult> compute(BuilderDataFactory<Object, Query> factory, ExecutorService exec) throws InterruptedException, ExecutionException
 	{
 		int                 nbThread;
 		ArrayList<Interval> intervals;
@@ -158,9 +147,8 @@ public class QThreadManager implements HasContext
 
 		for (Interval i : intervals)
 		{
-			QThread th = new QThread(context, query, i, encoding);
+			QThread th = new QThreadRewriting(context, query, i, encoding);
 			th.setCallback(callback);
-			th.setBuilderDataFactory(factory);
 			loaded.add(executor.submit(th));
 		}
 
