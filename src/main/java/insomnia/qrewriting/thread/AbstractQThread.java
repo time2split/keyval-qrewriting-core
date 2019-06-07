@@ -8,10 +8,16 @@ import java.util.function.Consumer;
  */
 abstract public class AbstractQThread implements QThread
 {
-	protected Consumer<Collection<QThreadResult>> callback;
+	private Consumer<Collection<QThreadResult>> callback;
 
 	public void setCallback(Consumer<Collection<QThreadResult>> callback)
 	{
 		this.callback = callback;
+	}
+
+	protected void callback(Collection<QThreadResult> results)
+	{
+		if (callback != null)
+			callback.accept(results);
 	}
 }
