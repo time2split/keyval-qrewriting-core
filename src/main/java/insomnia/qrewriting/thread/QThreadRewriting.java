@@ -35,12 +35,12 @@ public class QThreadRewriting extends AbstractQThread
 		encoding = e;
 	}
 
-	protected void setContext(Context context)
+	private void setContext(Context context)
 	{
 		this.context = context;
 	}
 
-	public void setInterval(Interval i)
+	private void setInterval(Interval i)
 	{
 		interval = i;
 	}
@@ -51,7 +51,7 @@ public class QThreadRewriting extends AbstractQThread
 		return context;
 	}
 
-	public void setQuery(Query q)
+	private void setQuery(Query q)
 	{
 		query = q;
 	}
@@ -70,9 +70,7 @@ public class QThreadRewriting extends AbstractQThread
 		for (Query q : qpuRes)
 			ret.add(new QThreadResult(q, null));
 
-		if (callback != null)
-			callback.accept(ret);
-
+		callback(ret);
 		return ret;
 	}
 }
