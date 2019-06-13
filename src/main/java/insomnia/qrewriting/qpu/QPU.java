@@ -11,7 +11,7 @@ import insomnia.qrewriting.query.Query;
  * @author zuri
  * 
  */
-abstract public class QPU
+public interface QPU
 {
 
 	/**
@@ -19,5 +19,5 @@ abstract public class QPU
 	 * 
 	 * @return Les requêtes réécrites
 	 */
-	abstract public Collection<Query> process();
+	Collection<Query> process();
 }
