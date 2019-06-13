@@ -2,68 +2,68 @@ package insomnia.qrewriting.thread;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.List;
 import java.util.function.Consumer;
 
 import insomnia.numeric.Interval;
-import insomnia.qrewriting.code.Encoding;
 import insomnia.qrewriting.context.Context;
 import insomnia.qrewriting.context.HasContext;
 import insomnia.qrewriting.query.Query;
 
 /**
- * Va créer des threads en fonction des codes de $encoding
- * 
  * @author zuri
  */
-public class QThreadManager implements HasContext
+public abstract class AbstractQThreadManager implements QThreadManager, HasContext
 {
 	/**
-	 * Mode de fonctionnement du gestionnaire
+	 * Computation mode for threads configuration.
 	 * <ul>
-	 * <li>NB_THREAD : spécifie le nombre de thread sur lesquels partager le
-	 * calcul</li>
-	 * <li>SIZEOF_THREAD : spécifie la taille maximale d'un thread, le nombre de
-	 * threads sera calculé en conséquence</li>
-	 * <li>AUTO : tente de déterminer seul la configuration</li>
+	 * <li>NB_THREAD : the number of threads on which we want to compute</li>
+	 * <li>SIZEOF_THREAD : The maximum number of input a thread can support</li>
+	 * <li>AUTO : automatic configuration</li>
 	 * </ul>
 	 * 
 	 * @author zuri
 	 */
-	private enum Mode
+	protected enum Mode
 	{
 		NB_THREAD, SIZEOF_THREAD, AUTO
 	};
 
-	private Context                  context;
-	private Query                    query;
-	private Encoding                 encoding;
-	private ExecutorService          executor;
-	private ArrayList<QThreadResult> result;
-	private int                      modeData;
-	private Mode                     mode = Mode.AUTO;
+	private Context context;
+	private Query   query;
+	private Mode    mode = Mode.AUTO;
+	private int     modeData;
 
 	private Consumer<Collection<QThreadResult>> callback;
 
-	public QThreadManager(Context context, Query q, Encoding e)
-	{
-		super();
-		setQuery(q);
-		setEncoding(e);
-		setContext(context);
-	}
-
-	public void setCallback(Consumer<Collection<QThreadResult>> callback)
+	/**
+	 * A callback to be apply inside a thread on its result set.
+	 */
+	@Override
+	public void setThreadCallback(Consumer<Collection<QThreadResult>> callback)
 	{
 		this.callback = callback;
+	}
+
+	protected Consumer<Collection<QThreadResult>> getThreadCallback()
+	{
+		return callback;
 	}
 
 	protected void setContext(Context context)
 	{
 		this.context = context;
+	}
+
+	protected void setQuery(Query q)
+	{
+		query = q;
+	}
+
+	protected Query getQuery()
+	{
+		return query;
 	}
 
 	@Override
@@ -72,90 +72,62 @@ public class QThreadManager implements HasContext
 		return context;
 	}
 
+	@Override
 	public void setMode_sizeOfThread(int nb)
 	{
 		mode     = Mode.SIZEOF_THREAD;
 		modeData = nb;
 	}
 
-	public void setMode_nbThread(int nb)
+	@Override
+	public void setMode_nbThreads(int nb)
 	{
 		mode     = Mode.NB_THREAD;
 		modeData = nb;
 	}
 
-	private void setEncoding(Encoding e)
+	protected Mode getMode()
 	{
-		encoding = e;
+		return mode;
 	}
 
-	public void setQuery(Query q)
+	protected int getModeData()
 	{
-		query = q;
+		return modeData;
 	}
 
-	public ExecutorService getExecutor()
+	@Override
+	public List<Interval> computeIntervals(Interval queriesInterval)
 	{
-		return executor;
-	}
-
-	public ArrayList<QThreadResult> getResult()
-	{
-		return result;
-	}
-
-	public ArrayList<QThreadResult> compute() throws InterruptedException, ExecutionException
-	{
-		return compute(Executors.newCachedThreadPool());
-	}
-
-	public ArrayList<QThreadResult> compute(ExecutorService exec) throws InterruptedException, ExecutionException
-	{
-		int                 nbThread;
-		ArrayList<Interval> intervals;
-		result   = new ArrayList<>(encoding.size());
-		executor = exec;
+		List<Interval> intervals;
 
 		switch (mode)
 		{
 		case NB_THREAD:
-			nbThread = modeData;
-			Interval initialInterval = encoding.generateCodeInterval();
-			intervals = initialInterval.cutByNumberOfIntervals(nbThread);
+		{
+			int      nbThreads       = modeData;
+			Interval initialInterval = queriesInterval;
+			intervals = initialInterval.cutByNumberOfIntervals(nbThreads);
 
 			if (intervals.isEmpty())
 			{
-				nbThread  = 1;
+				nbThreads = 1;
 				intervals = new ArrayList<>();
 				intervals.add(initialInterval);
 			}
 			break;
+		}
 
 		case SIZEOF_THREAD:
-			intervals = encoding.generateCodeInterval().cutBySizeOfIntervals(modeData);
-			nbThread = intervals.size();
+			intervals = queriesInterval.cutBySizeOfIntervals(modeData);
 			break;
 
-		// TODO: définir un meilleur comportement
+		// TODO: define a better approach
+		case AUTO:
 		default:
-			// case AUTO:
-			intervals = encoding.generateCodeInterval().cutBySizeOfIntervals(1000);
-			nbThread = intervals.size();
+			intervals = queriesInterval.cutBySizeOfIntervals(1000);
 			break;
 		}
-		Collection<Future<Collection<QThreadResult>>> loaded = new ArrayList<>(nbThread);
-
-		for (Interval i : intervals)
-		{
-			QThread th = new QThreadRewriting(context, query, i, encoding);
-			th.setCallback(callback);
-			loaded.add(executor.submit(th));
-		}
-
-		for (Future<Collection<QThreadResult>> ft : loaded)
-			result.addAll(ft.get());
-
-		executor.shutdown();
-		return result;
+		return intervals;
 	}
 }
