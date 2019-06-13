@@ -18,7 +18,7 @@ import insomnia.qrewriting.query.node.Node;
  * 
  * @author zuri
  */
-public class QPUSimple extends QPU implements HasContext
+public class QPUSimple implements QPU, HasContext
 {
 	Context  context;
 	Query    query;
