@@ -11,7 +11,7 @@ import insomnia.qrewriting.qpu.QPUSimple;
 import insomnia.qrewriting.query.Query;
 
 /**
- * Permet de calculer les réécritures d'une requête (par intervalle ou codes directs)
+ * A thread which compute a query's rewritings from an input interval.
  * 
  * @author zuri
  */
